@@ -1,0 +1,13 @@
+/* Style the buttons */
+.fig {
+    border: none;
+    outline: none;
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  
+  /* Style the active class (and buttons on mouse-over) */
+  .active, .fig:hover {
+    background-color: #dfd5d5;
+    color: white;
+  }

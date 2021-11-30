@@ -1,0 +1,18 @@
+{
+    "env": {
+        "browser": false,
+        "node": true,
+        "commonjs": true,
+        "es2021": true,
+        "jest/globals": true        
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 12
+    },
+    "rules": {
+        "max-classes-per-file": ["error", 2],
+        "no-console": "off",
+        "no-underscore-dangle": "off"
+    }
+}

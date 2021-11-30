@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem vindo ao amigo secreto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="jumbotron">
+
+        <div class="table">
+            <div class="row">
+                <div class="col">
+                    <p class="display-4">Adicione o participante</p>
+                    <div>
+                        <label class="form-label" for="">Nome</label>
+                        <input class="name form-control" type="text" required><br>
+    
+                    </div>
+    
+                    <div>
+                        <label class="form-label" for="">email</label>
+                        <input class="email form-control" type="email" required><br>
+                    </div>
+    
+                    <button class="btn btn-dark insert">Cadastrar</button>
+                </div>
+                <div class="col">
+                    <p class="display-4">Participantes</p>
+                    <div style="min-width: 100px">
+                        <select class="mb-2 participants form-control" name="" size="12" width="100" id="">
+                        </select>
+                    </div>
+                    <button class="btn btn-dark remove">Remover</button>
+                    <button class="btn btn-dark sort">Realizar Sorteio</button>
+                    <input class="form-label" type="checkbox" id="simulate">&nbsp;Simular
+                    <!-- <button class="btn btn-dark reveal">Revelar</button> -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./assets/js/script.js"></script>
+    <script>
+
+        // Funcoes auxiliares
+        async function insertParticipant() {
+            const name = document.querySelector('.name');
+            const email = document.querySelector('.email');
+
+            if (!name.checkValidity()) {
+                alert('Entre com o nome do participante!');
+                return false;
+            }
+            
+            if (!email.checkValidity()) {
+                alert('Por favor, entre com o endereço de email corretamente!');
+                return false;
+            }
+            
+            sendHttpRest(`friend`, null, "POST", { name: name.value, email: email.value }, getAllParticipants);
+        }
+        
+        async function removeParticipant () {
+            const selectParticipants = document.querySelector('.participants');
+            
+            const optionSelected = selectParticipants.options[selectParticipants.selectedIndex];
+            
+            sendHttpRest(`friend`, null, "DELETE", { id: optionSelected.value, name: optionSelected.text }, getAllParticipants);
+        }
+        
+        async function getAllParticipants() {
+            const result = await sendGetRest(`friend`);
+            
+            if (!result) {
+                return ;    
+            }
+            
+            let listParticipants = result;
+            const selectParticipants = document.querySelector('.participants');
+            
+            selectParticipants.innerHTML = "";
+            for (const participants of listParticipants) {
+                const option = document.createElement('option');
+                
+                option.value = participants.id;
+                option.text = `${participants.name}: ${participants.email}`;
+                
+                selectParticipants.add(option);
+            }
+        }
+
+        async function sort(simular) {
+            const result = await sendGetRest(`secret?request=sort${simular ? '&simulate=true' : ''}`, window.location.origin);
+
+            const { error, message, friends } = result;
+
+            if (error > 0 || !Array.isArray(friends)){            
+                return ;
+            }
+
+            friends.forEach(secret => {
+                
+                let printSecret = `${secret.friend.name} tirou ${secret.receiver.name}`;
+                console.log(printSecret);
+            });
+        }
+
+        async function initialize() {
+            // Inicializacoes da tela
+            // Obtem a lista dos participantes jah cadastrados
+            getAllParticipants();
+        }
+
+        // Event listeners
+        document.querySelector('.insert').addEventListener('click', (event) => {
+            insertParticipant();
+        })
+
+        document.querySelector('.remove').addEventListener('click', (event) => {
+            removeParticipant();
+        })
+
+        document.querySelector('.sort').addEventListener('click', async (event) => {
+            const msg = 
+                "Deseja realizar o sorteio do amigo secreto agora?\n" +
+                "OBS: Clicando em Ok, sera enviado um email para cada participante da lista com o seu respectivo amigo secreto";
+                ;
+       
+       
+            if (window.confirm(msg)){
+                const simular = document.querySelector('#simulate');
+                console.log();
+                await sort(simular.checked);
+            }
+        });
+
+        // document.querySelector('.reveal').addEventListener('click', async (event) => {
+        //     await sort();
+        // })
+        
+        initialize();
+
+    </script>
+
+</html>
