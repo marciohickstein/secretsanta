@@ -44,6 +44,22 @@ controller.create = async function(req, res) {
 // 	}
 // };
 
+controller.update = async function(req, res) {
+	const id = req.params.id;
+	const item = req.body;
+	const responseError = { error: true, message: "Registro não encontrado" };
+
+	if (!id)
+		return res.status(404).json(responseError);
+
+	try {
+		const itemUpdated = await WishListModel.update(id, item);
+		return res.status(200).json(itemUpdated);
+	} catch (error) {
+		return res.status(404).json(responseError);
+	}
+};
+
 
 
 module.exports = controller;

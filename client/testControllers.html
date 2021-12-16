@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Teste dos Controllers</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js" defer></script>
+	<script src="./assets/js/script.js" defer></script>
+	<script src="./assets/js/controllers/eventController.js" defer></script>
+	<script src="./assets/js/services/eventService.js" defer></script> 
+	<script src="./assets/js/controllers/wishlistController.js" defer></script>
+	<script src="./assets/js/services/wishlistService.js" defer></script>
+</head>
+<body>
+	<div ng-app="secretSanta" >
+		<div ng-controller="ctrlWishList">
+			<button ng-click="getData()">Buscar Lista de Compras</button>
+			{{wishlist}}
+		</div>
+	</div>
+	<div ng-app="secretSanta" >
+		<div ng-controller="ctrlEvent">
+			<button ng-click="getEvent()">Buscar Eventos</button>
+			{{events}}
+		</div>
+	</div>
+</body>
+</html>

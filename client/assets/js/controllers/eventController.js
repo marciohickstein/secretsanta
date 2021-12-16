@@ -1,8 +1,16 @@
+
 let _TEST_ = getUrlParameter('test');
 
-let app = angular.module('secretSanta', []);
+if (!appSecretSanta) {
+	appSecretSanta = angular.module("secretSanta", []);
+}
 
-app.controller('ctrlEvent', ($scope, eventService) => {
+const idEvent = getUrlParameter('idevent');
+appSecretSanta.value("idEvent", idEvent ? idEvent : '');
+
+appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
+	$scope.events = [];
+	$scope.idEvent = idEvent;
 
 	if (_TEST_) {
 		$scope.date = new Date().toLocaleString();
@@ -40,19 +48,38 @@ app.controller('ctrlEvent', ($scope, eventService) => {
 
 	$scope.createEvent = async () => {
 		const restParticipants = $scope.participants.slice(1);
-		const url = getUrl(`event`);
+
 		const event = {
 			date: new Date().toLocaleString(),
 			location: $scope.eventLocal,
 			amount: $scope.eventAmount,
 			host: $scope.participants[0],
 			message: $scope.eventMessage,
-			participants: restParticipants,
-			url
+			participants: restParticipants
 		}
-		const result = await eventService.create(event);
+		const { data } = await eventService.create(event);
 
-		// console.log(result);
+		const text = `Parabéns você acabou de criar o seu evento de Amigo Secreto!
+Para enviar os emails para os participantes com seus respectivos amigos secreto é necessário clicar no link "Sortear Amigo Secreto" enviado para o seu email: ${$scope.participants[0].email} .`;
+		alert(text);
+		console.log(data);
+		window.location.reload();
+	}
+
+	$scope.getEvents = () => {
+		eventService.get()
+			.then((response) => { 
+				$scope.events = response.data;
+			})
+			.catch((error) => console.log(error));
+	}
+
+	$scope.getEvent = () => {
+		eventService.get($scope.idEvent)
+			.then((response) => { 
+				$scope.event = response.data;
+			})
+			.catch((error) => console.log(error));
 	}
 });
 

@@ -7,7 +7,8 @@ const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
 const BasicController = require('@controllers/basicController');
 
-const { sendEmails, drawParticipants, sendEmail, replaceTags } = require('@utils/util');
+const { sendEmails, drawParticipants, sendEmail, replaceTags, getBaseUrl } = require('@utils/util');
+const { endsWith } = require('lodash');
 
 const createParticipants = async ({ host, participants }) => {
 	const listParticipants = [];
@@ -37,20 +38,29 @@ const getParticipant = async (id) => {
 	return participant[0];
 }
 
-const getParticipants = async ({ host, participants }) => {
+const getParticipants = async (baseUrl, { host, participants }) => {
 	const listParticipants = [];
 
-	let participant = await ParticipantModel.get(host);
+	let [participant] = await ParticipantModel.get(host);
 
 	if (!participant)
 		return null;
-	listParticipants.push(participant[0]);
+
+
+	participant.urlAddWishList = `${baseUrl}/crudWishlist.html?idparticipant=${participant.id}`;
+	participant.urlShowWishList = `${baseUrl}/wishlist.html?idparticipant=${participant.id}`;
+
+	listParticipants.push(participant);
 
 	for (const id of participants) {
-		participant = await ParticipantModel.get(id);
+		[ participant ] = await ParticipantModel.get(id);
 		if (!participant)
 			return null;
-		listParticipants.push(participant[0]);
+
+		participant.urlAddWishList = `${baseUrl}/crudWishlist.html?idparticipant=${participant.id}`;
+		participant.urlShowWishList = `${baseUrl}/wishlist.html?idparticipant=${participant.id}`;
+		
+		listParticipants.push(participant);
 	}
 
 	return listParticipants;
@@ -114,7 +124,8 @@ eventController.getOne = async (req, res) => {
 		return res.send(message);
 	}
 
-	let participants = await getParticipants(event[0]);
+	const baseUrl = getBaseUrl(req);
+	let participants = await getParticipants(baseUrl, event[0]);
 
 	try {
 		const eventUpdate = await draw(event[0], participants);
@@ -143,7 +154,8 @@ eventController.create = async (req, res) => {
 
 	const eventCreated = await EventModel.create(event);
 
-	const url = `${event.url}/${eventCreated.id}?draw=true`;
+	const baseUrl = getBaseUrl(req);
+	const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
 
 	const tags = [
 		['{HOST_NAME}', hostName],

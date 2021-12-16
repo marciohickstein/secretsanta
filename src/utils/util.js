@@ -19,48 +19,6 @@ const transporter = nodemailer.createTransport(smtpTransport({
 	}
 }));
 
-function Controller() {
-	this.name = model;
-	this.getAll = async function (req, res) {
-		const items = await model.get();
-		return res.json(items);
-	};
-	this.getOne = async function (req, res) {
-		const responseError = { error: true, message: "Registro não encontrado" };
-
-		if (!req.params.id)
-			return res.status(404).json(responseError);
-
-		const id = req.params.id ? req.params.id : '';
-		const item = await this._model.get(id);
-
-		if (!Array.isArray(item) || item.length <= 0)
-			return res.status(404).json(responseError);
-	
-		return res.status(200).json(item);
-	};
-	this.create = async function(req, res) {
-		const item = req.body;
-		const itemCreated = await this._model.create(item);
-		return res.status(200).json(itemCreated);
-	};
-	this.delete = async function(req, res) {
-		const id = req.params.id;
-		const responseError = { error: true, message: "Registro não encontrado" };
-
-		if (!id)
-			return res.status(404).json(responseError);
-
-		try {
-			const itemDeleted = await this._model.delete(id);
-			return res.status(200).json(itemDeleted);
-		} catch (error) {
-			return res.status(404).json(responseError);
-		}
-	}	
-}
-
-
 const replaceTags = (text, tags) => {
 	let textReplaced = text;
 
@@ -133,6 +91,14 @@ function sendEmail(from, to, subject, text) {
 
 }
 
+
+const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
+
+// const getFullUrl = (req, restUrl) => {
+// 	let baseUrl = getBaseUrl(req);
+// 	return !restUrl ? baseUrl : `${baseUrl}/${restUrl}`;
+// }
+
 function sendEmails(listFriendsSorted, hostName, subject, text) {
 
 	listFriendsSorted.forEach(secret => {
@@ -141,6 +107,8 @@ function sendEmails(listFriendsSorted, hostName, subject, text) {
 			['{NAME_RECEIVER}', secret.receiver.name ],
 			['{NAME_HOST}', hostName ],
 			['{TEXT}', text ],
+			['{URL_SHOW_WISHLIST}', secret.receiver.urlShowWishList ],
+			['{URL_ADD_WISHLIST}', secret.friend.urlAddWishList ],
 		];
 
 		const textMessage = replaceTags(config.templates.emailParticipant, tags);
@@ -151,4 +119,4 @@ function sendEmails(listFriendsSorted, hostName, subject, text) {
 	return ({ error: 0, message: 'Emails enviados para todos os participantes com sucesso!', friends: listFriendsSorted });
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmail, sendEmails, getRootPath, resolvePath, replaceTags };
+module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmail, sendEmails, getRootPath, resolvePath, replaceTags, getBaseUrl };

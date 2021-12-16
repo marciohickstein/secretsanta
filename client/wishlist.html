@@ -12,63 +12,74 @@
 		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
 		crossorigin="anonymous"></script>
 
+	<script src="./libs/angular.min.js"></script>
+	<script src="./assets/js/script.js"></script>
 </head>
 
 <body>
 
-	<div class="container" ng-app="wishlist" ng-controller="ctrlWishList">
+	<div class="container" ng-app="secretSanta">
 		<div>
 			<div class="row">
-				<div class="col-6 d-flex justify-content-center">
+				<!-- <div class="col-6 d-flex justify-content-center" ng-controller="ctrlParticipant" ng-init="getParticipant()">
 					<div class="card" style="width: 18rem;">
 						<div class="card-body">
 							<h5 class="card-title">Amigo Secreto</h5>
 							<h6 class="card-subtitle mb-2 text-muted">Criado por SecretSanta</h6>
-							<p class="card-text"><br>Parab&eacute;ns {{host_name}} o seu amigo secreto é: {{friend_name}}.</p>
+							<p class="card-text"><br>Parab&eacute;ns {{participant.name}} o seu amigo secreto é:
+								{{friend_name}}.</p>
 							<a href="#" class="card-link">Mensagem</a>
-							<!-- <a href="#" class="card-link">Another link</a>  -->
 						</div>
 					</div>
-				</div>
-				<div class="col-6 ">
-					<div class="card" style="width: 18rem;">
+				</div> -->
+				<div class="col-12 d-flex justify-content-center" ng-controller="ctrlEvent" ng-init="getEvent()">
+					<div class="card" style="width: 28rem;">
 						<div class="card-body">
 							<h5 class="card-title">Evento:</h5>
-							<p class="card-text"><b>Data:</b>{{event_date}}</p>
-							<p class="card-text"><b>Localiza&ccedil;&acirc;o:</b>{{event_location}}</p>
-							<p class="card-text"><b>Valor do presente:</b>{{event_value}}</p>
-							<p class="card-text"><b>Nr. de pessoas:</b>{{event_num_people}}</p>
+							<p class="card-text"><b>Data:</b> {{event[0].date}}</p>
+							<p class="card-text"><b>Localiza&ccedil;&acirc;o:</b> {{event[0].location}}</p>
+							<p class="card-text"><b>Valor do presente:</b> {{event[0].amount}}</p>
+							<p class="card-text"><b>Nr. de pessoas:</b> {{event[0].participants.length + 1}}</p>
 						</div>
 					</div>
+					<!-- {{event}} -->
 				</div>
 			</div>
 		</div>
-		<table class="table table-striped">
-			<thead>
-				<th>#</th>
-				<th>Presente</th>
-				<th>Pre&ccedil;o Estimado</th>
-				<th>Informa&ccedil;&ocirc;es Extras</th>
-			</thead>
-			<tbody>
-				<tr ng-repeat="wl in wishlist">
-					<td>1</td>
-					<td>{{wl.product}}</td>
-					<td>{{wl.price}}</td>
-					<td>{{wl.infoExtra}}</td>
-				</tr>
-			</tbody>
-		</table>
-		{{wishlist}}
+		<br>
+
+		<div ng-controller="ctrlParticipant" ng-init="getParticipant()">
+			<p>Abaixo segue a lista de presentes do seu amigo secreto <b>{{participant.name}}</b>:</p>
+		</div>
+
+
+		<div ng-controller="ctrlWishList" ng-init="getWishList()">
+			<table class="table table-striped">
+				<thead>
+					<th>#</th>
+					<th>Presente</th>
+					<th>Pre&ccedil;o Estimado</th>
+					<th>Informa&ccedil;&ocirc;es Extras</th>
+				</thead>
+				<tbody>
+					<tr ng-repeat="wl in wishlist">
+						<td>{{wishlist.indexOf(wl) + 1}}</td>
+						<td>{{wl.product}}</td>
+						<td>{{wl.price}}</td>
+						<td>{{wl.infoExtra}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-
-
 
 </body>
 
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-<script src="./assets/js/script.js"></script>
-<script src="./assets/js/controllers/wishlistController.js"></script>
-<script src="./assets/js/services/wishlistService.js"></script>
-
+<script src="./assets/js/controllers/wishlistController.js" defer></script>
+<script src="./assets/js/services/wishlistService.js" defer></script>
+<script src="./assets/js/controllers/eventController.js" defer></script>
+<script src="./assets/js/services/eventService.js" defer></script>
+<script src="./assets/js/controllers/participantController.js" defer></script>
+<script src="./assets/js/services/participantService.js" defer></script>
+ 
 </html>

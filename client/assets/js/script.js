@@ -1,3 +1,6 @@
+// Variaveis globais
+var appSecretSanta = null;
+
 // #######################################################
 // Rotinas para tratamento de URL
 // #######################################################

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Test AngularJS</title>
+</head>
+<body>
+	<div ng-app="test">
+		<div ng-controller='hello' ng-init="greetings='hello'">
+			{{greetings}}
+			<div ng-bind="greetings"></div>
+		</div>
+
+		<div ng-controller='time'>
+			{{timeToday}}
+		</div>
+	</div>
+
+	<div>Lista de compras: <a href="http://localhost:4000/wishlist.html?idparticipant=32b5d898-225d-43af-82f2-ac5012e94cbd">Ver</a> &nbsp; <a href="http://localhost:4000/crudWishlist.html?idparticipant=32b5d898-225d-43af-82f2-ac5012e94cbd">Adicionar</a></div>
+	
+
+</body>
+
+<script src="./libs/angular.min.js"></script>
+<script>
+
+	var app = angular.module('test', []);
+
+	app.controller('hello', ($scope) => {
+		// $scope.greetings = ``;
+		// $scope.greetings = `Hello World!`;
+	});
+
+	app.controller('time', ($scope) => {
+		const today = (new Date()).toLocaleString();
+		$scope.timeToday = `Today is ${today}`;
+	});
+
+	
+
+</script>
+</html>
