@@ -5,11 +5,10 @@ require('module-alias/register');
 const { getRootPath, resolvePath } = require('@utils/util')
 const { JSONDataSource } = require('@classes/jsonDataSource');
 
-this.dataEvents = new JSONDataSource();
-
 const fileEventData = process.env.TEST === "1" ? `${getRootPath()}/data/events-test.json` : `${getRootPath()}/data/events.json`;
 
-this.dataEvents.open(resolvePath(fileEventData));
+this.dataEvents = new JSONDataSource(resolvePath(fileEventData));
+
 
 const EventModel = {
 	get: async (id = '') => {

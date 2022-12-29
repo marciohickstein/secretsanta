@@ -1,6 +1,6 @@
 "use strict"
 
-const { readFile, writeFile } = require('fs');
+const { readFile, writeFile, existsSync } = require('fs');
 
 const { promisify } = require('util');
 
@@ -10,8 +10,30 @@ const writeFileJSON = promisify(writeFile);
 const uuid = require("uuid");
 
 class JSONDataSource {
-    constructor() {
+    constructor(fileName) {
+        this._fileName = fileName;
+        if (!this._fileName) {
+            throw new Error("Nao foi informado o nome do arquivos JSON.");
+        }
 
+        if (!existsSync(this._fileName)) {
+            this.createFile();
+        }
+        console.log('JSONDataSource:', fileName);
+    }
+
+    async createFile() {
+        if (!this._fileName) {
+            throw new Error("Nao foi informado o nome do arquivos JSON.");
+        }
+
+        try {
+            const stringJSON = JSON.stringify([]);
+            await writeFileJSON(this._fileName, stringJSON);
+            return true;
+        } catch (error) {
+            throw new Error(error);
+        }
     }
 
     async _readFile() {
@@ -39,10 +61,9 @@ class JSONDataSource {
         } catch (error) {
             throw new Error(error);
         }
-
     }
 
-    open(string) {
+    _open(string) {
         this._fileName = string;
     }
 

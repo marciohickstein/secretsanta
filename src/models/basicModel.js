@@ -8,8 +8,7 @@ const { JSONDataSource } = require('@classes/jsonDataSource');
 
 function BasicModel(fileEventData) {
 	this.readData = async function(){
-		this.data = new JSONDataSource();
-		this.data.open(resolvePath(fileEventData));
+		this.data = new JSONDataSource(resolvePath(fileEventData));
 	};
 	this.get = async function(id = '') {
 		const filter = id !== '' ? { id } : {};
