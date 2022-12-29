@@ -23,7 +23,7 @@ const replaceTags = (text, tags) => {
 	let textReplaced = text;
 
 	for (const tag of tags) {
-		textReplaced = textReplaced.replaceAll(tag[0], tag[1]);
+		textReplaced = textReplaced.replace(`/${tag[0]}/gi`, tag[1]);
 	}
 
 	return textReplaced;
