@@ -28,15 +28,26 @@ const replaceTags = (text, tags) => {
 
 	return textReplaced;
 }
+/**
+ * Given a path, return the root path of the project
+ * @returns A string.
+ */
 
 const getRootPath = () => {
 	return process.env.PWD;
 }
 
+/**
+ * Given a path, return the absolute path
+ * @param pathToResolve - The path to resolve.
+ * @returns A promise.
+ */
 const resolvePath = (pathToResolve) => {
 	return path.resolve(pathToResolve);
 }
 
+/* It's a function that receives an array and returns a new array with the same elements but in a
+different order. */
 const shuffleArray = function (array) {
 	if (!Array.isArray(array))
 		return [];
@@ -86,7 +97,7 @@ function sendEmail(from, to, subject, text) {
 		if (err){
 			return ({ error: 1, massage: `Ocorreu um no envio do email para : ${to}. Detalhes: ${err}` });
 		}
-		// console.log(info);
+		console.log(info);
 	})
 
 }

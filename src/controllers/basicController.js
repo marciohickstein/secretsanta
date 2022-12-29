@@ -25,6 +25,7 @@ function BasicController(model) {
 		return res.status(200).json(item);
 	};
 
+/* It's a function that will be called when the user will try to create a new item. */
 	this.create = async function(req, res) {
 		const item = req.body;
 
@@ -37,6 +38,7 @@ function BasicController(model) {
 		return res.status(200).json(itemCreated);
 	};
 
+/* It's a function that will be called when the user will try to delete an item. */
 	this.delete = async function(req, res) {
 		const id = req.params.id;
 		const responseError = { error: true, message: "Registro não encontrado" };
