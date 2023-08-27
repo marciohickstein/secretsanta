@@ -9,7 +9,6 @@ const fileEventData = process.env.TEST === "1" ? `${getRootPath()}/data/events-t
 
 this.dataEvents = new JSONDataSource(resolvePath(fileEventData));
 
-
 const EventModel = {
 	get: async (id = '') => {
 		const filter = id !== '' ? { id } : {};

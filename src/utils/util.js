@@ -34,7 +34,7 @@ const replaceTags = (text, tags) => {
  */
 
 const getRootPath = () => {
-	return process.env.PWD;
+	return process.cwd();
 }
 
 /**
