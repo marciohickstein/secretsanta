@@ -5,13 +5,13 @@ const request = require('supertest');
 const app = require('@app');
 
 const participant = {
-	id: "1",
+	id: "10",
 	name: "Marcio",
 	email: "marcio.hickstein@gmail.com"
 }
 
 const dataToTest = { 
-	id: "1", // ID participant
+	id: "10", // ID participant
 	wishlist: [
 		{
 			gift: "iphone",

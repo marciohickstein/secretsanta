@@ -4,7 +4,7 @@ const app = require('../app');
 const request = require('supertest');
 
 const PARTICIPANT = {
-	id: "1",
+	id: "100",
 	name: 'Marcio de Matos Hickstein',
 	email: 'marcio.hickstein@gmail.com'
 };
