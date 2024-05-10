@@ -1,8 +1,12 @@
 "use strict"
+
+process.env.TEST = 3;
+
 require('module-alias/register');
 const app = require('../app');
 const request = require('supertest');
 const util = require('../utils/util');
+
 
 jest.mock('../utils/util', () => {
 	const originalModule = jest.requireActual('../utils/util');
@@ -51,7 +55,7 @@ const eventToCompare = {
 	message: "Qualquer mensagem para os convidados do amigo secreto",
 }
 
-describe('POST /event', function () {
+describe('API /event', function () {
 	it('create a event', function (done) {
 		request(app)
 			.post('/event')
@@ -70,9 +74,7 @@ describe('POST /event', function () {
 				done(error);
 			})
 	});
-});
 
-describe('GET /event', function () {
 	it('return all event', function (done) {
 		request(app)
 			.get(`/event/${requestEvent.id}`)
@@ -90,9 +92,7 @@ describe('GET /event', function () {
 				done(error);
 			})
 	});
-});
 
-describe('DELETE /event', function () {
 	it('delete a event', function (done) {
 		request(app)
 			.delete(`/event/${requestEvent.id}`)
@@ -111,7 +111,7 @@ describe('DELETE /event', function () {
 			})
 	});
 
-	afterEach(async () => {
+	afterAll(async () => {
 		// Remove all list of participants before test of events
 		for (const participant of participants) {
 			const response = await request(app)

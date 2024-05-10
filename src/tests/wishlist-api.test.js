@@ -1,8 +1,11 @@
 "use strict"
 
+process.env.TEST = 2;
+
 require('module-alias/register');
 const request = require('supertest');
 const app = require('@app');
+
 
 const participant = {
 	id: "10",
@@ -24,15 +27,24 @@ const dataToTest = {
 	]
 };
 
-describe(`POST /wishlist`, () => {
-	beforeEach(async () => {
-		// Create a participant to test wishlist
-		const response = await request(app)
-			.post(`/participant/`)
-			.send(participant);
-		expect(response.res.statusCode).toBe(200);
-	});
+describe(`API /wishlist`, () => {
 
+	beforeAll((done) => {
+		// Create a participant to test wishlist
+		request(app)
+			.post(`/participant/`)
+			.send(participant)
+		.expect(200)
+		.then((response) => {
+			expect(response.body).toStrictEqual(participant);
+			done();
+		})
+		.catch((error) => {
+			done(error);
+		})
+	});
+	
+	
 	it(`Create a wishlist`, (done) => {
 		request(app)
 		.post('/wishlist')
@@ -48,9 +60,7 @@ describe(`POST /wishlist`, () => {
 			done(error);
 		})
 	});
-});
 
-describe(`GET /wishlist`, () => {
 	it(`Obtem a wishlist specific`, (done) => {
 		request(app)
 		.get(`/wishlist/${dataToTest.id}`)
@@ -65,9 +75,7 @@ describe(`GET /wishlist`, () => {
 			done(error);
 		})
 	});
-});
 
-describe(`DELETE /wishlist`, () => {
 	it(`Remove a wishlist specific`, (done) => {
 		request(app)
 		.delete(`/wishlist/${dataToTest.id}`)
@@ -83,7 +91,7 @@ describe(`DELETE /wishlist`, () => {
 		})
 	});
 
-	beforeEach(async () => {
+	afterAll(async () => {
 		// Create a participant to test wishlist
 		const response = await request(app)
 			.delete(`/participant/${participant.id}`)

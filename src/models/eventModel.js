@@ -5,7 +5,7 @@ require('module-alias/register');
 const { getRootPath, resolvePath } = require('@utils/util')
 const { JSONDataSource } = require('@classes/jsonDataSource');
 
-const fileEventData = process.env.TEST === "1" ? `${getRootPath()}/data/events-test.json` : `${getRootPath()}/data/events.json`;
+const fileEventData = process.env.TEST >= Number("0") ? `${getRootPath()}/data/events-test-${process.env.TEST}.json` : `${getRootPath()}/data/events.json`;
 
 this.dataEvents = new JSONDataSource(resolvePath(fileEventData));
 

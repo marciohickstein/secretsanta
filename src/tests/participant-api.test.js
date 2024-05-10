@@ -1,4 +1,7 @@
 "use strict"
+
+process.env.TEST = 1;
+
 require('module-alias/register');
 const app = require('../app');
 const request = require('supertest');
@@ -9,7 +12,7 @@ const PARTICIPANT = {
 	email: 'marcio.hickstein@gmail.com'
 };
 
-describe('API test /participant', function () {
+describe('API /participant', function () {
 	it('create a participant', function (done) {
 		request(app)
 			.post('/participant')
