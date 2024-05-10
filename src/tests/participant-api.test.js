@@ -9,7 +9,7 @@ const PARTICIPANT = {
 	email: 'marcio.hickstein@gmail.com'
 };
 
-describe('POST /participant', function () {
+describe('API test /participant', function () {
 	it('create a participant', function (done) {
 		request(app)
 			.post('/participant')
@@ -25,9 +25,7 @@ describe('POST /participant', function () {
 				done(error);
 			})
 	});
-});
 
-describe('GET /participant', function () {
 	it('return a participant', function (done) {
 		request(app)
 			.get(`/participant/${PARTICIPANT.id}`)
@@ -42,9 +40,7 @@ describe('GET /participant', function () {
 				done(error);
 			})
 	});
-});
 
-describe('DELETE /participant', function () {
 	it('delete a participant', function (done) {
 		request(app)
 			.delete(`/participant/${PARTICIPANT.id}`)
