@@ -19,7 +19,6 @@ class JSONDataSource {
         if (!existsSync(this._fileName)) {
             this.createFile();
         }
-        console.log('JSONDataSource:', fileName);
     }
 
     async createFile() {

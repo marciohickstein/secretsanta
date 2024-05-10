@@ -2,6 +2,18 @@
 require('module-alias/register');
 const app = require('../app');
 const request = require('supertest');
+const util = require('../utils/util');
+
+jest.mock('../utils/util', () => {
+	const originalModule = jest.requireActual('../utils/util');
+
+	//Mock the default export and named export 'foo'
+	return {
+		__esModule: true,
+		...originalModule,
+		sendEmail: jest.fn(() => true),
+	};
+});
 
 const participants = [
 	{
@@ -105,7 +117,7 @@ describe('DELETE /event', function () {
 			const response = await request(app)
 				.delete(`/participant/${participant.id}`)
 				.send(participant);
-				expect(response.res.statusCode).toBe(200);
+			expect(response.res.statusCode).toBe(200);
 		}
 	});
 
