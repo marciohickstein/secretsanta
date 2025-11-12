@@ -32,6 +32,20 @@ module.exports = {
 		<p>Abaixo segue mensagem deixada pelo organizador do evento <b>{NAME_HOST}</b>:</p>
 		<i>{TEXT}</i>
 		<p>Lista de compras: <a href="{URL_SHOW_WISHLIST}">Ver</a> &nbsp; <a href="{URL_ADD_WISHLIST}">Adicionar</a></p>
-		<p><b>Espero que curtam ;) !!!</b></p>`
+		<p><b>Espero que curtam ;) !!!</b></p>`,
+		textParticipant: `
+Olá {NAME_FRIEND},
+
+	Você está participando da lista do amigo secreto gerado pelo sistema Secret Santa e seu amigo secreto é o {NAME_RECEIVER}!
+
+	Abaixo segue a mensagem deixada pelo organizador do evento {NAME_HOST}:
+	{TEXT}
+
+	Lista de compras:
+	Ver: {URL_SHOW_WISHLIST}
+	Adicionar: {URL_ADD_WISHLIST}
+
+Espero que curtam ;) !!!
+`
 	}
 }

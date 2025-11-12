@@ -103,6 +103,15 @@ function sendEmail(from, to, subject, text) {
 }
 
 
+function sendTextMessage(to, subject, text) {
+
+	console.log(`Sending message from whatsapp...`);
+	console.log(subject);
+	console.log(text);
+	
+}
+
+
 const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
 // const getFullUrl = (req, restUrl) => {
@@ -130,4 +139,24 @@ function sendEmails(listFriendsSorted, hostName, subject, text) {
 	return ({ error: 0, message: 'Emails enviados para todos os participantes com sucesso!', friends: listFriendsSorted });
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmail, sendEmails, getRootPath, resolvePath, replaceTags, getBaseUrl };
+function sendTextMessages(listFriendsSorted, hostName, subject, text) {
+
+	listFriendsSorted.forEach(secret => {
+		let tags = [
+			['{NAME_FRIEND}', secret.friend.name ],
+			['{NAME_RECEIVER}', secret.receiver.name ],
+			['{NAME_HOST}', hostName ],
+			['{TEXT}', text ],
+			['{URL_SHOW_WISHLIST}', secret.receiver.urlShowWishList ],
+			['{URL_ADD_WISHLIST}', secret.friend.urlAddWishList ],
+		];
+
+		const textMessage = replaceTags(config.templates.textParticipant, tags);
+
+		sendTextMessage(secret.friend.celphone, subject, textMessage);
+	});
+
+	return ({ error: 0, message: 'Emails enviados para todos os participantes com sucesso!', friends: listFriendsSorted });
+}
+
+module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmail, sendEmails, getRootPath, resolvePath, replaceTags, getBaseUrl, sendTextMessages };

@@ -21,21 +21,58 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		$scope.participants = [
 			{
 				name: "Marcio Hickstein",
-				email: "marcio.hickstein@gmail.com"
+				email: "marcio.hickstein@gmail.com",
+				celphone: "5551984120669"
 			},
 			{
-				name: "Claudio Hickstein",
-				email: "hicky_kitten@yahoo.com"
+				name: "Ana Paula Fernandes",
+				email: "marcio.inetsoft@gmail.com",
+				celphone: "5551984120669"
 			},
 			{
 				name: "Leo Hickstein",
-				email: "hicky.kt@gmail.com"
+				email: "hicky.kt@gmail.com",
+				celphone: "5551984120669"
 			}
 		];
 	}
 	else {
 		$scope.participants = [{}, {}, {}];
 	}
+
+	$scope.validInput = function () {
+		let message = "";
+
+		// Valida campos do evento
+		if (
+			!$scope.eventLocal ||
+			!$scope.eventAmount ||
+			!$scope.eventMessage
+		) {
+			message = "❌ Dados do evento incompletos.";
+			console.error(message);
+			return message;
+		}
+
+		// Valida participantes
+		if (!$scope.participants || $scope.participants.length < 2) {
+			message = "❌ É necessário pelo menos 2 participantes.";
+			console.error(message);
+			return message;
+		}
+
+		// Verifica se todos os participantes têm os dados obrigatórios
+		for (const p of $scope.participants) {
+			if (!p.name || !p.email || !p.celphone) {
+				message = `❌ Participante com dados faltando: ${JSON.stringify(p)}`;
+				console.error(message);
+				return message;
+			}
+		}
+
+		console.log("✅ Dados válidos!");
+		return message;
+	};
 
 	$scope.addParticipant = () => {
 		$scope.participants.push({});
@@ -47,6 +84,18 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	}
 
 	$scope.createEvent = async () => {
+		const errorMessage = $scope.validInput();
+
+		if (errorMessage) {
+			alert(errorMessage);
+			return;
+		}
+
+		if ($scope.participants.length <= 1) {
+			alert(`Adicione pelo menos 2 participantes`);
+			return;
+		}
+
 		const restParticipants = $scope.participants.slice(1);
 
 		const event = {
@@ -68,7 +117,7 @@ Para enviar os emails para os participantes com seus respectivos amigos secreto 
 
 	$scope.getEvents = () => {
 		eventService.get()
-			.then((response) => { 
+			.then((response) => {
 				$scope.events = response.data;
 			})
 			.catch((error) => console.log(error));
@@ -76,7 +125,7 @@ Para enviar os emails para os participantes com seus respectivos amigos secreto 
 
 	$scope.getEvent = () => {
 		eventService.get($scope.idEvent)
-			.then((response) => { 
+			.then((response) => {
 				$scope.event = response.data;
 			})
 			.catch((error) => console.log(error));

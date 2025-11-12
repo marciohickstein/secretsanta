@@ -7,7 +7,7 @@ const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
 const BasicController = require('@controllers/basicController');
 
-const { sendEmails, drawParticipants, sendEmail, replaceTags, getBaseUrl } = require('@utils/util');
+const { sendEmails, drawParticipants, sendEmail, replaceTags, getBaseUrl, sendTextMessages } = require('@utils/util');
 const { endsWith } = require('lodash');
 
 const createParticipants = async ({ host, participants }) => {
@@ -84,7 +84,9 @@ const draw = async (event, participants) => {
 	const text = event.message;
 
 	const hostName = await getParticipant(event.host);
+
 	sendEmails(listDrawn, hostName.name, subject, text);
+	sendTextMessages(listDrawn, hostName.name, subject, text);
 
 	eventDraw = {
 		...eventDraw,
@@ -138,8 +140,11 @@ eventController.getOne = async (req, res) => {
 
 eventController.create = async (req, res) => {
 	let event = req.body;
-	const hostName = event.host.name;
-	const hostEmail = event.host.email;
+	// const hostName = event.host.name;
+	// const hostEmail = event.host.email;
+	// const celphone = event.host.celphone;
+
+	const {name: hostName, email: hostEmail, celphone: celPhone} = event.host;
 
 	const participants = await createParticipants(event);
 
@@ -164,7 +169,13 @@ eventController.create = async (req, res) => {
 
 	const message = replaceTags(config.templates.emailHost, tags);
 
-	sendEmail(config.email.from, hostEmail, 'Amigo Secreto', message);
+	if (hostEmail) {
+		sendEmail(config.email.from, hostEmail, 'Amigo Secreto', message);
+	}
+
+	// if (celPhone) {
+	// 	sendTextMessages(config.email.from, celPhone, 'Amigo Secreto', message);
+	// }
 
 	return res.status(200).json(eventCreated);
 };

@@ -84,6 +84,7 @@
 							<th>#</th>
 							<th>Participante</th>
 							<th>E-mail</th>
+							<th>Celular</th>
 							<th></th>
 						</thead>
 						<tbody>
@@ -92,6 +93,8 @@
 								<td><input ng-model="participant.name" class="form-control" type="text" name="" id="">
 								</td>
 								<td><input ng-model="participant.email" class="form-control" type="text" name="" id="">
+								</td>
+								<td><input ng-model="participant.celphone" class="form-control" type="text" name="" id="">
 								</td>
 								<td></td>
 								<td class="text-end">
@@ -165,6 +168,7 @@
 		// Preenche os campos para teste
 		const TEST = getUrlParameter('test');
 
+		console.log(TEST)
 		if (TEST) {
 			$("#party_eventdate").val(`2021-12-25T21:00`);
 		}
