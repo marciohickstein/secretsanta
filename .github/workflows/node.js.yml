@@ -42,3 +42,5 @@ jobs:
             git pull origin main
             npm ci --production
             pm2 restart server
+
+            
