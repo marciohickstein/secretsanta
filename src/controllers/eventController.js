@@ -176,11 +176,11 @@ eventController.create = async (req, res) => {
 	const message = template.replace();
 
 	if (hostEmail) {
-		email.send(config.email.from, hostEmail, 'Amigo Secreto', message);
+		email.send(hostEmail, 'Amigo Secreto', message);
 	}
 
 	if (celPhone) {
-		whatsapp.send(config.email.from, celPhone, 'Amigo Secreto', message);
+		whatsapp.send(celPhone, 'Amigo Secreto', message);
 	}
 
 	return res.status(200).json(eventCreated);

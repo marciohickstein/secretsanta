@@ -13,6 +13,18 @@ class Template {
         this.pairs.push(pair);
     }
     
+    getValue(tag) {
+        const internalTag = `{${tag}}`;
+
+        for (const pair of this.pairs) {
+            if (pair[0] === internalTag) {
+                return pair[1];
+            }
+        }
+
+        return null;
+    }
+
     replace() {
         let textOutput = this.tamplate;
 

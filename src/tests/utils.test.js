@@ -1,6 +1,7 @@
 "use strict"
 
 const util = require('../utils/util');
+const Template = require('../utils/template');
 
 describe(`Testing utils...`, () => {
 	it(`Test getRootPath():`, () => {
@@ -65,17 +66,20 @@ describe(`Testing utils...`, () => {
 	})
 
 	it(`Test replaceTags(): `, () => {
-		const tags = [
-			['{MENSAGEM_OLA}', 'Olá'],
-			['{NOME_CONVIDADO}', 'Leo'],
-			['{NOME_PROGRAMADOR}', 'Márcio'],
-			['{LINGUAGEM}', 'Javascript'],
-		];
 
-		const template1 = `{MENSAGEM_OLA} {NOME_CONVIDADO},\nMeu nome é {NOME_PROGRAMADOR} programador que desenvolveu esta função em {LINGUAGEM}`;
+		const text = `{MENSAGEM_OLA} {NOME_CONVIDADO},\nMeu nome eh {NOME_PROGRAMADOR} programador que desenvolveu esta funcao em {LINGUAGEM}`;
 
-		const finalText = `${tags[0][1]} ${tags[1][1]},\nMeu nome é ${tags[2][1]} programador que desenvolveu esta função em ${tags[3][1]}`;
-		const textReplaced = util.replaceTags(template1, tags);
+		const template = new Template(text);
+
+		template.assign('MENSAGEM_OLA', 'Ola');
+		template.assign('NOME_CONVIDADO', 'Leo');
+		template.assign('NOME_PROGRAMADOR', 'Marcio');
+		template.assign('LINGUAGEM', 'Javascript');
+
+		const finalText = 
+		`${template.getValue('MENSAGEM_OLA')} ${template.getValue('NOME_CONVIDADO')},\nMeu nome eh ${template.getValue('NOME_PROGRAMADOR')} programador que desenvolveu esta funcao em ${template.getValue('LINGUAGEM')}`;
+
+		const textReplaced = template.replace();
 
 		expect(textReplaced).toBe(finalText);
 	})
