@@ -6,9 +6,11 @@ const config = require('@config');
 const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
 const BasicController = require('@controllers/basicController');
+const email = require('@utils/emailSender');
+const whatsapp = require('@utils/whatsAppSender');
+const Template = require('@utils/template');
 
-const { sendEmails, drawParticipants, sendEmail, replaceTags, getBaseUrl, sendTextMessages } = require('@utils/util');
-const { endsWith } = require('lodash');
+const { sendEmails, drawParticipants, getBaseUrl, sendTextMessages } = require('@utils/util');
 
 const createParticipants = async ({ host, participants }) => {
 	const listParticipants = [];
@@ -122,7 +124,11 @@ eventController.getOne = async (req, res) => {
 		const tags = [
 			['{DATE_EVENT_DRAW}', new Date(event[0].event_drawn)],
 		];
-		const message = replaceTags(config.templates.emailEventAlreadyCreated, tags);
+		const template = new Template(config.templates.emailEventAlreadyCreated);
+
+		template.assign('DATE_EVENT_DRAW', new Date(event[0].event_drawn));
+
+		const message = template.replace();
 		return res.send(message);
 	}
 
@@ -162,20 +168,20 @@ eventController.create = async (req, res) => {
 	const baseUrl = getBaseUrl(req);
 	const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
 
-	const tags = [
-		['{HOST_NAME}', hostName],
-		['{URL_TO_SORT}', url],
-	];
+	const template = new Template(config.templates.emailHost);
 
-	const message = replaceTags(config.templates.emailHost, tags);
+	template.assign('HOST_NAME', hostName);
+	template.assign('URL_TO_SORT', url);
+	
+	const message = template.replace();
 
 	if (hostEmail) {
-		sendEmail(config.email.from, hostEmail, 'Amigo Secreto', message);
+		email.send(config.email.from, hostEmail, 'Amigo Secreto', message);
 	}
 
-	// if (celPhone) {
-	// 	sendTextMessages(config.email.from, celPhone, 'Amigo Secreto', message);
-	// }
+	if (celPhone) {
+		whatsapp.send(config.email.from, celPhone, 'Amigo Secreto', message);
+	}
 
 	return res.status(200).json(eventCreated);
 };

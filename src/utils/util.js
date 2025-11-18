@@ -1,33 +1,12 @@
 "use strict"
 
+const email = require('./emailSender');
+const whatsapp = require('./whatsAppSender');
 const config = require('../config');
+const Template = require('./template');
 
-const nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
 const path = require('path');
 
-const transporter = nodemailer.createTransport(smtpTransport({
-	service: config.email.service,
-	host: config.email.host,
-	port: config.email.port,
-	tls: {
-		rejectUnauthorized: false
-	},
-	auth: {
-		user: config.email.user,
-		pass: config.email.pass
-	}
-}));
-
-const replaceTags = (text, tags) => {
-	let textReplaced = text;
-
-	for (const tag of tags) {
-		textReplaced = textReplaced.replaceAll(tag[0], tag[1]);
-	}
-
-	return textReplaced;
-}
 /**
  * Given a path, return the root path of the project
  * @returns A string.
@@ -84,79 +63,39 @@ const drawParticipants = function (listParticipants) {
 	return listFriends;
 }
 
-function sendEmail(from, to, subject, text) {
-
-	let mailOptions = {
-		from,
-		to,
-		subject,
-		html: text
-	}
-
-	transporter.sendMail(mailOptions, (err, info) => {
-		if (err){
-			return ({ error: 1, massage: `Ocorreu um no envio do email para : ${to}. Detalhes: ${err}` });
-		}
-		console.log(info);
-	})
-
-}
-
-
-function sendTextMessage(to, subject, text) {
-
-	console.log(`Sending message from whatsapp...`);
-	console.log(subject);
-	console.log(text);
-	
-}
-
-
 const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
-// const getFullUrl = (req, restUrl) => {
-// 	let baseUrl = getBaseUrl(req);
-// 	return !restUrl ? baseUrl : `${baseUrl}/${restUrl}`;
-// }
+function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 
-function sendEmails(listFriendsSorted, hostName, subject, text) {
+	const template = new Template(config.templates.emailParticipant);
 
 	listFriendsSorted.forEach(secret => {
-		let tags = [
-			['{NAME_FRIEND}', secret.friend.name ],
-			['{NAME_RECEIVER}', secret.receiver.name ],
-			['{NAME_HOST}', hostName ],
-			['{TEXT}', text ],
-			['{URL_SHOW_WISHLIST}', secret.receiver.urlShowWishList ],
-			['{URL_ADD_WISHLIST}', secret.friend.urlAddWishList ],
-		];
+		template.assign('NAME_FRIEND', secret.friend.name);
+		template.assign('NAME_RECEIVER', secret.receiver.name);
+		template.assign('NAME_HOST', hostName);
+		template.assign('TEXT', text);
+		template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
+		template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
 
-		const textMessage = replaceTags(config.templates.emailParticipant, tags);
+		const textMessage = template.replace();
 
-		sendEmail(config.email.from, secret.friend.email, subject, textMessage);
+		if (type === 'email') {
+			email.send(secret.friend.email, subject, textMessage);
+		} else {
+			whatsapp.send(secret.friend.celphone, subject, textMessage);
+		}
 	});
 
-	return ({ error: 0, message: 'Emails enviados para todos os participantes com sucesso!', friends: listFriendsSorted });
+	const message = `Mensagens enviadas para todos os participantes com sucesso!`;
+	return ({ error: 0, message, friends: listFriendsSorted });
+}
+
+function sendEmails(listFriendsSorted, hostName, subject, text) {
+	return sendNotification('email', listFriendsSorted, hostName, subject, text);
 }
 
 function sendTextMessages(listFriendsSorted, hostName, subject, text) {
-
-	listFriendsSorted.forEach(secret => {
-		let tags = [
-			['{NAME_FRIEND}', secret.friend.name ],
-			['{NAME_RECEIVER}', secret.receiver.name ],
-			['{NAME_HOST}', hostName ],
-			['{TEXT}', text ],
-			['{URL_SHOW_WISHLIST}', secret.receiver.urlShowWishList ],
-			['{URL_ADD_WISHLIST}', secret.friend.urlAddWishList ],
-		];
-
-		const textMessage = replaceTags(config.templates.textParticipant, tags);
-
-		sendTextMessage(secret.friend.celphone, subject, textMessage);
-	});
-
-	return ({ error: 0, message: 'Emails enviados para todos os participantes com sucesso!', friends: listFriendsSorted });
+	return sendNotification('whatsapp', listFriendsSorted, hostName, subject, text);
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmail, sendEmails, getRootPath, resolvePath, replaceTags, getBaseUrl, sendTextMessages };
+module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmails, getRootPath, resolvePath, getBaseUrl, sendTextMessages };
