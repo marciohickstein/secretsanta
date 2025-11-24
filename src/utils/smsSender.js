@@ -2,16 +2,6 @@ const config = require('@config');
 const twilio = require("twilio");
 // Never hardcode credentials — use environment variables
 
-const accountSid = config.twilio.sid;
-const authToken = config.twilio.token;
-const twilioNumber = config.twilio.from;
-
-if (!accountSid || !authToken || !twilioNumber) {
-    throw new Error("Missing Twilio environment variables.");
-}
-
-const client = twilio(accountSid, authToken);
-
 /**
  * Convert any Brazilian phone number to E.164 format.
  * Ex: 51 98412-0669 -> +5551984120669
@@ -32,6 +22,15 @@ function toE164Brazil(number) {
  * @param {string} message - SMS body text
  */
 async function sendSms(to, subject, message) {
+    const accountSid = config.twilio.sid;
+    const authToken = config.twilio.token;
+    const twilioNumber = config.twilio.from;
+
+    if (!accountSid || !authToken || !twilioNumber) {
+        throw new Error("Missing Twilio environment variables.");
+    }
+
+    const client = twilio(accountSid, authToken);
     const formattedNumber = toE164Brazil(to);
 
     if (!formattedNumber) {
