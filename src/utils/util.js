@@ -2,6 +2,7 @@
 
 const email = require('./emailSender');
 const whatsapp = require('./whatsAppSender');
+const sms = require('./smsSender');
 const config = require('../config');
 const Template = require('./template');
 
@@ -67,7 +68,8 @@ const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
 function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 
-	const template = new Template(config.templates.emailParticipant);
+	const emailTemplate = new Template(config.templates.emailParticipant);
+	const textTemplate = new Template(config.templates.textParticipant);
 
 	listFriendsSorted.forEach(secret => {
 		template.assign('NAME_FRIEND', secret.friend.name);
@@ -77,12 +79,20 @@ function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 		template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
 		template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
 
-		const textMessage = template.replace();
+		let message = '';
 
 		if (type === 'email') {
-			email.send(secret.friend.email, subject, textMessage);
+			message = emailTemplate.replace();
+
+			email.send(secret.friend.email, subject, message);
+		} else if (type === 'whatsapp') {
+			message = textTemplate.replace();
+
+			whatsapp.send(secret.friend.email, subject, message);
 		} else {
-			whatsapp.send(secret.friend.celphone, subject, textMessage);
+			message = textTemplate.replace();
+
+			sms.send(secret.friend.celphone, subject, message);
 		}
 	});
 
@@ -98,4 +108,8 @@ function sendTextMessages(listFriendsSorted, hostName, subject, text) {
 	return sendNotification('whatsapp', listFriendsSorted, hostName, subject, text);
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmails, getRootPath, resolvePath, getBaseUrl, sendTextMessages };
+function sendSms(listFriendsSorted, hostName, subject, text) {
+	return sendNotification('sms', listFriendsSorted, hostName, subject, text);
+}
+
+module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmails, getRootPath, resolvePath, getBaseUrl, sendTextMessages, sendSms };

@@ -2,10 +2,8 @@
 
 process.env.TEST = 2;
 
-require('module-alias/register');
 const request = require('supertest');
 const app = require('@app');
-
 
 const participant = {
 	id: "10",

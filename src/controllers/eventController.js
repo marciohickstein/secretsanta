@@ -8,9 +8,10 @@ const ParticipantModel = require('@models/participantModel');
 const BasicController = require('@controllers/basicController');
 const email = require('@utils/emailSender');
 const whatsapp = require('@utils/whatsAppSender');
+const sms = require('@utils/smsSender');
 const Template = require('@utils/template');
 
-const { sendEmails, drawParticipants, getBaseUrl, sendTextMessages } = require('@utils/util');
+const { sendEmails, drawParticipants, getBaseUrl, sendTextMessages, sendSms } = require('@utils/util');
 
 const createParticipants = async ({ host, participants }) => {
 	const listParticipants = [];
@@ -89,6 +90,7 @@ const draw = async (event, participants) => {
 
 	sendEmails(listDrawn, hostName.name, subject, text);
 	sendTextMessages(listDrawn, hostName.name, subject, text);
+	sendSms(listDrawn, hostName.name, subject, text);
 
 	eventDraw = {
 		...eventDraw,
@@ -168,19 +170,22 @@ eventController.create = async (req, res) => {
 	const baseUrl = getBaseUrl(req);
 	const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
 
-	const template = new Template(config.templates.emailHost);
+	const template = new Template();
 
 	template.assign('HOST_NAME', hostName);
 	template.assign('URL_TO_SORT', url);
 	
-	const message = template.replace();
-
 	if (hostEmail) {
+		template.setTemplate(config.templates.emailHost);
+		const message = template.replace();
 		email.send(hostEmail, 'Amigo Secreto', message);
 	}
 
 	if (celPhone) {
+		template.setTemplate(config.templates.textHost);
+		const message = template.replace();
 		whatsapp.send(celPhone, 'Amigo Secreto', message);
+		sms.send(celPhone, 'Amigo Secreto', message);
 	}
 
 	return res.status(200).json(eventCreated);

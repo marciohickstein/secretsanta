@@ -22,17 +22,17 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			{
 				name: "Marcio Hickstein",
 				email: "marcio.hickstein@gmail.com",
-				celphone: "5551984120669"
+				celphone: "51984120669"
 			},
 			{
 				name: "Ana Paula Fernandes",
 				email: "marcio.inetsoft@gmail.com",
-				celphone: "5551984120669"
+				celphone: "51984120669"
 			},
 			{
 				name: "Leo Hickstein",
 				email: "hicky.kt@gmail.com",
-				celphone: "5551984120669"
+				celphone: "51984120669"
 			}
 		];
 	}

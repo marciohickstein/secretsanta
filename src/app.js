@@ -30,7 +30,7 @@ class AppController {
 		this.express.use("/", express.static('client/'));
 
 		//The 404 Route (ALWAYS Keep this as the last route)
-		this.express.get('*', function (req, res) {
+		this.express.get(function (req, res) {
 			res.sendFile(util.resolvePath(util.getRootPath() + '/client/error404.html'));
 		});
 	}

@@ -2,8 +2,6 @@
 
 require('module-alias/register');
 
-const config = require('@config');
-
 function BasicController(model) {
 	this.getAll = async function(req, res) {
 		const items = await model.get();

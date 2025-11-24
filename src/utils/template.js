@@ -1,7 +1,11 @@
 class Template {
-    constructor(template) {
+    constructor(template = null) {
         this.pairs = [];
-        this.tamplate = template;
+        this.template = template;
+    }
+
+    setTemplate(template) {
+        this.template = template;
     }
 
     clear() {
@@ -26,7 +30,11 @@ class Template {
     }
 
     replace() {
-        let textOutput = this.tamplate;
+        if (this.template == null) {
+            return '';
+        }
+
+        let textOutput = this.template;
 
         for (const pair of this.pairs) {
             textOutput = textOutput.replaceAll(pair[0], pair[1]);

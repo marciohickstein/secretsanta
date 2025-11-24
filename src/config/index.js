@@ -1,12 +1,17 @@
 "use strict"
 
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const PORT_DEFAULT = 3333;
 
-module.exports = {
+const config = {
 	app: {
 		port: process.env.PORT || PORT_DEFAULT,
+	},
+	twilio: {
+		sid: process.env.TWILIO_SID,
+		token: process.env.TWILIO_TOKEN,
+		from: process.env.TWILIO_FROM,
 	},
 	email: {
 		service: process.env.MAIL_SERVICE,
@@ -33,19 +38,37 @@ module.exports = {
 		<i>{TEXT}</i>
 		<p>Lista de compras: <a href="{URL_SHOW_WISHLIST}">Ver</a> &nbsp; <a href="{URL_ADD_WISHLIST}">Adicionar</a></p>
 		<p><b>Espero que curtam ;) !!!</b></p>`,
-		textParticipant: `
-Olá {NAME_FRIEND},
+		textEventCreated:
+			`Evento de amigo secreto gerado com sucesso.
+OBS: Foi enviado um email para cada participante com seu respectivo amigo secreto! :)`,
 
-	Você está participando da lista do amigo secreto gerado pelo sistema Secret Santa e seu amigo secreto é o {NAME_RECEIVER}!
+		textEventAlreadyCreated:
+			`Evento de amigo secreto já foi gerado com sucesso em {DATE_EVENT_DRAW}.`,
 
-	Abaixo segue a mensagem deixada pelo organizador do evento {NAME_HOST}:
-	{TEXT}
+		textHost:
+			`Ola {HOST_NAME}
 
-	Lista de compras:
-	Ver: {URL_SHOW_WISHLIST}
-	Adicionar: {URL_ADD_WISHLIST}
+Para validar e sortear o seu evento de amigo secreto clique no link abaixo:
+{URL_TO_SORT}
 
-Espero que curtam ;) !!!
-`
+OBS: Sera enviado um email para cada participante com seu respectivo amigo secreto!`,
+
+		textParticipant:
+			`Ola {NAME_FRIEND}
+
+Você esta participando da lista do amigo secreto gerado pelo sistema Secret Santa 
+e seu amigo secreto é o {NAME_RECEIVER}!
+
+Abaixo segue a mensagem deixada pelo organizador do evento {NAME_HOST}:
+{TEXT}
+
+Lista de compras:
+Ver: {URL_SHOW_WISHLIST}
+Adicionar: {URL_ADD_WISHLIST}
+
+Espero que curtam ;) !!!`
 	}
 }
+
+module.exports = config;
+

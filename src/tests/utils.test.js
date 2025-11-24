@@ -1,7 +1,7 @@
 "use strict"
 
-const util = require('../utils/util');
-const Template = require('../utils/template');
+const util = require('@utils/util');
+const Template = require('@utils/template');
 
 describe(`Testing utils...`, () => {
 	it(`Test getRootPath():`, () => {
@@ -65,7 +65,7 @@ describe(`Testing utils...`, () => {
 		expect(list.includes(listFriends[2].receiver)).toBe(true);
 	})
 
-	it(`Test replaceTags(): `, () => {
+	it(`Test Template(): `, () => {
 
 		const text = `{MENSAGEM_OLA} {NOME_CONVIDADO},\nMeu nome eh {NOME_PROGRAMADOR} programador que desenvolveu esta funcao em {LINGUAGEM}`;
 
@@ -83,4 +83,5 @@ describe(`Testing utils...`, () => {
 
 		expect(textReplaced).toBe(finalText);
 	})
+
 });
