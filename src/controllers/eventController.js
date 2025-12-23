@@ -138,8 +138,9 @@ eventController.getOne = async (req, res) => {
 	let participants = await getParticipants(baseUrl, event[0]);
 
 	try {
-		const eventUpdate = await draw(event[0], participants);
-		const message = config.templates.emailEventCreated;
+		await draw(event[0], participants);
+		const templateEventCreated = new Template(config.templates.emailEventCreated, true);
+		const message = templateEventCreated.replace();
 		return res.send(message);
 	} catch (error) {
 		return res.status(404).json(error);

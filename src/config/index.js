@@ -22,9 +22,7 @@ const config = {
 		pass: process.env.MAIL_PASS,
 	},
 	templates: {
-		emailEventCreated: `<center><h4>Evento de amigo secreto gerado com sucesso.</h4>
-		<p><b>OBS: Foi enviado um email para cada participante com seu respectivo amigo secreto! :)</b></p>
-		</center>`
+		emailEventCreated: `emaileventcreated.html`
 		,
 		emailEventAlreadyCreated: `<center><h4>Evento de amigo secreto j&aacute foi gerado com sucesso em {DATE_EVENT_DRAW}.</h4></center>`
 		,
