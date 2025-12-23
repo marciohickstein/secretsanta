@@ -28,9 +28,7 @@ const config = {
 		,
 		emailEventAlreadyCreated: `<center><h4>Evento de amigo secreto j&aacute foi gerado com sucesso em {DATE_EVENT_DRAW}.</h4></center>`
 		,
-		emailHost: `<p>Ol&aacute; {HOST_NAME}</p>
-		<p>Para validar e sortear o seu evento de amigo secreto clique no link: <a href="{URL_TO_SORT}">Sortear Amigo Secreto</a></p>
-		<p><b>OBS: Ser&aacute; enviado um email para cada participante com seu respectivo amigo secreto!</b></p>`
+		emailHost: `emailhost.html`
 		,
 		emailParticipant: `<p>Ol&aacute; <b>{NAME_FRIEND}</b></p>
 		<p>Voc&ecirc; est&aacute participando da lista do amigo secreto gerado pelo sistema <b>Secret Santa</b> e seu amigo secreto &eacute; o <b>{NAME_RECEIVER}</b>!</p>
@@ -38,7 +36,7 @@ const config = {
 		<i>{TEXT}</i>
 		<p>Lista de compras: <a href="{URL_SHOW_WISHLIST}">Ver</a> &nbsp; <a href="{URL_ADD_WISHLIST}">Adicionar</a></p>
 		<p><b>Espero que curtam ;) !!!</b></p>`,
-		textEventCreated:
+		textEventCreated: 
 			`Evento de amigo secreto gerado com sucesso.
 OBS: Foi enviado um email para cada participante com seu respectivo amigo secreto! :)`,
 

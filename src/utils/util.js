@@ -72,12 +72,12 @@ function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 	const textTemplate = new Template(config.templates.textParticipant);
 
 	listFriendsSorted.forEach(secret => {
-		template.assign('NAME_FRIEND', secret.friend.name);
-		template.assign('NAME_RECEIVER', secret.receiver.name);
-		template.assign('NAME_HOST', hostName);
-		template.assign('TEXT', text);
-		template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
-		template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
+		emailTemplate.assign('NAME_FRIEND', secret.friend.name);
+		emailTemplate.assign('NAME_RECEIVER', secret.receiver.name);
+		emailTemplate.assign('NAME_HOST', hostName);
+		emailTemplate.assign('TEXT', text);
+		emailTemplate.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
+		emailTemplate.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
 
 		let message = '';
 
@@ -96,8 +96,7 @@ function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 		}
 	});
 
-	const message = `Mensagens enviadas para todos os participantes com sucesso!`;
-	return ({ error: 0, message, friends: listFriendsSorted });
+	return ({ error: 0, message: `Mensagens enviadas para todos os participantes com sucesso!`, friends: listFriendsSorted });
 }
 
 function sendEmails(listFriendsSorted, hostName, subject, text) {

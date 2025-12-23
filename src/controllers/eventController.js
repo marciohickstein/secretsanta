@@ -148,10 +148,6 @@ eventController.getOne = async (req, res) => {
 
 eventController.create = async (req, res) => {
 	let event = req.body;
-	// const hostName = event.host.name;
-	// const hostEmail = event.host.email;
-	// const celphone = event.host.celphone;
-
 	const {name: hostName, email: hostEmail, celphone: celPhone} = event.host;
 
 	const participants = await createParticipants(event);
@@ -176,7 +172,8 @@ eventController.create = async (req, res) => {
 	template.assign('URL_TO_SORT', url);
 	
 	if (hostEmail) {
-		template.setTemplate(config.templates.emailHost);
+		const fromFile = true;
+		template.setTemplate(config.templates.emailHost, fromFile);
 		const message = template.replace();
 		email.send(hostEmail, 'Amigo Secreto', message);
 	}

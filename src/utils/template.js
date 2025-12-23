@@ -1,11 +1,28 @@
+const path = require('path');
+const { readFileSync } = require('fs');
+
 class Template {
-    constructor(template = null) {
+    constructor(template = null, fromFile = false) {
         this.pairs = [];
-        this.template = template;
+        this.setTemplate(template, fromFile);
     }
 
-    setTemplate(template) {
-        this.template = template;
+    readFile(file) {
+        try {
+            const projectRoot = process.cwd();
+            const fullPathOfFile = path.join(projectRoot, 'src', 'templates', file);
+
+            const content = readFileSync(fullPathOfFile, 'utf-8');
+
+            return content;
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    setTemplate(template, fromFile = false) {
+        this.template = fromFile ? this.readFile(template) : template;
+        return true;
     }
 
     clear() {
@@ -16,7 +33,7 @@ class Template {
         const pair = [`{${key}}`, value];
         this.pairs.push(pair);
     }
-    
+
     getValue(tag) {
         const internalTag = `{${tag}}`;
 
