@@ -1,20 +1,16 @@
 "use strict"
 
-const { readFile, writeFile, existsSync } = require('fs');
-
-const { promisify } = require('util');
-
-const readFileJSON = promisify(readFile);
-const writeFileJSON = promisify(writeFile);
-
-const uuid = require("uuid");
+const { readFile, writeFile } = require('fs/promises');
+const { existsSync } = require('fs');
+const { v4: uuidV4 } = require("uuid");
 
 class JSONDataSource {
     constructor(fileName) {
-        this._fileName = fileName;
-        if (!this._fileName) {
-            throw new Error("Nao foi informado o nome do arquivos JSON.");
+        if (!fileName) {
+            throw new Error("Arquivo JSON informado inválido.");
         }
+
+        this._fileName = fileName;
 
         if (!existsSync(this._fileName)) {
             this.createFile();
@@ -23,12 +19,12 @@ class JSONDataSource {
 
     async createFile() {
         if (!this._fileName) {
-            throw new Error("Nao foi informado o nome do arquivos JSON.");
+            throw new Error("Arquivo JSON informado inválido.");
         }
 
         try {
             const stringJSON = JSON.stringify([]);
-            await writeFileJSON(this._fileName, stringJSON);
+            await writeFile(this._fileName, stringJSON);
             return true;
         } catch (error) {
             throw new Error(error);
@@ -41,7 +37,7 @@ class JSONDataSource {
         }
 
         try {
-            const data = await readFileJSON(this._fileName);
+            const data = await readFile(this._fileName);
             return JSON.parse(data.toString());
         } catch (error) {
             throw new Error(error);
@@ -55,7 +51,7 @@ class JSONDataSource {
 
         try {
             const stringJSON = JSON.stringify(records);
-            await writeFileJSON(this._fileName, stringJSON);
+            await writeFile(this._fileName, stringJSON);
             return true;
         } catch (error) {
             throw new Error(error);
@@ -100,7 +96,7 @@ class JSONDataSource {
         const items = await this._readFile();
 
         let newItem = {
-            id: uuid.v4(),
+            id: uuidV4(),
             ...item
         }
         items.push(newItem);
@@ -166,7 +162,7 @@ class JSONDataSource {
     async deleteAll() {
         const items = await this._readFile();
 
-        await writeFileJSON(this._fileName, '[]', function () { console.log('done') });
+        await writeFile(this._fileName, '[]', function () { console.log('done') });
 
         return items;
     }
