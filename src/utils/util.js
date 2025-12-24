@@ -67,11 +67,10 @@ const drawParticipants = function (listParticipants) {
 const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
 function sendNotification(type, listFriendsSorted, hostName, subject, text) {
-
-	const emailTemplate = new Template(config.templates.emailParticipant);
-	const textTemplate = new Template(config.templates.textParticipant);
-
 	listFriendsSorted.forEach(secret => {
+		const emailTemplate = new Template(config.templates.emailParticipant);
+		const textTemplate = new Template(config.templates.textParticipant);
+	
 		emailTemplate.assign('NAME_FRIEND', secret.friend.name);
 		emailTemplate.assign('NAME_RECEIVER', secret.receiver.name);
 		emailTemplate.assign('NAME_HOST', hostName);
