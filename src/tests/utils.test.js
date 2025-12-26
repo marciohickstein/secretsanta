@@ -69,7 +69,7 @@ describe(`Testing utils...`, () => {
 
 		const text = `{MENSAGEM_OLA} {NOME_CONVIDADO},\nMeu nome eh {NOME_PROGRAMADOR} programador que desenvolveu esta funcao em {LINGUAGEM}`;
 
-		const template = new Template(text);
+		const template = new Template(text, false);
 
 		template.assign('MENSAGEM_OLA', 'Ola');
 		template.assign('NOME_CONVIDADO', 'Leo');

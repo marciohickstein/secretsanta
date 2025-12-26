@@ -1,0 +1,2 @@
+Evento de amigo secreto gerado com sucesso.
+OBS: Foi enviado um email para cada participante com seu respectivo amigo secreto! :)

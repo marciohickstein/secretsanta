@@ -1,0 +1,6 @@
+Ola {HOST_NAME}
+
+Para validar e sortear o seu evento de amigo secreto clique no link abaixo:
+{URL_TO_SORT}
+
+OBS: Sera enviado um email para cada participante com seu respectivo amigo secreto!

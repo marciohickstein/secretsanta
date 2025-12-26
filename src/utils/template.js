@@ -2,7 +2,7 @@ const path = require('path');
 const { readFileSync } = require('fs');
 
 class Template {
-    constructor(template = null, fromFile = false) {
+    constructor(template = null, fromFile = true) {
         this.pairs = [];
         this.setTemplate(template, fromFile);
     }
@@ -20,8 +20,8 @@ class Template {
         }
     }
 
-    setTemplate(template, fromFile = false) {
-        this.template = fromFile ? this.readFile(template) : template;
+    setTemplate(template, fromFile = true) {
+        this.template = (template && fromFile) ? this.readFile(template) : template;
         return true;
     }
 

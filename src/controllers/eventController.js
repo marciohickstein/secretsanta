@@ -126,7 +126,7 @@ eventController.getOne = async (req, res) => {
 		const tags = [
 			['{DATE_EVENT_DRAW}', new Date(event[0].event_drawn)],
 		];
-		const template = new Template(config.templates.emailEventAlreadyCreated);
+		const template = new Template(config.templates.emailEventAlreadyCreated, true);
 
 		template.assign('DATE_EVENT_DRAW', new Date(event[0].event_drawn));
 
@@ -180,7 +180,7 @@ eventController.create = async (req, res) => {
 	}
 
 	if (celPhone) {
-		template.setTemplate(config.templates.textHost);
+		template.setTemplate(config.templates.textHost, true);
 		const message = template.replace();
 		whatsapp.send(celPhone, 'Amigo Secreto', message);
 		sms.send(celPhone, 'Amigo Secreto', message);

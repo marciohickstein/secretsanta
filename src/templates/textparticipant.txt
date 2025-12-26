@@ -1,0 +1,13 @@
+Ola {NAME_FRIEND}
+
+Você esta participando da lista do amigo secreto gerado pelo sistema Secret Santa 
+e seu amigo secreto é o {NAME_RECEIVER}!
+
+Abaixo segue a mensagem deixada pelo organizador do evento {NAME_HOST}:
+{TEXT}
+
+Lista de compras:
+Ver: {URL_SHOW_WISHLIST}
+Adicionar: {URL_ADD_WISHLIST}
+
+Espero que curtam ;) !!!

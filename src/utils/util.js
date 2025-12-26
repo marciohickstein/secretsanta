@@ -68,29 +68,28 @@ const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
 
 function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 	listFriendsSorted.forEach(secret => {
-		const emailTemplate = new Template(config.templates.emailParticipant);
-		const textTemplate = new Template(config.templates.textParticipant);
+		const template = new Template();
 	
-		emailTemplate.assign('NAME_FRIEND', secret.friend.name);
-		emailTemplate.assign('NAME_RECEIVER', secret.receiver.name);
-		emailTemplate.assign('NAME_HOST', hostName);
-		emailTemplate.assign('TEXT', text);
-		emailTemplate.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
-		emailTemplate.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
+		template.assign('NAME_FRIEND', secret.friend.name);
+		template.assign('NAME_RECEIVER', secret.receiver.name);
+		template.assign('NAME_HOST', hostName);
+		template.assign('TEXT', text);
+		template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
+		template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
 
 		let message = '';
 
 		if (type === 'email') {
-			message = emailTemplate.replace();
-
+			template.setTemplate(config.templates.emailParticipant);
+			message = template.replace();
 			email.send(secret.friend.email, subject, message);
 		} else if (type === 'whatsapp') {
-			message = textTemplate.replace();
-
+			template.setTemplate(config.templates.textParticipant);
+			message = template.replace();
 			whatsapp.send(secret.friend.email, subject, message);
 		} else {
-			message = textTemplate.replace();
-
+			template.setTemplate(config.templates.textParticipant);
+			message = template.replace();
 			sms.send(secret.friend.celphone, subject, message);
 		}
 	});
