@@ -2,265 +2,177 @@
 <html lang="pt-BR">
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cadastro de Lista de Presentes</title>
-
-	<link
-		href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-		rel="stylesheet"
-		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-		crossorigin="anonymous"
-	>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Santa — Minha Lista de Presentes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
-<body class="bg-light">
+<body>
 
-	<div
-		ng-app="secretSanta"
-		ng-controller="ctrlWishList"
-		class="container py-5"
-		ng-init="getWishList()"
-	>
+  <!-- ── Navbar ── -->
+  <nav class="navbar navbar-santa navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="event.html">
+        <img src="./assets/img/logo_secret_santa.png" alt="Secret Santa">
+        <span>Secret Santa</span>
+      </a>
+    </div>
+  </nav>
 
-		<div class="row justify-content-center">
-			<div class="col-lg-10 col-xl-9">
+  <!-- ── Hero banner (compact) ── -->
+  <div style="background:linear-gradient(135deg,#c0392b,#922b21);padding:2rem 0;text-align:center;color:#fff;">
+    <div class="container">
+      <h2 class="fw-bold mb-1"><i class="bi bi-bag-heart-fill me-2"></i>Minha Lista de Presentes</h2>
+      <p class="mb-0 opacity-75 small">Adicione os presentes que você gostaria de receber</p>
+    </div>
+  </div>
 
-				<div class="card shadow-sm border-0">
-					<div class="card-body p-4">
+  <div
+    ng-app="secretSanta"
+    ng-controller="ctrlWishList"
+    class="container py-5"
+    ng-init="getWishList()"
+  >
 
-						<h3 class="card-title text-center mb-4">
-							🎁 Cadastro da Lista de Presentes
-						</h3>
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
 
-						<form name="event" action="" onsubmit="return false;" novalidate>
+        <div class="card-santa card">
+          <div class="card-header-santa">
+            <i class="bi bi-list-check me-2"></i>Itens da Lista
+          </div>
+          <div class="card-body p-0">
 
-							<div class="table-responsive">
-								<table class="table table-striped align-middle">
-									<thead class="table-light">
-										<tr>
-											<th>#</th>
-											<th>Presente</th>
-											<th>Preço Estimado</th>
-											<th>Informações Extras</th>
-											<th class="text-end"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="item in wishlistTemp">
-											<td>{{wishlistTemp.indexOf(item) + 1}}</td>
+            <form name="event" action="" onsubmit="return false;" novalidate>
 
-											<td>
-												<input
-													ng-model="item.product"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
+              <div class="table-responsive">
+                <table class="table table-santa align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width:48px">#</th>
+                      <th>Presente</th>
+                      <th style="width:180px">Preço Estimado</th>
+                      <th>Informações Extras</th>
+                      <th style="width:100px" class="text-end pe-3"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="item in wishlistTemp">
+                      <td class="text-muted fw-semibold ps-3">{{wishlistTemp.indexOf(item) + 1}}</td>
 
-											<td>
-												<input
-													ng-model="item.price"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
+                      <td>
+                        <input
+                          ng-model="item.product"
+                          ng-change="changeDataField()"
+                          class="form-control form-control-sm"
+                          type="text"
+                          placeholder="Nome do presente"
+                        >
+                      </td>
 
-											<td>
-												<input
-													ng-model="item.infoExtra"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
+                      <td>
+                        <div class="input-group input-group-sm">
+                          <span class="input-group-text">R$</span>
+                          <input
+                            ng-model="item.price"
+                            ng-change="changeDataField()"
+                            class="form-control"
+                            type="text"
+                            placeholder="0,00"
+                          >
+                        </div>
+                      </td>
 
-											<td class="text-end">
-												<button
-													type="button"
-													ng-click="delItem(item)"
-													class="btn btn-danger btn-sm"
-												>
-													Remover
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+                      <td>
+                        <input
+                          ng-model="item.infoExtra"
+                          ng-change="changeDataField()"
+                          class="form-control form-control-sm"
+                          type="text"
+                          placeholder="Cor, tamanho, link..."
+                        >
+                      </td>
 
-							<div class="d-flex justify-content-end my-3">
-								<button
-									type="button"
-									ng-click="addItem()"
-									class="btn btn-success"
-								>
-									➕ Adicionar Presente
-								</button>
-							</div>
+                      <td class="text-end pe-3">
+                        <button
+                          type="button"
+                          ng-click="delItem(item)"
+                          class="btn btn-outline-danger btn-sm"
+                          title="Remover item"
+                        >
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </td>
+                    </tr>
 
-							<div class="text-center mt-4">
-								<button
-									type="button"
-									ng-disabled="!save"
-									ng-click="saveWishList(wishlistTemp)"
-									class="btn btn-primary btn-lg"
-								>
-									💾 Salvar Lista de Presentes
-								</button>
-							</div>
+                    <tr ng-show="wishlistTemp.length === 0">
+                      <td colspan="5" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                        Nenhum item ainda. Clique em "Adicionar Presente" para começar!
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-						</form>
+              <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                <button
+                  type="button"
+                  ng-click="addItem()"
+                  class="btn btn-outline-success"
+                >
+                  <i class="bi bi-plus-circle-fill me-2"></i>Adicionar Presente
+                </button>
 
-					</div>
-				</div>
+                <button
+                  type="button"
+                  ng-disabled="!save"
+                  ng-click="saveWishList(wishlistTemp)"
+                  class="btn btn-santa"
+                >
+                  <i class="bi bi-floppy-fill me-2"></i>Salvar Lista
+                </button>
+              </div>
 
-			</div>
-		</div>
+            </form>
 
-	</div>
+          </div>
+        </div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="./libs/angular.min.js"></script>
-	<script src="./assets/js/script.js"></script>
-	<script src="./assets/js/controllers/wishlistController.js"></script>
-	<script src="./assets/js/services/wishlistService.js"></script>
+        <!-- Dica -->
+        <div class="alert alert-warning d-flex gap-2 mt-4 rounded-3 border-0" role="alert"
+          style="background:#fff8e1;border-left:4px solid #f39c12 !important;border-radius:10px;">
+          <i class="bi bi-lightbulb-fill fs-5 mt-1" style="color:#f39c12;"></i>
+          <div class="small">
+            <strong>Dica:</strong> Seja específico nos detalhes — informe cor, tamanho ou um link do produto para facilitar a vida do seu Amigo Secreto!
+          </div>
+        </div>
 
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-BR">
+      </div>
+    </div>
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Cadastro de Lista de Presentes</title>
+  </div><!-- /container ng-app -->
 
-	<link
-		href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-		rel="stylesheet"
-		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-		crossorigin="anonymous"
-	>
-</head>
+  <!-- ── Footer ── -->
+  <footer class="footer-santa">
+    <div class="container text-center">
+      <p class="mb-1"><i class="bi bi-gift-fill me-1 text-danger"></i><strong class="text-white">Secret Santa</strong> — Organizador gratuito de Amigo Secreto</p>
+      <p class="mb-0">Feito com <i class="bi bi-heart-fill text-danger"></i> para tornar o Natal mais especial</p>
+    </div>
+  </footer>
 
-<body class="bg-light">
-
-	<div
-		ng-app="secretSanta"
-		ng-controller="ctrlWishList"
-		class="container py-5"
-		ng-init="getWishList()"
-	>
-
-		<div class="row justify-content-center">
-			<div class="col-lg-10 col-xl-9">
-
-				<div class="card shadow-sm border-0">
-					<div class="card-body p-4">
-
-						<h3 class="card-title text-center mb-4">
-							🎁 Cadastro da Lista de Presentes
-						</h3>
-
-						<form name="event" action="" onsubmit="return false;" novalidate>
-
-							<div class="table-responsive">
-								<table class="table table-striped align-middle">
-									<thead class="table-light">
-										<tr>
-											<th>#</th>
-											<th>Presente</th>
-											<th>Preço Estimado</th>
-											<th>Informações Extras</th>
-											<th class="text-end"></th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr ng-repeat="item in wishlistTemp">
-											<td>{{wishlistTemp.indexOf(item) + 1}}</td>
-
-											<td>
-												<input
-													ng-model="item.product"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
-
-											<td>
-												<input
-													ng-model="item.price"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
-
-											<td>
-												<input
-													ng-model="item.infoExtra"
-													ng-change="changeDataField()"
-													class="form-control"
-													type="text"
-												>
-											</td>
-
-											<td class="text-end">
-												<button
-													type="button"
-													ng-click="delItem(item)"
-													class="btn btn-danger btn-sm"
-												>
-													Remover
-												</button>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-
-							<div class="d-flex justify-content-end my-3">
-								<button
-									type="button"
-									ng-click="addItem()"
-									class="btn btn-success"
-								>
-									➕ Adicionar Presente
-								</button>
-							</div>
-
-							<div class="text-center mt-4">
-								<button
-									type="button"
-									ng-disabled="!save"
-									ng-click="saveWishList(wishlistTemp)"
-									class="btn btn-primary btn-lg"
-								>
-									💾 Salvar Lista de Presentes
-								</button>
-							</div>
-
-						</form>
-
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-	</div>
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="./libs/angular.min.js"></script>
-	<script src="./assets/js/script.js"></script>
-	<script src="./assets/js/controllers/wishlistController.js"></script>
-	<script src="./assets/js/services/wishlistService.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmJGBSqiidMDMoR0S7cJqNGBX8b" crossorigin="anonymous"></script>
+  <script src="./libs/angular.min.js"></script>
+  <script src="./assets/js/script.js"></script>
+  <script src="./assets/js/controllers/wishlistController.js"></script>
+  <script src="./assets/js/services/wishlistService.js"></script>
 
 </body>
 </html>

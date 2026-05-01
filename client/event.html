@@ -1,181 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Secret Santa</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-		crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Santa — Crie seu Amigo Secreto</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
 
-	<div ng-app="secretSanta" ng-controller="ctrlEvent" class="container">
-		<div>
-			<img src="./assets/img/logo_secret_santa.png" alt="">
-		</div>
-		<br>
-		<div class="modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">Aviso</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p>Parab&eacute;ns voc&ecirc; acabou de criar o seu evento de amigo secreto!</p>
-						<p>Mas enviar os emails para os participantes com seus respectivos amigos secreto &eacute; necess&aacute;rio clicar no link "Sortear amigo secreto" enviado para o seu email.</p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
-					</div>
-				</div>
-			</div>
-		</div>
+  <!-- ── Navbar ── -->
+  <nav class="navbar navbar-santa navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="./assets/img/logo_secret_santa.png" alt="Secret Santa">
+        <span>Secret Santa</span>
+      </a>
+    </div>
+  </nav>
 
-		<div>
-			<h1>O que é Secret Santa ?</h1>
-			<p class="text-justify">É um <strong>organizador de troca de presentes</strong> online <strong>gratuito</strong>! Organize um evento de amigo convidando amigos, família ou até colegas de trabalho. Após receber o e-mail do Organizador do evento, você pode adicionar sua própria <strong>lista de presentes desejados</strong>, que poderá ser visualizada pelo seu amigo secreto.</p>
-			<p class="text-justify">Todos os anos, pessoas no mundo inteiro trocam presentes durante o período de
-				Natal.
-				Para deixar esse momento ainda mais memorável, você pode fazer com que <strong>pessoas escolhidas
-					arbitrariamente</strong> comprem presentes umas para as outras.
-			</p>
+  <!-- ── Hero ── -->
+  <section class="hero-section">
+    <div class="container">
+      <h1><i class="bi bi-gift-fill me-2"></i>Secret Santa</h1>
+      <p class="mt-3">Organize sua troca de presentes online de forma simples, gratuita e divertida!</p>
+      <a href="#criar-evento" class="btn btn-light btn-lg mt-4 fw-semibold px-4">
+        <i class="bi bi-plus-circle-fill me-2"></i>Criar meu evento
+      </a>
+    </div>
+  </section>
 
-			<h2>Como funciona?</h2>
-			<p class="text-justify">Basta criar um evento nesta página inicial</a>. Você precisa de, no mínimo, 3 participantes, <b>sendo o primeiro participante também o proprietário e operador do evento e lista.</b> O operador da lista irá receber o link de confirmação por e-mail, no qual ele precisará clicar para validar o evento. Uma vez validado, os nomes que estão na lista do seu evento de amigo secreto será sorteado e todos os participantes receberão a mensagem que você escreveu para eles junto com o nome do amigo para o qual eles deves comprar um presente, ou seja, seu Amigo Secreto. Essa confirmação é necessária para evitar que hóspedes indesejáveis ou trols estraguem a brincadeira do Secret Santa. <b>O e-mail de validação irá gerar um link para o proprietário do evento</b>.
-			</p>
-		</div>
+  <!-- ── AngularJS app root ── -->
+  <div ng-app="secretSanta" ng-controller="ctrlEvent">
 
-		<div>
-			<h2>Adicione os participantes</h2>
-			<form name="event" action="" onsubmit='return false;' novalidate="novalidate">
-				<div class="row">
-					<div class="col">
-						<label for="party_eventdate" class="required">Data da sua festa de Amigo Secreto</label>
-						<input type="datetime-local" ng-model="eventDate" id="party_eventdate" name="party[eventdate]"
-							required="required" class="form-control" />
+    <!-- ── Modal de confirmação ── -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+          <div class="modal-header border-0 pb-0" style="background:linear-gradient(135deg,#c0392b,#922b21);border-radius:13px 13px 0 0;">
+            <h5 class="modal-title text-white fw-bold" id="successModalLabel">
+              <i class="bi bi-check-circle-fill me-2"></i>Evento criado!
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body pt-3">
+            <p>Parabéns, você acabou de criar o seu evento de Amigo Secreto! 🎉</p>
+            <p class="mb-0 text-muted small">Para enviar os e-mails aos participantes é necessário clicar no link <strong>"Sortear Amigo Secreto"</strong> que será enviado para o seu e-mail.</p>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-santa" data-bs-dismiss="modal">Entendido</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-					</div>
-					<div class="col">
-						<label for="party_location" class="required">Local da sua festa</label>
-						<input type="text" ng-model="eventLocal" id="party_location" name="party[location]"
-							required="required" class="form-control" />
+    <div class="container py-5">
 
-					</div>
-					<div class="col">
-						<label for="party_amount" class="required">Valor máximo a gastar</label>
-						<input type="number" ng-model="eventAmount" id="party_amount" name="party[amount]"
-							required="required" class="form-control" />
+      <!-- ── O que é? ── -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-question-circle me-2"></i>O que é Secret Santa?</h2>
+        <hr class="section-divider">
+        <p class="lead text-muted">É um <strong>organizador de troca de presentes</strong> online e <strong>gratuito</strong>! Convide amigos, família ou colegas de trabalho e deixe a mágica do sorteio acontecer.</p>
+        <p class="text-muted">Após receber o e-mail do organizador, cada participante pode adicionar sua <strong>lista de presentes desejados</strong> — visível apenas para seu Amigo Secreto.</p>
+      </section>
 
-					</div>
-				</div>
+      <!-- ── Como funciona ── -->
+      <section class="mb-5">
+        <h2 class="section-title"><i class="bi bi-list-ol me-2"></i>Como funciona?</h2>
+        <hr class="section-divider">
+        <div class="row g-4 mt-1">
+          <div class="col-md-4">
+            <div class="step-card">
+              <div class="step-icon"><i class="bi bi-pencil-fill"></i></div>
+              <span class="step-number">Passo 1</span>
+              <h5 class="fw-bold mt-2">Crie o evento</h5>
+              <p class="text-muted small mb-0">Preencha a data, local, valor máximo e adicione ao menos 3 participantes. O primeiro é o operador da lista.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card">
+              <div class="step-icon"><i class="bi bi-envelope-check-fill"></i></div>
+              <span class="step-number">Passo 2</span>
+              <h5 class="fw-bold mt-2">Confirme por e-mail</h5>
+              <p class="text-muted small mb-0">O operador recebe um e-mail de validação e clica em "Sortear Amigo Secreto" para disparar o sorteio.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="step-card">
+              <div class="step-icon"><i class="bi bi-gift-fill"></i></div>
+              <span class="step-number">Passo 3</span>
+              <h5 class="fw-bold mt-2">Receba o resultado</h5>
+              <p class="text-muted small mb-0">Cada participante recebe um e-mail com o nome do seu Amigo Secreto e pode acessar a lista de presentes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-				<div>
-					<table class="table table-striped">
-						<thead>
-							<th>#</th>
-							<th>Participante</th>
-							<th>E-mail</th>
-							<th>Celular</th>
-							<th></th>
-						</thead>
-						<tbody>
-							<tr ng-repeat="participant in participants">
-								<td>{{participants.indexOf(participant) + 1}}</td>
-								<td><input ng-model="participant.name" class="form-control" type="text" name="" id="">
-								</td>
-								<td><input ng-model="participant.email" class="form-control" type="text" name="" id="">
-								</td>
-								<td><input ng-model="participant.celphone" class="form-control" type="text" name="" id="">
-								</td>
-								<td></td>
-								<td class="text-end">
-									<p ng-show="participants.indexOf(participant) === 0">"Esta pessoa é o operador da
-										lista"</p><button ng-show="participants.indexOf(participant) > 0"
-										ng-click="delParticipant(participant)" class="btn btn-danger">Remover esta
-										pessoa</button>
-								</td>
-							</tr>
-							<!-- <tr>
-								<td>1</td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td></td>
-								<td class="text-end">Esta pessoa é o operador da lista</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td> </td>
-								<td class="text-end"><button class="btn btn-danger">Remover esta pessoa</button></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td><input class="form-control" type="text" name="" id=""></td>
-								<td> </td>
-								<td class="text-end"><button class="btn btn-danger">Remover esta pessoa</button></td>
-							</tr> -->
-						</tbody>
-					</table>
-				</div>
+      <!-- ── Formulário ── -->
+      <section id="criar-evento">
+        <h2 class="section-title"><i class="bi bi-calendar-plus me-2"></i>Criar Evento</h2>
+        <hr class="section-divider">
 
-				<div class="bg-light text-end">
-					<button ng-click="addParticipant()" class="btn btn-success">
-						Adicionar Pessoa
-					</button>
-				</div>
+        <form name="event" action="" onsubmit="return false;" novalidate>
 
-				<h2>Adicione uma mensagem pessoal</h2>
-				<textarea ng-model="eventMessage" id="party_message" name="party[message]" required="required" rows="8"
-					class="form-control field span12"></textarea><br />
+          <!-- Detalhes do evento -->
+          <div class="card-santa card mb-4">
+            <div class="card-header-santa">
+              <i class="bi bi-info-circle me-2"></i>Detalhes do evento
+            </div>
+            <div class="card-body p-4">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label for="party_eventdate" class="form-label">
+                    <i class="bi bi-calendar3 me-1 text-danger"></i>Data da festa
+                  </label>
+                  <input type="datetime-local" ng-model="eventDate" id="party_eventdate"
+                    name="party[eventdate]" required class="form-control">
+                </div>
+                <div class="col-md-4">
+                  <label for="party_location" class="form-label">
+                    <i class="bi bi-geo-alt me-1 text-danger"></i>Local da festa
+                  </label>
+                  <input type="text" ng-model="eventLocal" id="party_location"
+                    name="party[location]" required class="form-control" placeholder="Ex: Casa da Ana">
+                </div>
+                <div class="col-md-4">
+                  <label for="party_amount" class="form-label">
+                    <i class="bi bi-currency-dollar me-1 text-danger"></i>Valor máximo (R$)
+                  </label>
+                  <input type="number" ng-model="eventAmount" id="party_amount"
+                    name="party[amount]" required class="form-control" placeholder="Ex: 80">
+                </div>
+              </div>
+            </div>
+          </div>
 
-				<br />
-				<!-- <div class="confirmation">
-					<input type="checkbox" ng-model="eventPermission" id="party_confirmed" name="party[confirmed]"
-						required="required" value="1" />
-					<label for="party_confirmed" class="required">Sim, tenho permissão para utilizar os e-mails dos
-						participantes</label>
-				</div> -->
-				<p>
-					<button type="submit" ng-click="createEvent()" class="btn btn-large btn-primary btn-create-event"
-						id="create-party-btn">
-						<i class="fa fa-check"></i> Criar um evento!
-					</button>
-				</p>
+          <!-- Participantes -->
+          <div class="card-santa card mb-4">
+            <div class="card-header-santa">
+              <i class="bi bi-people-fill me-2"></i>Participantes
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-santa align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th style="width:48px">#</th>
+                      <th>Nome</th>
+                      <th>E-mail</th>
+                      <th>Celular</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="participant in participants">
+                      <td class="text-muted fw-semibold">{{participants.indexOf(participant) + 1}}</td>
+                      <td><input ng-model="participant.name" class="form-control form-control-sm" type="text" placeholder="Nome completo"></td>
+                      <td><input ng-model="participant.email" class="form-control form-control-sm" type="email" placeholder="email@exemplo.com"></td>
+                      <td><input ng-model="participant.celphone" class="form-control form-control-sm" type="text" placeholder="+55 11 9..."></td>
+                      <td class="text-end pe-3">
+                        <span ng-show="participants.indexOf(participant) === 0" class="badge text-bg-warning">
+                          <i class="bi bi-star-fill me-1"></i>Operador
+                        </span>
+                        <button ng-show="participants.indexOf(participant) > 0"
+                          ng-click="delParticipant(participant)"
+                          class="btn btn-outline-danger btn-sm">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="p-3 text-end border-top">
+                <button ng-click="addParticipant()" class="btn btn-outline-success btn-sm">
+                  <i class="bi bi-person-plus-fill me-1"></i>Adicionar Pessoa
+                </button>
+              </div>
+            </div>
+          </div>
 
-			</form>
+          <!-- Mensagem pessoal -->
+          <div class="card-santa card mb-4">
+            <div class="card-header-santa">
+              <i class="bi bi-chat-heart me-2"></i>Mensagem pessoal
+            </div>
+            <div class="card-body p-4">
+              <label for="party_message" class="form-label">Escreva uma mensagem para seus convidados</label>
+              <textarea ng-model="eventMessage" id="party_message" name="party[message]"
+                required rows="5" class="form-control"
+                placeholder="Ex: Feliz Natal a todos! Mal posso esperar pela nossa festa..."></textarea>
+            </div>
+          </div>
 
-		</div>
+          <!-- Submit -->
+          <div class="text-center pb-3">
+            <button type="submit" ng-click="createEvent()"
+              class="btn btn-santa btn-santa-lg" id="create-party-btn">
+              <i class="bi bi-stars me-2"></i>Criar Evento de Amigo Secreto!
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+    </div><!-- /container -->
+  </div><!-- /ng-app -->
+
+  <!-- ── Footer ── -->
+  <footer class="footer-santa">
+    <div class="container text-center">
+      <p class="mb-1"><i class="bi bi-gift-fill me-1 text-danger"></i><strong class="text-white">Secret Santa</strong> — Organizador gratuito de Amigo Secreto</p>
+      <p class="mb-0">Feito com <i class="bi bi-heart-fill text-danger"></i> para tornar o Natal mais especial</p>
+    </div>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmJGBSqiidMDMoR0S7cJqNGBX8b" crossorigin="anonymous"></script>
+  <script src="./libs/angular.min.js"></script>
+  <script src="./assets/js/script.js"></script>
+  <script src="./assets/js/controllers/eventController.js"></script>
+  <script src="./assets/js/services/eventService.js"></script>
+  <script>
+    $(document).ready(function () {
+      const TEST = getUrlParameter('test');
+      if (TEST) {
+        $("#party_eventdate").val(`2021-12-25T21:00`);
+      }
+    });
+  </script>
 
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="./libs/angular.min.js"></script>
-<script src="./assets/js/script.js"></script>
-<script src="./assets/js/controllers/eventController.js"></script>
-<script src="./assets/js/services/eventService.js"></script>
-<script>
-	$(document).ready(function () {
-		// Preenche os campos para teste
-		const TEST = getUrlParameter('test');
-
-		console.log(TEST)
-		if (TEST) {
-			$("#party_eventdate").val(`2021-12-25T21:00`);
-		}
-
-
-	});
-	
-</script>
-
 </html>
