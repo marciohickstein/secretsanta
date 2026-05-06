@@ -2,9 +2,7 @@ const config = require('../config');
 const nodemailer = require('nodemailer');
 const logger = require('./logger');
 
-var smtpTransport = require('nodemailer-smtp-transport');
-
-const transporter = nodemailer.createTransport(smtpTransport({
+const transporter = nodemailer.createTransport({
     service: config.email.service,
     host: config.email.host,
     port: config.email.port,
@@ -15,7 +13,7 @@ const transporter = nodemailer.createTransport(smtpTransport({
         user: config.email.user,
         pass: config.email.pass
     }
-}));
+});
 
 function sendEmail(to, subject, text) {
     const from = config.email.from;
