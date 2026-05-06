@@ -1,13 +1,7 @@
+const logger = require('./logger');
 
 function sendTextMessage(to, subject, text) {
-
-	console.log(`Sending message from whatsapp...`);
-	console.log(to);
-	console.log(subject);
-	console.log(text);
-	
+	logger.info('whatsAppSender: envio de WhatsApp não implementado', { to, subject });
 }
 
-module.exports = {
-    send: sendTextMessage
-}
+module.exports = { send: sendTextMessage };

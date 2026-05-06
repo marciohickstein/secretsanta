@@ -1,7 +1,7 @@
 const config = require('../config');
 const nodemailer = require('nodemailer');
+const logger = require('./logger');
 
-// Inicialize smtp-transport
 var smtpTransport = require('nodemailer-smtp-transport');
 
 const transporter = nodemailer.createTransport(smtpTransport({
@@ -18,23 +18,33 @@ const transporter = nodemailer.createTransport(smtpTransport({
 }));
 
 function sendEmail(to, subject, text) {
-    // sendemail
     const from = config.email.from;
 
-    let mailOptions = {
-        from,
-        to,
-        subject,
-        html: text
+    if (!config.email.user || !config.email.pass || !from) {
+        logger.error('emailSender: credenciais de e-mail não configuradas', {
+            service: config.email.service,
+            host: config.email.host,
+            from,
+            user: config.email.user ? '***' : undefined
+        });
+        return;
     }
 
-    transporter.sendMail(mailOptions, (err, info) => {
-        if (err){
-            return ({ error: 1, massage: `Ocorreu um no envio do email para : ${to}. Detalhes: ${err}` });
-        }
-        console.log(info);
-    })
+    const mailOptions = { from, to, subject, html: text };
 
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            logger.error('emailSender: falha ao enviar e-mail', {
+                to,
+                subject,
+                error: err.message,
+                code: err.code,
+                responseCode: err.responseCode
+            });
+            return;
+        }
+        logger.info('emailSender: e-mail enviado', { to, subject, messageId: info.messageId });
+    });
 }
 
 module.exports = { send: sendEmail };
