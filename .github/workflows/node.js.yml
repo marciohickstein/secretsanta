@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            cd /home/pi/apps/secretsanta/
+            cd ${{ secrets.APP_PATH }}
             git pull origin main
             npm ci --production
             pm2 restart server
