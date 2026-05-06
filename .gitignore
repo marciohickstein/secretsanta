@@ -3,3 +3,4 @@ data/*.json
 .env
 .enviroment
 xxx
+logs/*.log

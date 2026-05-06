@@ -5,6 +5,7 @@ require('module-alias/register');
 const express = require('express');
 const morgan = require('morgan');
 const util = require('@utils/util');
+const logger = require('@utils/logger');
 const routerEvent = require('@routes/eventRoutes');
 const routerParticipant = require('@routes/participantRoutes');
 const routerWishList = require('@routes/wishlistRoutes');
@@ -18,7 +19,7 @@ class AppController {
 
 	middleware() {
 		this.express.use(express.json());
-		this.express.use(morgan('combined'));
+		this.express.use(morgan('combined', { stream: logger.stream }));
 	}
 
 	routes() {
