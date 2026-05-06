@@ -91,28 +91,31 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			return;
 		}
 
-		if ($scope.participants.length <= 1) {
-			alert(`Adicione pelo menos 2 participantes`);
-			return;
-		}
-
 		const restParticipants = $scope.participants.slice(1);
 
 		const event = {
-			date: new Date().toLocaleString(),
+			date: $scope.eventDate ? new Date($scope.eventDate).toLocaleString() : new Date().toLocaleString(),
 			location: $scope.eventLocal,
 			amount: $scope.eventAmount,
 			host: $scope.participants[0],
 			message: $scope.eventMessage,
 			participants: restParticipants
 		}
-		const { data } = await eventService.create(event);
 
-		const text = `Parabéns você acabou de criar o seu evento de Amigo Secreto!
-Para enviar os emails para os participantes com seus respectivos amigos secreto é necessário clicar no link "Sortear Amigo Secreto" enviado para o seu email: ${$scope.participants[0].email} .`;
-		alert(text);
-		console.log(data);
-		window.location.reload();
+		try {
+			const response = await eventService.create(event);
+			const data = response.data;
+			console.log('Evento criado:', data);
+
+			const text = `Parabéns você acabou de criar o seu evento de Amigo Secreto!\nPara enviar os e-mails aos participantes é necessário clicar no link "Sortear Amigo Secreto" enviado para o seu e-mail: ${$scope.participants[0].email}`;
+			alert(text);
+			window.location.reload();
+		} catch (err) {
+			const serverMsg = err.data && err.data.message ? err.data.message : 'Erro desconhecido';
+			const status = err.status || '?';
+			console.error(`Erro ao criar evento [${status}]:`, err.data || err);
+			alert(`❌ Falha ao criar o evento (${status}): ${serverMsg}`);
+		}
 	}
 
 	$scope.getEvents = () => {

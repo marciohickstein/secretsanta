@@ -34,6 +34,12 @@ class AppController {
 		this.express.get(function (req, res) {
 			res.sendFile(util.resolvePath(util.getRootPath() + '/client/error404.html'));
 		});
+
+		// Middleware de erro global — captura erros assíncronos não tratados
+		this.express.use((err, req, res, next) => {
+			logger.error(`${req.method} ${req.originalUrl} — ${err.message}`, { stack: err.stack });
+			res.status(500).json({ error: true, message: 'Erro interno no servidor.' });
+		});
 	}
 }
 

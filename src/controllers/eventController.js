@@ -12,6 +12,7 @@ const sms = require('@utils/smsSender');
 const Template = require('@utils/template');
 
 const { sendEmails, drawParticipants, getBaseUrl, sendTextMessages, sendSms } = require('@utils/util');
+const logger = require('@utils/logger');
 
 const createParticipants = async ({ host, participants }) => {
 	const listParticipants = [];
@@ -106,7 +107,7 @@ const draw = async (event, participants) => {
 const eventController = new BasicController(EventModel);
 
 eventController.getOne = async (req, res) => {
-	const responseError = { error: true, message: "Evento de amigo secreto n�o encontrado" };
+	const responseError = { error: true, message: "Evento de amigo secreto n�o encontrado" };
 
 	if (!req.params.id)
 		return res.status(404).json(responseError);
@@ -147,46 +148,70 @@ eventController.getOne = async (req, res) => {
 	}
 };
 
-eventController.create = async (req, res) => {
-	let event = req.body;
-	const {name: hostName, email: hostEmail, celphone: celPhone} = event.host;
+eventController.create = async (req, res, next) => {
+	try {
+		let event = req.body;
 
-	const participants = await createParticipants(event);
+		if (!event || !event.host) {
+			logger.warn('create event: body inválido recebido', { body: event });
+			return res.status(400).json({ error: true, message: 'Dados do evento inválidos.' });
+		}
 
-	delete event.host;
-	delete event.participants;
+		const {name: hostName, email: hostEmail, celphone: celPhone} = event.host;
 
-	event = {
-		...event,
-		host: participants[0],
-		participants: participants.slice(1)
+		logger.info('Criando evento', { host: hostName, participantCount: (event.participants || []).length + 1 });
+
+		const participants = await createParticipants(event);
+
+		if (!participants) {
+			logger.error('create event: falha ao criar participantes', { host: hostName });
+			return res.status(500).json({ error: true, message: 'Falha ao criar participantes.' });
+		}
+
+		delete event.host;
+		delete event.participants;
+
+		event = {
+			...event,
+			host: participants[0],
+			participants: participants.slice(1)
+		}
+
+		const eventCreated = await EventModel.create(event);
+
+		if (!eventCreated) {
+			logger.error('create event: falha ao gravar evento', { host: hostName });
+			return res.status(500).json({ error: true, message: 'Falha ao gravar o evento.' });
+		}
+
+		logger.info('Evento criado com sucesso', { eventId: eventCreated.id, host: hostName });
+
+		const baseUrl = getBaseUrl(req);
+		const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
+
+		const template = new Template();
+
+		template.assign('HOST_NAME', hostName);
+		template.assign('URL_TO_SORT', url);
+
+		if (hostEmail) {
+			template.setTemplate(config.templates.emailHost, true);
+			const message = template.replace();
+			email.send(hostEmail, 'Amigo Secreto', message);
+		}
+
+		if (celPhone) {
+			template.setTemplate(config.templates.textHost, true);
+			const message = template.replace();
+			whatsapp.send(celPhone, 'Amigo Secreto', message);
+			sms.send(celPhone, 'Amigo Secreto', message);
+		}
+
+		return res.status(200).json(eventCreated);
+	} catch (err) {
+		logger.error('create event: erro inesperado', { message: err.message, stack: err.stack });
+		next(err);
 	}
-
-	const eventCreated = await EventModel.create(event);
-
-	const baseUrl = getBaseUrl(req);
-	const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
-
-	const template = new Template();
-
-	template.assign('HOST_NAME', hostName);
-	template.assign('URL_TO_SORT', url);
-	
-	if (hostEmail) {
-		const fromFile = true;
-		template.setTemplate(config.templates.emailHost, fromFile);
-		const message = template.replace();
-		email.send(hostEmail, 'Amigo Secreto', message);
-	}
-
-	if (celPhone) {
-		template.setTemplate(config.templates.textHost, true);
-		const message = template.replace();
-		whatsapp.send(celPhone, 'Amigo Secreto', message);
-		sms.send(celPhone, 'Amigo Secreto', message);
-	}
-
-	return res.status(200).json(eventCreated);
 };
 
 module.exports = eventController;
