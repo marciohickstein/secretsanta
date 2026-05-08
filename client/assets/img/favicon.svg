@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#c0392b"/>
+
+  <!-- Gift box body -->
+  <rect x="14" y="32" width="36" height="22" rx="2" fill="#f1f1f1"/>
+
+  <!-- Gift box lid -->
+  <rect x="12" y="26" width="40" height="8" rx="2" fill="#e74c3c"/>
+
+  <!-- Ribbon vertical -->
+  <rect x="29" y="26" width="6" height="28" fill="#f39c12"/>
+
+  <!-- Ribbon horizontal (lid) -->
+  <rect x="12" y="28" width="40" height="4" fill="#f39c12"/>
+
+  <!-- Bow left loop -->
+  <ellipse cx="24" cy="22" rx="8" ry="5" fill="#f39c12" transform="rotate(-20 24 22)"/>
+
+  <!-- Bow right loop -->
+  <ellipse cx="40" cy="22" rx="8" ry="5" fill="#f39c12" transform="rotate(20 40 22)"/>
+
+  <!-- Bow center knot -->
+  <circle cx="32" cy="24" r="4" fill="#e67e22"/>
+
+  <!-- Star on top -->
+  <polygon points="32,8 33.5,13 38,13 34.5,16 36,21 32,18 28,21 29.5,16 26,13 30.5,13"
+           fill="#f1c40f"/>
+</svg>
