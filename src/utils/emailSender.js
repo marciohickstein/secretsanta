@@ -1,48 +1,41 @@
+const { Resend } = require('resend');
 const config = require('../config');
-const nodemailer = require('nodemailer');
 const logger = require('./logger');
 
-const transporter = nodemailer.createTransport({
-    service: config.email.service,
-    host: config.email.host,
-    port: config.email.port,
-    tls: {
-        rejectUnauthorized: false
-    },
-    auth: {
-        user: config.email.user,
-        pass: config.email.pass
-    }
-});
+const resend = config.email.apiKey ? new Resend(config.email.apiKey) : null;
 
-function sendEmail(to, subject, text) {
+async function sendEmail(to, subject, html) {
     const from = config.email.from;
 
-    if (!config.email.user || !config.email.pass || !from) {
+    if (!config.email.apiKey || !from) {
         logger.error('emailSender: credenciais de e-mail não configuradas', {
-            service: config.email.service,
-            host: config.email.host,
             from,
-            user: config.email.user ? '***' : undefined
+            apiKey: config.email.apiKey ? '***' : undefined
         });
         return;
     }
 
-    const mailOptions = { from, to, subject, html: text };
+    try {
+        const { data, error } = await resend.emails.send({ from, to, subject, html });
 
-    transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
+        if (error) {
             logger.error('emailSender: falha ao enviar e-mail', {
                 to,
                 subject,
-                error: err.message,
-                code: err.code,
-                responseCode: err.responseCode
+                error: error.message,
+                name: error.name
             });
             return;
         }
-        logger.info('emailSender: e-mail enviado', { to, subject, messageId: info.messageId });
-    });
+
+        logger.info('emailSender: e-mail enviado', { to, subject, messageId: data?.id });
+    } catch (err) {
+        logger.error('emailSender: falha ao enviar e-mail', {
+            to,
+            subject,
+            error: err.message
+        });
+    }
 }
 
 module.exports = { send: sendEmail };

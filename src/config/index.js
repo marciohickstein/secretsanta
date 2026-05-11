@@ -19,12 +19,8 @@ const config = {
 		from: process.env.TWILIO_FROM,
 	},
 	email: {
-		service: process.env.MAIL_SERVICE,
-		host: process.env.MAIL_HOST,
-		port: process.env.MAIL_PORT,
-		from: process.env.MAIL_FROM,
-		user: process.env.MAIL_USER,
-		pass: process.env.MAIL_PASS,
+		from: process.env.RESEND_FROM,
+		apiKey: process.env.RESEND_API_KEY,
 	},
 	templates: {
 		emailEventCreated: `emaileventcreated.html`
