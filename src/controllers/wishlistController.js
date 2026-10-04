@@ -1,65 +1,39 @@
 "use strict"
 
 require('module-alias/register');
-const BasicController = require('@controllers/basicController');
+
 const WishListModel = require('@models/wishlistModel');
 const ParticipantModel = require('@models/participantModel');
+const { validateWishlist } = require('@utils/validation');
+const { safeEqual } = require('@utils/security');
 
-const controller = new BasicController(WishListModel);
+const controller = {};
 
-controller.create = async function(req, res) {
-	const item = req.body;
+controller.getOne = async (req, res) => {
+	const [item] = await WishListModel.get(req.params.id);
 
-	// Verifica se jah existe registro
-	const itemExists = await WishListModel.get(item.id);
+	if (!item)
+		return res.status(404).json({ error: true, message: "Lista de presentes n√£o encontrada" });
 
-	if (itemExists && itemExists.length >= 1) {
-		return res.status(404).json({ error: true, message: "Lista de presentes j· existe" });
-	}	
-
-	// Verifica se existe este participante
-	const participant = await ParticipantModel.get(item.id);
-
-	if (participant.length <= 0) {
-		return res.status(404).json({ error: true, message: "Participante n„o encontrado" });
-	}
-
-	const itemCreated = await WishListModel.create(item);
-	return res.status(200).json(itemCreated);
+	return res.status(200).json({ id: item.id, wishlist: item.wishlist || [] });
 };
 
-// controller.delete = async function(req, res) {
-// 	const id = req.params.id;
-// 	const item2Remove = req.body;
-// 	const responseError = { error: true, message: "Registro n„o encontrado" };
-
-// 	if (!id)
-// 		return res.status(404).json(responseError);
-
-// 	try {
-// 		const itemDeleted = await model.delete(id);
-// 		return res.status(200).json(itemDeleted);
-// 	} catch (error) {
-// 		return res.status(404).json(responseError);
-// 	}
-// };
-
-controller.update = async function(req, res) {
+/* Cria ou atualiza a lista do participante. Exige o token de edicao enviado somente ao proprio participante */
+controller.save = async (req, res) => {
 	const id = req.params.id;
-	const item = req.body;
-	const responseError = { error: true, message: "Registro n„o encontrado" };
+	const [participant] = await ParticipantModel.get(id);
 
-	if (!id)
-		return res.status(404).json(responseError);
+	if (!participant || !safeEqual(req.get('X-Edit-Token'), participant.editToken))
+		return res.status(403).json({ error: true, message: "Link de edi√ß√£o inv√°lido." });
 
-	try {
-		const itemUpdated = await WishListModel.update(id, item);
-		return res.status(200).json(itemUpdated);
-	} catch (error) {
-		return res.status(404).json(responseError);
-	}
+	const wishlist = validateWishlist(req.body);
+	const [exists] = await WishListModel.get(id);
+
+	const saved = exists
+		? await WishListModel.update(id, { wishlist })
+		: await WishListModel.create({ id, wishlist });
+
+	return res.status(200).json({ id: saved.id, wishlist: saved.wishlist });
 };
-
-
 
 module.exports = controller;

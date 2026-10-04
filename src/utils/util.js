@@ -64,7 +64,21 @@ const drawParticipants = function (listParticipants) {
 	return listFriends;
 }
 
-const getBaseUrl = (req) => `${req.protocol}://${req.get('host')}`;
+const logger = require('./logger');
+
+let warnedBaseUrl = false;
+
+/* URL publica da aplicacao. Usa APP_URL para nao confiar no cabecalho Host enviado pelo cliente */
+const getBaseUrl = (req) => {
+	if (config.app.url) return config.app.url;
+
+	if (!warnedBaseUrl) {
+		logger.warn('APP_URL não configurada: os links usarão o cabeçalho Host da requisição');
+		warnedBaseUrl = true;
+	}
+
+	return `${req.protocol}://${req.get('host')}`;
+};
 
 function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 	listFriendsSorted.forEach(secret => {
@@ -86,7 +100,7 @@ function sendNotification(type, listFriendsSorted, hostName, subject, text) {
 		} else if (type === 'whatsapp') {
 			template.setTemplate(config.templates.textParticipant);
 			message = template.replace();
-			whatsapp.send(secret.friend.email, subject, message);
+			whatsapp.send(secret.friend.celphone, subject, message);
 		} else {
 			template.setTemplate(config.templates.textParticipant);
 			message = template.replace();

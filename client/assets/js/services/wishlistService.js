@@ -1,22 +1,16 @@
 angular.module('secretSanta').factory('wishlistService', ($http) => {
-	let api = 'wishlist';
+	const api = 'wishlist';
 
-	const _getWishList = (id) => id ? $http.get(`${getUrl(api)}/${id}`) : $http.get(`${getUrl(api)}`);
+	const _getWishList = (id) => $http.get(`${getUrl(api)}/${encodeURIComponent(id)}`);
 
-	const _saveWishList = (id, wishlist) => {
-		const url = `${getUrl(api)}/${id}`;
-		return $http.put(url, wishlist);
-	};
-
-	const _createWishList = (wishlist) => {
-		const url = `${getUrl(api)}`;
-		return $http.post(url, wishlist);
+	// Cria ou atualiza a lista; o token de edicao chega apenas no link enviado ao proprio participante
+	const _saveWishList = (id, token, wishlist) => {
+		const url = `${getUrl(api)}/${encodeURIComponent(id)}`;
+		return $http.put(url, { wishlist }, { headers: { 'X-Edit-Token': token || '' } });
 	};
 
 	return {
 		getWishList: _getWishList,
 		saveWishList: _saveWishList,
-		createWishList: _createWishList,
 	};
 });
-

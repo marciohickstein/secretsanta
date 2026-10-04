@@ -1,5 +1,6 @@
 const config = require('../config');
 const logger = require('./logger');
+const { maskContact } = require('./security');
 
 // Envio via SMS Gateway for Android (https://sms-gate.app)
 // Modo cloud: SMS_GATEWAY_URL=https://api.sms-gate.app/3rdparty/v1
@@ -29,7 +30,7 @@ async function sendSms(to, subject, message) {
     const formattedNumber = toE164Brazil(to);
 
     if (!formattedNumber) {
-        logger.error('smsSender: número de telefone inválido', { to });
+        logger.error('smsSender: número de telefone inválido', { to: maskContact(to) });
         return;
     }
 
@@ -55,18 +56,18 @@ async function sendSms(to, subject, message) {
 
         if (!response.ok) {
             logger.error('smsSender: falha ao enviar SMS', {
-                to: formattedNumber,
+                to: maskContact(formattedNumber),
                 status: response.status,
                 response: data
             });
             return;
         }
 
-        logger.info('smsSender: SMS enviado', { to: formattedNumber, id: data?.id, state: data?.state });
+        logger.info('smsSender: SMS enviado', { to: maskContact(formattedNumber), id: data?.id, state: data?.state });
         return data;
     } catch (error) {
         logger.error('smsSender: falha ao enviar SMS', {
-            to: formattedNumber,
+            to: maskContact(formattedNumber),
             error: error.message
         });
     }

@@ -5,220 +5,170 @@ require('module-alias/register');
 const config = require('@config');
 const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
-const BasicController = require('@controllers/basicController');
 const email = require('@utils/emailSender');
 const whatsapp = require('@utils/whatsAppSender');
 const sms = require('@utils/smsSender');
 const Template = require('@utils/template');
+const { validateEvent } = require('@utils/validation');
+const { newToken, safeEqual } = require('@utils/security');
 
 const { sendEmails, sendTextMessages, sendSms, drawParticipants, getBaseUrl } = require('@utils/util');
 const logger = require('@utils/logger');
 
-const createParticipants = async ({ host, participants }) => {
-	const listParticipants = [];
+const NOT_FOUND = { error: true, message: "Evento de amigo secreto não encontrado" };
 
-	let participantCreated = await ParticipantModel.create(host);
+/* Campos do evento que podem ser exibidos publicamente (sem participantes, tokens ou sorteio) */
+const toPublicEvent = (event) => ({
+	id: event.id,
+	date: event.date,
+	location: event.location,
+	amount: event.amount,
+	participantsCount: (event.participants || []).length + 1,
+	drawn: Boolean(event.event_drawn),
+});
 
-	if (!participantCreated)
-		return null;
-	listParticipants.push(participantCreated.id);
+const createParticipants = async (host, participants) => {
+	const ids = [];
 
-	for (const participant of participants) {
-		participantCreated = await ParticipantModel.create(participant);
-		if (!participantCreated)
-			return null;
-		listParticipants.push(participantCreated.id);
+	for (const participant of [host, ...participants]) {
+		const created = await ParticipantModel.create({ ...participant, editToken: newToken() });
+		ids.push(created.id);
 	}
 
-	return listParticipants;
+	return ids;
 }
 
-const getParticipant = async (id) => {
-	let participant = await ParticipantModel.get(id);
+/* Carrega os participantes do evento; participantes antigos sem token de edicao recebem um */
+const getParticipants = async ({ host, participants }) => {
+	const list = [];
 
-	if (!Array(participant))
-		return null;
+	for (const id of [host, ...(participants || [])]) {
+		let [participant] = await ParticipantModel.get(id);
 
-	return participant[0];
-}
-
-const getParticipants = async (baseUrl, { host, participants }) => {
-	const listParticipants = [];
-
-	let [participant] = await ParticipantModel.get(host);
-
-	if (!participant)
-		return null;
-
-
-	participant.urlAddWishList = `${baseUrl}/crudWishlist.html?idparticipant=${participant.id}`;
-	participant.urlShowWishList = `${baseUrl}/wishlist.html?idparticipant=${participant.id}`;
-
-	listParticipants.push(participant);
-
-	for (const id of participants) {
-		[ participant ] = await ParticipantModel.get(id);
 		if (!participant)
 			return null;
 
-		participant.urlAddWishList = `${baseUrl}/crudWishlist.html?idparticipant=${participant.id}`;
-		participant.urlShowWishList = `${baseUrl}/wishlist.html?idparticipant=${participant.id}`;
-		
-		listParticipants.push(participant);
+		if (!participant.editToken) {
+			participant = await ParticipantModel.update(participant.id, { editToken: newToken() });
+		}
+
+		list.push(participant);
 	}
 
-	return listParticipants;
+	return list;
 }
 
-const draw = async (event, participants) => {
-	let eventDraw = { ...event };
-	const listParticipants = [...participants];
+const withLinks = (baseUrl, eventId, participant) => ({
+	...participant,
+	urlAddWishList: `${baseUrl}/crudWishlist.html?idparticipant=${encodeURIComponent(participant.id)}&token=${encodeURIComponent(participant.editToken)}`,
+	urlShowWishList: `${baseUrl}/wishlist.html?idparticipant=${encodeURIComponent(participant.id)}&idevent=${encodeURIComponent(eventId)}`,
+});
 
-	if (eventDraw.participants_drawn) {
-		delete eventDraw.participants_drawn;
-	}
-
-	const listDrawn = drawParticipants(listParticipants);
-
-	if (!Array.isArray(listDrawn)) {
-		throw new Error({ error: true, message: "Erro ao sortear os participantes do amigo secreto" });
-	}
-
-	const subject = `Amigo Secreto`;
-	const text = event.message;
-
-	const hostName = await getParticipant(event.host);
-
-	if (config.notifications.email)    sendEmails(listDrawn, hostName.name, subject, text);
-	if (config.notifications.whatsapp) sendTextMessages(listDrawn, hostName.name, subject, text);
-	if (config.notifications.sms)      sendSms(listDrawn, hostName.name, subject, text);
-
-	eventDraw = {
-		...eventDraw,
-		event_drawn: Date.now(),
-		participants_drawn: [...listDrawn]
-	}
-
-	const eventUpdated = await EventModel.update(eventDraw.id, eventDraw);
-
-	return eventUpdated;
+const isValidDrawToken = (event, token) => {
+	// Eventos criados antes do token de sorteio usavam ?draw=true
+	if (!event.drawToken) return token === 'true';
+	return safeEqual(token, event.drawToken);
 }
 
-const eventController = new BasicController(EventModel);
+const alreadyDrawnPage = (event) => {
+	const template = new Template(config.templates.emailEventAlreadyCreated, true);
+	template.assign('DATE_EVENT_DRAW', new Date(event.event_drawn).toLocaleString('pt-BR'));
+	return template.replace();
+}
 
-eventController.getOne = async (req, res) => {
-	const responseError = { error: true, message: "Evento de amigo secreto n�o encontrado" };
+const draw = async (req, res, event) => {
+	if (!isValidDrawToken(event, req.query.draw))
+		return res.status(404).json(NOT_FOUND);
 
-	if (!req.params.id)
-		return res.status(404).json(responseError);
+	if (event.event_drawn)
+		return res.send(alreadyDrawnPage(event));
 
-	const id = req.params.id ? req.params.id : '';
-	const isGetOne = !req.query.draw;
-	const event = await EventModel.get(id);
+	const participants = await getParticipants(event);
 
-	if (!Array.isArray(event) || event.length <= 0)
-		return res.status(404).json(responseError);
-
-	if (isGetOne) {
-		return res.status(200).json(event);
+	if (!participants || participants.length < config.limits.minParticipants) {
+		logger.error('draw: participantes do evento não encontrados', { eventId: event.id });
+		return res.status(500).json({ error: true, message: "Não foi possível sortear este evento." });
 	}
 
-	if (event[0].event_drawn) {
-		const tags = [
-			['{DATE_EVENT_DRAW}', new Date(event[0].event_drawn)],
-		];
-		const template = new Template(config.templates.emailEventAlreadyCreated, true);
+	// Marca o evento como sorteado de forma atomica para evitar sorteio/envio em duplicidade
+	const drawnAt = Date.now();
+	const claimed = await EventModel.update(event.id, { event_drawn: drawnAt }, { onlyIf: current => !current.event_drawn });
 
-		template.assign('DATE_EVENT_DRAW', new Date(event[0].event_drawn));
-
-		const message = template.replace();
-		return res.send(message);
-	}
+	if (!claimed)
+		return res.send(alreadyDrawnPage((await EventModel.get(event.id))[0]));
 
 	const baseUrl = getBaseUrl(req);
-	let participants = await getParticipants(baseUrl, event[0]);
+	const listDrawn = drawParticipants(participants.map(p => withLinks(baseUrl, event.id, p)));
 
-	try {
-		await draw(event[0], participants);
-		const templateEventCreated = new Template(config.templates.emailEventCreated, true);
-		const message = templateEventCreated.replace();
-		return res.send(message);
-	} catch (error) {
-		return res.status(404).json(error);
-	}
+	await EventModel.update(event.id, {
+		participants_drawn: listDrawn.map(({ friend, receiver }) => ({ friend: friend.id, receiver: receiver.id })),
+	});
+
+	const subject = `Amigo Secreto`;
+	const hostName = participants[0].name;
+
+	if (config.notifications.email)    sendEmails(listDrawn, hostName, subject, event.message);
+	if (config.notifications.whatsapp) sendTextMessages(listDrawn, hostName, subject, event.message);
+	if (config.notifications.sms)      sendSms(listDrawn, hostName, subject, event.message);
+
+	logger.info('Sorteio realizado', { eventId: event.id, participants: participants.length });
+
+	const templateEventCreated = new Template(config.templates.emailEventCreated, true);
+	return res.send(templateEventCreated.replace());
+}
+
+const eventController = {};
+
+eventController.getOne = async (req, res) => {
+	const [event] = await EventModel.get(req.params.id);
+
+	if (!event)
+		return res.status(404).json(NOT_FOUND);
+
+	if (req.query.draw !== undefined)
+		return draw(req, res, event);
+
+	return res.status(200).json(toPublicEvent(event));
 };
 
-eventController.create = async (req, res, next) => {
-	try {
-		let event = req.body;
+eventController.create = async (req, res) => {
+	const { event, host, participants } = validateEvent(req.body);
 
-		if (!event || !event.host) {
-			logger.warn('create event: body inválido recebido', { body: event });
-			return res.status(400).json({ error: true, message: 'Dados do evento inválidos.' });
-		}
+	const participantIds = await createParticipants(host, participants);
 
-		const {name: hostName, email: hostEmail, celphone: celPhone} = event.host;
+	const eventCreated = await EventModel.create({
+		...event,
+		host: participantIds[0],
+		participants: participantIds.slice(1),
+		drawToken: newToken(),
+		created_at: Date.now(),
+	});
 
-		logger.info('Criando evento', { host: hostName, participantCount: (event.participants || []).length + 1 });
+	logger.info('Evento criado com sucesso', { eventId: eventCreated.id, participants: participantIds.length });
 
-		const participants = await createParticipants(event);
+	const url = `${getBaseUrl(req)}/event/${encodeURIComponent(eventCreated.id)}?draw=${encodeURIComponent(eventCreated.drawToken)}`;
 
-		if (!participants) {
-			logger.error('create event: falha ao criar participantes', { host: hostName });
-			return res.status(500).json({ error: true, message: 'Falha ao criar participantes.' });
-		}
+	const template = new Template();
 
-		delete event.host;
-		delete event.participants;
+	template.assign('HOST_NAME', host.name);
+	template.assign('URL_TO_SORT', url);
 
-		event = {
-			...event,
-			host: participants[0],
-			participants: participants.slice(1)
-		}
-
-		const eventCreated = await EventModel.create(event);
-
-		if (!eventCreated) {
-			logger.error('create event: falha ao gravar evento', { host: hostName });
-			return res.status(500).json({ error: true, message: 'Falha ao gravar o evento.' });
-		}
-
-		logger.info('Evento criado com sucesso', { eventId: eventCreated.id, host: hostName });
-
-		const baseUrl = getBaseUrl(req);
-		const url = `${baseUrl}/event/${eventCreated.id}?draw=true`;
-
-		const template = new Template();
-
-		template.assign('HOST_NAME', hostName);
-		template.assign('URL_TO_SORT', url);
-
-		if (hostEmail && config.notifications.email) {
-			template.setTemplate(config.templates.emailHost, true);
-			const message = template.replace();
-			email.send(hostEmail, 'Amigo Secreto', message);
-		}
-
-		if (celPhone && config.notifications.whatsapp) {
-			template.setTemplate(config.templates.textHost, true);
-			const message = template.replace();
-			whatsapp.send(celPhone, 'Amigo Secreto', message);
-		}
-
-		if (celPhone && config.notifications.sms) {
-			template.setTemplate(config.templates.textHost, true);
-			const message = template.replace();
-			sms.send(celPhone, 'Amigo Secreto', message);
-		}
-
-
-
-		return res.status(200).json(eventCreated);
-	} catch (err) {
-		logger.error('create event: erro inesperado', { message: err.message, stack: err.stack });
-		next(err);
+	if (config.notifications.email) {
+		template.setTemplate(config.templates.emailHost, true);
+		email.send(host.email, 'Amigo Secreto', template.replace());
 	}
+
+	if (host.celphone && config.notifications.whatsapp) {
+		template.setTemplate(config.templates.textHost, true);
+		whatsapp.send(host.celphone, 'Amigo Secreto', template.replace());
+	}
+
+	if (host.celphone && config.notifications.sms) {
+		template.setTemplate(config.templates.textHost, true);
+		sms.send(host.celphone, 'Amigo Secreto', template.replace());
+	}
+
+	return res.status(201).json(toPublicEvent(eventCreated));
 };
 
 module.exports = eventController;

@@ -7,6 +7,19 @@ const PORT_DEFAULT = 3333;
 const config = {
 	app: {
 		port: process.env.PORT || PORT_DEFAULT,
+		// URL publica usada nos links enviados por e-mail/SMS (ex.: https://amigosecreto.com.br)
+		url: process.env.APP_URL ? process.env.APP_URL.replace(/\/+$/, '') : '',
+		// Proxies confiaveis para obter o IP real (X-Forwarded-For). Padrao: nginx na mesma maquina
+		trustProxy: process.env.TRUST_PROXY || 'loopback',
+	},
+	limits: {
+		minParticipants: 3,
+		maxParticipants: 50,
+		maxWishlistItems: 50,
+		// Criacao de eventos por IP a cada hora
+		eventsPerHour: Number(process.env.RATE_LIMIT_EVENTS_PER_HOUR) || 10,
+		// Requisicoes a API por IP a cada 15 minutos
+		apiRequestsPer15Min: Number(process.env.RATE_LIMIT_API_PER_15MIN) || 300,
 	},
 	database: {
 		file: process.env.TEST ? ':memory:' : (process.env.DB_FILE || 'data/secretsanta.db'),

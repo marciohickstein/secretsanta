@@ -4,64 +4,53 @@ if (!appSecretSanta)
 
 var idParticipant = getUrlParameter('idparticipant');
 appSecretSanta.value("idParticipant", idParticipant ? idParticipant : '');
+appSecretSanta.value("editToken", getUrlParameter('token') || '');
 
-appSecretSanta.controller("ctrlWishList", async ($scope, wishlistService, idParticipant) => {
+appSecretSanta.controller("ctrlWishList", ($scope, wishlistService, idParticipant, editToken) => {
 	$scope.save = false;
 	$scope.wishlist = [];
 	$scope.wishlistTemp = [];
-	$scope.hasWishlist = false;
+	$scope.canEdit = Boolean(idParticipant && editToken);
 
 	$scope.changeDataField = () => {
 		$scope.save = true;
 	}
-	
+
 	$scope.getWishList = () => {
-		wishlistService.getWishList(idParticipant ? idParticipant : null)
+		if (!idParticipant)
+			return;
+
+		wishlistService.getWishList(idParticipant)
 			.then((response) => {
-				let wishlist = response.data.length > 0 ? response.data[0].wishlist : {};
-				$scope.wishlist = wishlist;
+				$scope.wishlist = (response.data && response.data.wishlist) || [];
 				$scope.getItems();
-				$scope.hasWishlist = true;
 			})
 			.catch((error) => {
-				console.log(error)
-				$scope.hasWishlist = false;
+				if (error.status !== 404)
+					console.log(error);
+				$scope.wishlist = [];
+				$scope.getItems();
 			});
 	}
 
 	$scope.saveWishList = (wishlist) => {
-		if (!idParticipant)
-			return ;
-
-		const wishlistItem = {
-			id: idParticipant,
-			wishlist
+		if (!$scope.canEdit) {
+			alert('❌ Link de edição inválido. Use o link "Adicionar presentes" recebido por e-mail.');
+			return;
 		}
 
-		if ($scope.hasWishlist) {
-			wishlistService.saveWishList(idParticipant, wishlistItem)
-				.then((response) => {
-					// let wishlist = response.data.length > 0 ? response.data[0].wishlist : {};
-					// $scope.wishlist = wishlist;
-					$scope.getWishList();
-					$scope.save = false;
-				})
-				.catch((error) => { 
-					console.log(error)
-				});
-		}
-		else {
-			wishlistService.createWishList(wishlistItem)
-				.then((response) => {
-					// let wishlist = response.data.length > 0 ? response.data[0].wishlist : {};
-					// $scope.wishlist = wishlist;
-					$scope.getWishList();
-					$scope.save = false;
-				})
-				.catch((error) => { 
-					console.log(error)
-				});
-		}
+		const items = wishlist.map(({ product, price, infoExtra }) => ({ product, price, infoExtra }));
+
+		wishlistService.saveWishList(idParticipant, editToken, items)
+			.then(() => {
+				$scope.getWishList();
+				$scope.save = false;
+			})
+			.catch((error) => {
+				const serverMsg = error.data && error.data.message ? error.data.message : 'Erro desconhecido';
+				console.log(error);
+				alert(`❌ Falha ao salvar a lista: ${serverMsg}`);
+			});
 	}
 
 	$scope.addItem = () => {

@@ -13,8 +13,7 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	$scope.idEvent = idEvent;
 
 	if (_TEST_) {
-		$scope.date = new Date().toLocaleString();
-		// $scope.date = `2021-12-25T21:00`;
+		$scope.eventDate = new Date(2021, 11, 25, 21, 0);
 		$scope.eventLocal = "Av. Tulio de Rose, 260 - Salao de Festas";
 		$scope.eventAmount = 300.00;
 		$scope.eventMessage = "Ola pessoal, nosso amigo secreto foi gerado pelo SecretSanta Generator. Por favor sigam as instrucoes e boas festas!";
@@ -55,8 +54,8 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		}
 
 		// Valida participantes
-		if (!$scope.participants || $scope.participants.length < 2) {
-			message = "❌ É necessário pelo menos 2 participantes.";
+		if (!$scope.participants || $scope.participants.length < 3) {
+			message = "❌ É necessário pelo menos 3 participantes.";
 			console.error(message);
 			return message;
 		}
@@ -118,15 +117,10 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		}
 	}
 
-	$scope.getEvents = () => {
-		eventService.get()
-			.then((response) => {
-				$scope.events = response.data;
-			})
-			.catch((error) => console.log(error));
-	}
-
 	$scope.getEvent = () => {
+		if (!$scope.idEvent)
+			return;
+
 		eventService.get($scope.idEvent)
 			.then((response) => {
 				$scope.event = response.data;

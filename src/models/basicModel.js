@@ -17,8 +17,8 @@ function BasicModel(tableName) {
 	this.delete = async function(id) {
 		return await this.data.delete(id);
 	};
-	this.update = async function(id, item) {
-		return await this.data.update(id, item);
+	this.update = async function(id, item, options) {
+		return await this.data.update(id, item, options);
 	};
 }
 

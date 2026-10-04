@@ -84,4 +84,23 @@ describe(`Testing utils...`, () => {
 		expect(textReplaced).toBe(finalText);
 	})
 
+
+	it(`Template HTML escapa os valores: `, () => {
+		const template = new Template('emailhost.html');
+		template.assign('HOST_NAME', '<img src=x onerror=alert(1)>');
+		template.assign('URL_TO_SORT', 'http://x.com/?a=1&b="2"');
+
+		const html = template.replace();
+
+		expect(html).not.toContain('<img src=x');
+		expect(html).toContain('&lt;img src=x onerror=alert(1)&gt;');
+		expect(html).toContain('http://x.com/?a=1&amp;b=&quot;2&quot;');
+	})
+
+	it(`Template de texto nao escapa os valores: `, () => {
+		const template = new Template('texthost.txt');
+		template.assign('HOST_NAME', 'Ana & Bia');
+
+		expect(template.replace()).toContain('Ana & Bia');
+	})
 });

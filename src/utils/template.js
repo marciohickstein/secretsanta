@@ -1,5 +1,6 @@
 const path = require('path');
 const { readFileSync } = require('fs');
+const { escapeHtml } = require('./security');
 
 class Template {
     constructor(template = null, fromFile = true) {
@@ -22,6 +23,8 @@ class Template {
 
     setTemplate(template, fromFile = true) {
         this.template = (template && fromFile) ? this.readFile(template) : template;
+        // Templates HTML recebem os valores com escape para evitar injecao de HTML nos e-mails
+        this.escape = Boolean(template && fromFile && /\.html?$/i.test(template));
         return true;
     }
 
@@ -54,7 +57,8 @@ class Template {
         let textOutput = this.template;
 
         for (const pair of this.pairs) {
-            textOutput = textOutput.replaceAll(pair[0], pair[1]);
+            const value = this.escape ? escapeHtml(pair[1]) : String(pair[1] ?? '');
+            textOutput = textOutput.replaceAll(pair[0], () => value);
         }
 
         return textOutput;

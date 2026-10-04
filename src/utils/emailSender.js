@@ -1,6 +1,7 @@
 const { Resend } = require('resend');
 const config = require('../config');
 const logger = require('./logger');
+const { maskContact } = require('./security');
 
 const resend = config.email.apiKey ? new Resend(config.email.apiKey) : null;
 
@@ -20,7 +21,7 @@ async function sendEmail(to, subject, html) {
 
         if (error) {
             logger.error('emailSender: falha ao enviar e-mail', {
-                to,
+                to: maskContact(to),
                 subject,
                 error: error.message,
                 name: error.name
@@ -28,10 +29,10 @@ async function sendEmail(to, subject, html) {
             return;
         }
 
-        logger.info('emailSender: e-mail enviado', { to, subject, messageId: data?.id });
+        logger.info('emailSender: e-mail enviado', { to: maskContact(to), subject, messageId: data?.id });
     } catch (err) {
         logger.error('emailSender: falha ao enviar e-mail', {
-            to,
+            to: maskContact(to),
             subject,
             error: err.message
         });

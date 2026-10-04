@@ -1,6 +1,6 @@
 "use strict"
 
-const { v4: uuidV4 } = require("uuid");
+const { randomUUID } = require("crypto");
 const { getDatabase } = require('../db/database');
 
 const TABLE_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -86,7 +86,7 @@ class SQLiteDataSource {
 	async insertAutoId(item) {
 		const newItem = {
 			...item,
-			id: item?.id ?? uuidV4(),
+			id: item?.id ?? randomUUID(),
 		};
 
 		this._stmt.insert.run(String(newItem.id), JSON.stringify(newItem));
@@ -102,12 +102,20 @@ class SQLiteDataSource {
 		return this.insertAutoId(item);
 	}
 
-	async update(id, item) {
+	/*
+	 * onlyIf: funcao opcional avaliada dentro da transacao com o registro atual.
+	 * Se retornar false, nada e alterado e o metodo retorna null.
+	 */
+	async update(id, item, { onlyIf } = {}) {
 		const altItem = this._db.transaction(() => {
 			const current = this._findById(id);
 
 			if (!current) {
 				throw new Error(`Item ${id} not found`);
+			}
+
+			if (onlyIf && !onlyIf(current)) {
+				return null;
 			}
 
 			const merged = { ...current, ...item, id: current.id };

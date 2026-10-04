@@ -55,30 +55,6 @@ async function sendGetRest(path, origin) {
     }
 }
 
-// HTTP POST,PUT, etc.
-function sendHttpRest(path, origin, method, data, callbackSuccess){
-    const url = makeUrl(path, origin);
-
-    $.ajax({
-        url: `${url}`,
-        type: method,
-        data: JSON.stringify(data),
-        processData: false,
-        contentType: "application/json; charset=UTF-8",
-        beforeSend : function(){
-            console.log(`Enviando transacao para o servidor: [${method}] ${this.url}`);
-        },
-        success: function(data){
-            console.log(`Dados retornado da transacao com o servidor: ${JSON.stringify(data)}`);
-            if (callbackSuccess)
-                callbackSuccess(data);
-        },
-        error: function(xhr, ajaxOptions, thrownError) {
-            console.log(`Ocorreu um erro na transacao com o servidor: ${this.url}`);
-        }
-    });
-}
-
 // #######################################################
 // Funcoes auxiliares
 // #######################################################

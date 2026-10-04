@@ -18,9 +18,15 @@ const logger = createLogger({
 		new transports.File({
 			filename: path.join(logsDir, 'error.log'),
 			level: 'error',
+			maxsize: 5 * 1024 * 1024,
+			maxFiles: 5,
+			tailable: true,
 		}),
 		new transports.File({
 			filename: path.join(logsDir, 'combined.log'),
+			maxsize: 10 * 1024 * 1024,
+			maxFiles: 5,
+			tailable: true,
 		}),
 	],
 });

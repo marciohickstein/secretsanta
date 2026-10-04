@@ -11,10 +11,12 @@ appSecretSanta.controller("ctrlParticipant", async ($scope, participantService, 
 	$scope.idParticipant = idParticipant;
 
 	$scope.getParticipant = () => {
+		if (!$scope.idParticipant)
+			return;
+
 		participantService.get($scope.idParticipant)
 			.then((response) => {
-				let data = response.data.length > 0 ? response.data[0] : {};
-				$scope.participant = data;
+				$scope.participant = response.data || {};
 			})
 			.catch((error) => console.log(error));
 	}
