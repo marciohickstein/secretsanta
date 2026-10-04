@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server --watch src --ignore '*.json'",
+    "dev": "node --watch server.js",
     "test": "TEST=1 jest --no-cache"
   },
   "keywords": [],
@@ -28,7 +28,6 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "jest": "^30.2.0",
-    "nodemon": "^3.1.11",
     "supertest": "^7.1.4"
   },
   "_moduleAliases": {
