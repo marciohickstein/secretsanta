@@ -34,4 +34,28 @@ function maskContact(value) {
 	return '***';
 }
 
-module.exports = { newId, newToken, safeEqual, escapeHtml, maskContact };
+/*
+ * Valida a assinatura de webhooks no padrao Svix (usado pelo Resend).
+ * Conteudo assinado: "<svix-id>.<svix-timestamp>.<corpo bruto>", HMAC-SHA256 com o segredo (whsec_<base64>).
+ */
+function verifyWebhookSignature(secret, headers, rawBody, { toleranceSeconds = 300, now = Date.now() } = {}) {
+	const id = headers['svix-id'];
+	const timestamp = headers['svix-timestamp'];
+	const signatures = headers['svix-signature'];
+
+	if (!secret || !id || !timestamp || !signatures) return false;
+
+	const ts = Number(timestamp);
+	if (!Number.isFinite(ts) || Math.abs(now / 1000 - ts) > toleranceSeconds) return false;
+
+	const key = Buffer.from(String(secret).replace(/^whsec_/, ''), 'base64');
+	const body = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody ?? '');
+	const expected = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${body}`).digest('base64');
+
+	return String(signatures)
+		.split(' ')
+		.map(part => part.split(',')[1])
+		.some(signature => safeEqual(signature, expected));
+}
+
+module.exports = { newId, newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature };

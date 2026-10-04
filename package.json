@@ -39,6 +39,7 @@
     "@classes": "./src/classes",
     "@data": "./data",
     "@controllers": "./src/controllers",
-    "@models": "./src/models"
+    "@models": "./src/models",
+    "@services": "./src/services"
   }
 }

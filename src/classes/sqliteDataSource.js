@@ -11,7 +11,10 @@ const FIELD_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
  * mantendo a mesma interface do antigo JSONDataSource.
  */
 class SQLiteDataSource {
-	constructor(tableName, db = getDatabase()) {
+	/*
+	 * options.indexes: campos do documento JSON que recebem indice (ex.: ['emailMessageId'])
+	 */
+	constructor(tableName, db = getDatabase(), { indexes = [] } = {}) {
 		if (!tableName || !TABLE_NAME.test(tableName)) {
 			throw new Error(`Nome de tabela inválido: ${tableName}`);
 		}
@@ -23,6 +26,15 @@ class SQLiteDataSource {
 			id   TEXT PRIMARY KEY,
 			data TEXT NOT NULL
 		)`);
+
+		for (const field of indexes) {
+			if (!FIELD_NAME.test(field)) {
+				throw new Error(`Campo de índice inválido: ${field}`);
+			}
+
+			this._db.exec(`CREATE INDEX IF NOT EXISTS idx_${this._table}_${field}
+				ON ${this._table} (json_extract(data, '$.${field}'))`);
+		}
 
 		this._stmt = {
 			all: this._db.prepare(`SELECT data FROM ${this._table} ORDER BY rowid`),

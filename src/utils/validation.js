@@ -117,4 +117,19 @@ function validateWishlist(body) {
 	});
 }
 
-module.exports = { ValidationError, validateEvent, validateWishlist };
+/* Valida a correcao de dados de um participante feita pelo organizador */
+function validateParticipantUpdate(body) {
+	if (!isPlainObject(body)) throw new ValidationError('Dados do participante inválidos.');
+
+	const update = {};
+
+	if (body.name !== undefined) update.name = text(body.name, 'name', { required: true, max: 100 });
+	if (body.email !== undefined) update.email = email(body.email, 'email');
+	if (body.celphone !== undefined) update.celphone = celphone(body.celphone, 'celphone');
+
+	if (Object.keys(update).length === 0) throw new ValidationError('Nenhum dado para atualizar.');
+
+	return update;
+}
+
+module.exports = { ValidationError, validateEvent, validateWishlist, validateParticipantUpdate };

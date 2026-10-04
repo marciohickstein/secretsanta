@@ -1,6 +1,6 @@
 Ola {HOST_NAME}
 
-Para validar e sortear o seu evento de amigo secreto clique no link abaixo:
-{URL_TO_SORT}
+Seu evento de amigo secreto foi criado! Acesse o painel do organizador para acompanhar os participantes e fazer o sorteio:
+{URL_PANEL}
 
-OBS: Sera enviado um email para cada participante com seu respectivo amigo secreto!
+Guarde esta mensagem: o link acima e o seu acesso ao painel.

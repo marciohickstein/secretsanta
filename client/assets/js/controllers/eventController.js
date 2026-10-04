@@ -127,15 +127,16 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		$scope.saving = true;
 
 		try {
-			await eventService.create(event);
+			const response = await eventService.create(event);
 
 			showMessage({
 				type: 'success',
 				icon: 'bi-check-lg',
 				title: 'Evento criado com sucesso! 🎉',
-				message: 'Falta só um passo para o sorteio acontecer.',
+				message: 'Agora é só fazer o sorteio pelo painel do organizador.',
 				email: hostEmail,
-				button: 'Entendido'
+				link: response.data && response.data.organizerUrl,
+				button: 'Fechar'
 			}, resetForm);
 		} catch (err) {
 			const serverMsg = err.data && err.data.message ? err.data.message : 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';

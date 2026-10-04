@@ -11,6 +11,7 @@ module.exports = {
     "^@classes/(.*)$": "<rootDir>/src/classes/$1",
     "^@controllers/(.*)$": "<rootDir>/src/controllers/$1",
     "^@models/(.*)$": "<rootDir>/src/models/$1",
+    "^@services/(.*)$": "<rootDir>/src/services/$1",
     "^@data/(.*)$": "<rootDir>/data/$1",
   },
 

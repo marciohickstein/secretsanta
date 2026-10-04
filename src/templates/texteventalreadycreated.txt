@@ -1,1 +1,0 @@
-Evento de amigo secreto já foi gerado com sucesso em {DATE_EVENT_DRAW}.

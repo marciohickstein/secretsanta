@@ -37,22 +37,22 @@ const config = {
 	email: {
 		from: process.env.RESEND_FROM,
 		apiKey: process.env.RESEND_API_KEY,
+		// Segredo do webhook do Resend (whsec_...), usado para validar os eventos de entrega
+		webhookSecret: process.env.RESEND_WEBHOOK_SECRET,
+		// Intervalo minimo entre envios (o Resend limita a quantidade de requisicoes por segundo)
+		minIntervalMs: process.env.TEST ? 0 : (Number(process.env.EMAIL_MIN_INTERVAL_MS) || 600),
+		// Intervalo minimo entre consultas de status ao Resend para o mesmo e-mail (alternativa ao webhook)
+		statusCheckIntervalMs: process.env.TEST ? 0 : 30 * 1000,
+		// Depois deste tempo o status deixa de ser consultado
+		statusCheckMaxAgeMs: 3 * 24 * 60 * 60 * 1000,
+		// Tempo minimo entre reenvios para o mesmo participante
+		resendCooldownMs: 10 * 60 * 1000,
 	},
 	templates: {
-		emailEventCreated: `emaileventcreated.html`
-		,
-		emailEventAlreadyCreated: `emaileventalreadycreated.html`
-		,
-		emailHost: `emailhost.html`
-		,
+		emailHost: `emailhost.html`,
 		emailParticipant: `emailparticipant.html`,
-		textEventCreated: `texteventcreated.txt`,
-
-		textEventAlreadyCreated: `texteventalreadycreated.txt`,
-
 		textHost: `texthost.txt`,
-
-		textParticipant: `textparticipant.txt`
+		textParticipant: `textparticipant.txt`,
 	}
 }
 

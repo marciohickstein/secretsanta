@@ -4,8 +4,8 @@ require('module-alias/register');
 
 const { SQLiteDataSource } = require('@classes/sqliteDataSource');
 
-function BasicModel(tableName) {
-	this.data = new SQLiteDataSource(tableName);
+function BasicModel(tableName, options = {}) {
+	this.data = new SQLiteDataSource(tableName, undefined, options);
 
 	this.get = async function(id = '') {
 		const filter = id !== '' ? { id } : {};
@@ -16,6 +16,9 @@ function BasicModel(tableName) {
 	};
 	this.delete = async function(id) {
 		return await this.data.delete(id);
+	};
+	this.find = async function(filter) {
+		return await this.data.select(filter);
 	};
 	this.update = async function(id, item, options) {
 		return await this.data.update(id, item, options);

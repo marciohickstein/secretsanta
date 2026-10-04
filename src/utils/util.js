@@ -1,6 +1,5 @@
 "use strict"
 
-const email = require('./emailSender');
 const whatsapp = require('./whatsAppSender');
 const sms = require('./smsSender');
 const config = require('../config');
@@ -80,47 +79,31 @@ const getBaseUrl = (req) => {
 	return `${req.protocol}://${req.get('host')}`;
 };
 
-function sendNotification(type, listFriendsSorted, hostName, subject, text) {
-	listFriendsSorted.forEach(secret => {
-		const template = new Template();
-	
-		template.assign('NAME_FRIEND', secret.friend.name);
-		template.assign('NAME_RECEIVER', secret.receiver.name);
-		template.assign('NAME_HOST', hostName);
-		template.assign('TEXT', text);
-		template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
-		template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
+/* Monta a mensagem do sorteio para um par (friend tira receiver) */
+function buildParticipantMessage(templateName, secret, hostName, text) {
+	const template = new Template(templateName);
 
-		let message = '';
+	template.assign('NAME_FRIEND', secret.friend.name);
+	template.assign('NAME_RECEIVER', secret.receiver.name);
+	template.assign('NAME_HOST', hostName);
+	template.assign('TEXT', text);
+	template.assign('URL_SHOW_WISHLIST', secret.receiver.urlShowWishList);
+	template.assign('URL_ADD_WISHLIST', secret.friend.urlAddWishList);
 
-		if (type === 'email') {
-			template.setTemplate(config.templates.emailParticipant);
-			message = template.replace();
-			email.send(secret.friend.email, subject, message);
-		} else if (type === 'whatsapp') {
-			template.setTemplate(config.templates.textParticipant);
-			message = template.replace();
-			whatsapp.send(secret.friend.celphone, subject, message);
-		} else {
-			template.setTemplate(config.templates.textParticipant);
-			message = template.replace();
-			sms.send(secret.friend.celphone, subject, message);
-		}
-	});
-
-	return ({ error: 0, message: `Mensagens enviadas para todos os participantes com sucesso!`, friends: listFriendsSorted });
+	return template.replace();
 }
 
-function sendEmails(listFriendsSorted, hostName, subject, text) {
-	return sendNotification('email', listFriendsSorted, hostName, subject, text);
-}
-
+/* WhatsApp e SMS (o e-mail tem envio rastreado em services/notificationService) */
 function sendTextMessages(listFriendsSorted, hostName, subject, text) {
-	return sendNotification('whatsapp', listFriendsSorted, hostName, subject, text);
+	listFriendsSorted.forEach(secret => {
+		whatsapp.send(secret.friend.celphone, subject, buildParticipantMessage(config.templates.textParticipant, secret, hostName, text));
+	});
 }
 
 function sendSms(listFriendsSorted, hostName, subject, text) {
-	return sendNotification('sms', listFriendsSorted, hostName, subject, text);
+	listFriendsSorted.forEach(secret => {
+		sms.send(secret.friend.celphone, subject, buildParticipantMessage(config.templates.textParticipant, secret, hostName, text));
+	});
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, sendEmails, getRootPath, resolvePath, getBaseUrl, sendTextMessages, sendSms };
+module.exports = { shuffleArray, createListFriends, drawParticipants, getRootPath, resolvePath, getBaseUrl, buildParticipantMessage, sendTextMessages, sendSms };

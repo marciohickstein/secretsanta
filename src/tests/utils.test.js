@@ -88,7 +88,7 @@ describe(`Testing utils...`, () => {
 	it(`Template HTML escapa os valores: `, () => {
 		const template = new Template('emailhost.html');
 		template.assign('HOST_NAME', '<img src=x onerror=alert(1)>');
-		template.assign('URL_TO_SORT', 'http://x.com/?a=1&b="2"');
+		template.assign('URL_PANEL', 'http://x.com/?a=1&b="2"');
 
 		const html = template.replace();
 

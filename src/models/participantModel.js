@@ -3,4 +3,4 @@
 require('module-alias/register');
 const BasicModel = require('@models/basicModel');
 
-module.exports = new BasicModel('participants');
+module.exports = new BasicModel('participants', { indexes: ['emailMessageId'] });

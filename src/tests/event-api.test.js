@@ -27,6 +27,7 @@ const PUBLIC_FIELDS = ['amount', 'date', 'drawn', 'id', 'location', 'participant
 
 describe('API /event', () => {
 	let eventId;
+	let organizerUrl;
 
 	it('cria um evento e retorna somente dados publicos', async () => {
 		const response = await request(app)
@@ -35,7 +36,8 @@ describe('API /event', () => {
 			.expect('Content-Type', /json/)
 			.expect(201);
 
-		expect(Object.keys(response.body).sort()).toEqual(PUBLIC_FIELDS);
+		expect(Object.keys(response.body).sort()).toEqual([...PUBLIC_FIELDS, 'organizerUrl'].sort());
+		expect(response.body.organizerUrl).toMatch(/^http:\/\/localhost:3333\/painel\.html\?event=.+&token=.+$/);
 		expect(response.body).toMatchObject({
 			date: requestEvent.date,
 			location: requestEvent.location,
@@ -46,6 +48,7 @@ describe('API /event', () => {
 		expect(response.body.id).not.toBe('forjado');
 
 		eventId = response.body.id;
+		organizerUrl = response.body.organizerUrl;
 	});
 
 	it('nao grava campos nao permitidos (mass assignment)', async () => {
@@ -53,7 +56,8 @@ describe('API /event', () => {
 
 		expect(event.event_drawn).toBeUndefined();
 		expect(event.participants_drawn).toBeUndefined();
-		expect(event.drawToken).toEqual(expect.any(String));
+		expect(event.adminToken).toEqual(expect.any(String));
+		expect(organizerUrl).toContain(event.adminToken);
 	});
 
 	it('retorna o evento sem participantes, tokens ou sorteio', async () => {
@@ -82,44 +86,33 @@ describe('API /event', () => {
 		await request(app).delete(`/event/${eventId}`).expect(404);
 	});
 
-	it('nao sorteia com token invalido', async () => {
+	it('link antigo de sorteio com token invalido nao leva ao painel', async () => {
 		await request(app).get(`/event/${eventId}?draw=true`).expect(404);
 		await request(app).get(`/event/${eventId}?draw=errado`).expect(404);
-
-		const [event] = await EventModel.get(eventId);
-		expect(event.event_drawn).toBeUndefined();
 	});
 
-	it('sorteia com o token correto e guarda apenas os ids dos pares', async () => {
+	it('link de sorteio com token valido redireciona para o painel sem sortear', async () => {
 		const [event] = await EventModel.get(eventId);
 
-		await request(app).get(`/event/${eventId}?draw=${event.drawToken}`).expect(200);
+		const response = await request(app).get(`/event/${eventId}?draw=${event.adminToken}`).expect(302);
 
-		const [drawn] = await EventModel.get(eventId);
-		const ids = [drawn.host, ...drawn.participants].sort();
-
-		expect(drawn.event_drawn).toEqual(expect.any(Number));
-		expect(drawn.participants_drawn).toHaveLength(3);
-		drawn.participants_drawn.forEach(pair => {
-			expect(Object.keys(pair).sort()).toEqual(['friend', 'receiver']);
-			expect(pair.friend).not.toBe(pair.receiver);
-		});
-		expect(drawn.participants_drawn.map(p => p.friend).sort()).toEqual(ids);
-		expect(drawn.participants_drawn.map(p => p.receiver).sort()).toEqual(ids);
-
-		const response = await request(app).get(`/event/${eventId}`).expect(200);
-		expect(response.body.drawn).toBe(true);
-		expect(response.body.participants_drawn).toBeUndefined();
-	});
-
-	it('nao sorteia duas vezes', async () => {
-		const [event] = await EventModel.get(eventId);
-		const before = event.participants_drawn;
-
-		await request(app).get(`/event/${eventId}?draw=${event.drawToken}`).expect(200);
+		expect(response.headers.location).toBe(`http://localhost:3333/painel.html?event=${eventId}&token=${event.adminToken}`);
 
 		const [after] = await EventModel.get(eventId);
-		expect(after.participants_drawn).toEqual(before);
+		expect(after.event_drawn).toBeUndefined();
+	});
+
+	it('evento antigo (sem token) aceita ?draw=true e ganha token do organizador', async () => {
+		const legacy = await EventModel.create({ location: 'x', message: 'y', host: 'h', participants: ['a', 'b'] });
+
+		const response = await request(app).get(`/event/${legacy.id}?draw=true`).expect(302);
+		const [updated] = await EventModel.get(legacy.id);
+
+		expect(updated.adminToken).toEqual(expect.any(String));
+		expect(response.headers.location).toContain(`token=${updated.adminToken}`);
+
+		// depois de ganhar token, ?draw=true deixa de funcionar
+		await request(app).get(`/event/${legacy.id}?draw=true`).expect(404);
 	});
 
 	it('cria participantes com token de edicao', async () => {

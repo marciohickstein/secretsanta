@@ -55,17 +55,20 @@
             <div ng-if="modal.type === 'success'" class="text-start mt-4">
               <div class="modal-santa-email">
                 <i class="bi bi-envelope-paper-heart-fill"></i>
-                <div>Enviamos um e-mail para <strong class="text-break">{{modal.email}}</strong></div>
+                <div>Enviamos o link do painel para <strong class="text-break">{{modal.email}}</strong></div>
               </div>
               <ol class="modal-santa-steps">
-                <li>Abra o e-mail (confira também a caixa de spam).</li>
-                <li>Clique no botão <strong>"Sortear Amigo Secreto"</strong>.</li>
-                <li>Pronto! Cada participante recebe por e-mail o nome do seu amigo secreto.</li>
+                <li>No <strong>painel do organizador</strong>, confira os participantes.</li>
+                <li>Clique em <strong>"Sortear agora"</strong>: cada um recebe por e-mail o seu amigo secreto.</li>
+                <li>Acompanhe a entrega dos e-mails e as listas de presentes pelo painel.</li>
               </ol>
             </div>
           </div>
           <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
-            <button type="button" class="btn btn-santa px-5" data-bs-dismiss="modal">{{modal.button}}</button>
+            <a ng-if="modal.link" ng-href="{{modal.link}}" class="btn btn-santa px-4">
+              <i class="bi bi-clipboard2-check-fill me-2"></i>Abrir painel do organizador
+            </a>
+            <button type="button" class="btn px-4" ng-class="modal.link ? 'btn-outline-secondary' : 'btn-santa px-5'" data-bs-dismiss="modal">{{modal.button}}</button>
           </div>
         </div>
       </div>

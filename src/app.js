@@ -12,6 +12,7 @@ const logger = require('@utils/logger');
 const routerEvent = require('@routes/eventRoutes');
 const routerParticipant = require('@routes/participantRoutes');
 const routerWishList = require('@routes/wishlistRoutes');
+const routerWebhook = require('@routes/webhookRoutes');
 
 const CDN = 'https://cdn.jsdelivr.net';
 
@@ -46,6 +47,9 @@ class AppController {
 			},
 		}));
 
+		// Webhooks precisam do corpo bruto, por isso ficam antes do express.json()
+		this.express.use('/webhooks', routerWebhook);
+
 		this.express.use(express.json({ limit: '50kb' }));
 		this.express.use(morgan(ACCESS_LOG_FORMAT, { stream: logger.stream }));
 	}
@@ -68,7 +72,7 @@ class AppController {
 
 		// 404 (manter sempre como ultima rota)
 		this.express.use((req, res) => {
-			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist)\b/.test(req.path)) {
+			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist|webhooks)\b/.test(req.path)) {
 				return res.status(404).json({ error: true, message: 'Recurso não encontrado.' });
 			}
 
