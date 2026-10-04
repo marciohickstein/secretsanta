@@ -41,22 +41,31 @@
   <!-- ── AngularJS app root ── -->
   <div ng-app="secretSanta" ng-controller="ctrlEvent">
 
-    <!-- ── Modal de confirmação ── -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <!-- ── Caixa de mensagem (sucesso / erro) ── -->
+    <div class="modal fade modal-santa" id="messageModal" tabindex="-1" aria-labelledby="messageModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 shadow">
-          <div class="modal-header border-0 pb-0" style="background:linear-gradient(135deg,#c0392b,#922b21);border-radius:13px 13px 0 0;">
-            <h5 class="modal-title text-white fw-bold" id="successModalLabel">
-              <i class="bi bi-check-circle-fill me-2"></i>Evento criado!
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+          <div class="modal-body text-center px-4 pt-5 pb-3 px-md-5">
+            <div class="modal-santa-icon" ng-class="'modal-santa-icon-' + modal.type">
+              <i class="bi" ng-class="modal.icon"></i>
+            </div>
+            <h4 class="fw-bold mt-4 mb-2" id="messageModalTitle">{{modal.title}}</h4>
+            <p class="text-muted mb-0">{{modal.message}}</p>
+
+            <div ng-if="modal.type === 'success'" class="text-start mt-4">
+              <div class="modal-santa-email">
+                <i class="bi bi-envelope-paper-heart-fill"></i>
+                <div>Enviamos um e-mail para <strong class="text-break">{{modal.email}}</strong></div>
+              </div>
+              <ol class="modal-santa-steps">
+                <li>Abra o e-mail (confira também a caixa de spam).</li>
+                <li>Clique no botão <strong>"Sortear Amigo Secreto"</strong>.</li>
+                <li>Pronto! Cada participante recebe por e-mail o nome do seu amigo secreto.</li>
+              </ol>
+            </div>
           </div>
-          <div class="modal-body pt-3">
-            <p>Parabéns, você acabou de criar o seu evento de Amigo Secreto! 🎉</p>
-            <p class="mb-0 text-muted small">Para enviar os e-mails aos participantes é necessário clicar no link <strong>"Sortear Amigo Secreto"</strong> que será enviado para o seu e-mail.</p>
-          </div>
-          <div class="modal-footer border-0">
-            <button type="button" class="btn btn-santa" data-bs-dismiss="modal">Entendido</button>
+          <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
+            <button type="button" class="btn btn-santa px-5" data-bs-dismiss="modal">{{modal.button}}</button>
           </div>
         </div>
       </div>
@@ -109,7 +118,7 @@
         <h2 class="section-title"><i class="bi bi-calendar-plus me-2"></i>Criar Evento</h2>
         <hr class="section-divider">
 
-        <form name="event" action="" onsubmit="return false;" novalidate>
+        <form name="event" novalidate>
 
           <!-- Detalhes do evento -->
           <div class="card-santa card mb-4">
@@ -203,9 +212,10 @@
 
           <!-- Submit -->
           <div class="text-center pb-3">
-            <button type="submit" ng-click="createEvent()"
+            <button type="submit" ng-click="createEvent()" ng-disabled="saving"
               class="btn btn-santa btn-santa-lg" id="create-party-btn">
-              <i class="bi bi-stars me-2"></i>Criar Evento de Amigo Secreto!
+              <span ng-show="saving" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              <i ng-hide="saving" class="bi bi-stars me-2"></i>{{ saving ? 'Criando evento...' : 'Criar Evento de Amigo Secreto!' }}
             </button>
           </div>
 

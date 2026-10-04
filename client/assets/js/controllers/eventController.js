@@ -39,38 +39,57 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		$scope.participants = [{}, {}, {}];
 	}
 
-	$scope.validInput = function () {
-		let message = "";
+	$scope.saving = false;
+	$scope.modal = {};
 
+	// Exibe a caixa de mensagem (sucesso ou erro) no lugar do alert()
+	const showMessage = (options, onClose) => {
+		const element = document.getElementById('messageModal');
+
+		$scope.$applyAsync(() => {
+			$scope.modal = {
+				type: 'error',
+				icon: 'bi-exclamation-triangle-fill',
+				button: 'Entendi',
+				...options
+			};
+		});
+
+		if (onClose) {
+			element.addEventListener('hidden.bs.modal', () => $scope.$apply(onClose), { once: true });
+		}
+
+		bootstrap.Modal.getOrCreateInstance(element).show();
+	};
+
+	const resetForm = () => {
+		$scope.eventDate = null;
+		$scope.eventLocal = '';
+		$scope.eventAmount = null;
+		$scope.eventMessage = '';
+		$scope.participants = [{}, {}, {}];
+	};
+
+	$scope.validInput = function () {
 		// Valida campos do evento
-		if (
-			!$scope.eventLocal ||
-			!$scope.eventAmount ||
-			!$scope.eventMessage
-		) {
-			message = "❌ Dados do evento incompletos.";
-			console.error(message);
-			return message;
+		if (!$scope.eventLocal || !$scope.eventAmount || !$scope.eventMessage) {
+			return "Preencha o local da festa, o valor máximo do presente e a mensagem para os convidados.";
 		}
 
 		// Valida participantes
 		if (!$scope.participants || $scope.participants.length < 3) {
-			message = "❌ É necessário pelo menos 3 participantes.";
-			console.error(message);
-			return message;
+			return "O amigo secreto precisa de pelo menos 3 participantes, incluindo você.";
 		}
 
 		// Verifica se todos os participantes têm os dados obrigatórios
-		for (const p of $scope.participants) {
+		for (const [index, p] of $scope.participants.entries()) {
 			if (!p.name || !p.email || !p.celphone) {
-				message = `❌ Participante com dados faltando: ${JSON.stringify(p)}`;
-				console.error(message);
-				return message;
+				const who = index === 0 ? 'do organizador (participante 1)' : `do participante ${index + 1}`;
+				return `Preencha nome, e-mail válido e celular ${who}.`;
 			}
 		}
 
-		console.log("✅ Dados válidos!");
-		return message;
+		return "";
 	};
 
 	$scope.addParticipant = () => {
@@ -83,14 +102,18 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	}
 
 	$scope.createEvent = async () => {
+		if ($scope.saving)
+			return;
+
 		const errorMessage = $scope.validInput();
 
 		if (errorMessage) {
-			alert(errorMessage);
+			showMessage({ title: 'Quase lá!', message: errorMessage });
 			return;
 		}
 
 		const restParticipants = $scope.participants.slice(1);
+		const hostEmail = $scope.participants[0].email;
 
 		const event = {
 			date: $scope.eventDate ? new Date($scope.eventDate).toLocaleString() : new Date().toLocaleString(),
@@ -101,19 +124,29 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			participants: restParticipants
 		}
 
-		try {
-			const response = await eventService.create(event);
-			const data = response.data;
-			console.log('Evento criado:', data);
+		$scope.saving = true;
 
-			const text = `Parabéns você acabou de criar o seu evento de Amigo Secreto!\nPara enviar os e-mails aos participantes é necessário clicar no link "Sortear Amigo Secreto" enviado para o seu e-mail: ${$scope.participants[0].email}`;
-			alert(text);
-			window.location.reload();
+		try {
+			await eventService.create(event);
+
+			showMessage({
+				type: 'success',
+				icon: 'bi-check-lg',
+				title: 'Evento criado com sucesso! 🎉',
+				message: 'Falta só um passo para o sorteio acontecer.',
+				email: hostEmail,
+				button: 'Entendido'
+			}, resetForm);
 		} catch (err) {
-			const serverMsg = err.data && err.data.message ? err.data.message : 'Erro desconhecido';
-			const status = err.status || '?';
-			console.error(`Erro ao criar evento [${status}]:`, err.data || err);
-			alert(`❌ Falha ao criar o evento (${status}): ${serverMsg}`);
+			const serverMsg = err.data && err.data.message ? err.data.message : 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
+			console.error(`Erro ao criar evento [${err.status || '?'}]:`, err.data || err);
+
+			showMessage({
+				title: err.status === 429 ? 'Muitas tentativas' : 'Não foi possível criar o evento',
+				message: serverMsg
+			});
+		} finally {
+			$scope.$applyAsync(() => { $scope.saving = false; });
 		}
 	}
 
