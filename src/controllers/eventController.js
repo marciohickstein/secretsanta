@@ -213,6 +213,7 @@ eventController.create = async (req, res, next) => {
 		}
 
 
+
 		return res.status(200).json(eventCreated);
 	} catch (err) {
 		logger.error('create event: erro inesperado', { message: err.message, stack: err.stack });

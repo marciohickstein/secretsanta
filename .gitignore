@@ -4,3 +4,5 @@ data/*.json
 .enviroment
 xxx
 logs/*.log
+data/*.db
+data/*.db-*
