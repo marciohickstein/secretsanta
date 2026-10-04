@@ -7,13 +7,60 @@
   --santa-dark: #2c3e50;
   --santa-snow: #fdf8f0;
   --santa-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+
+  /* Tokens que mudam com o tema */
+  --santa-bg: var(--santa-snow);
+  --santa-text: #343a40;
+  --santa-surface: #fff;
+  --santa-border: #f0dede;
+  --santa-label: #495057;
+  --santa-muted: #888;
+  --santa-heading: var(--santa-red);
+  --santa-detail-value: var(--santa-dark);
+  --santa-row-hover: #fff5f4;
+  --santa-success-bg: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  --santa-success-border: #a5d6a7;
+  --santa-success-text: #1b5e20;
+  --santa-tip-bg: #fff8e1;
+  --santa-tip-text: #664d03;
+  --santa-footer-bg: var(--santa-dark);
+}
+
+/* ─── Tema escuro ────────────────────────────────────────── */
+[data-bs-theme="dark"] {
+  --santa-bg: #15191e;
+  --santa-text: #dee2e6;
+  --santa-surface: #1f252c;
+  --santa-border: #3a2f31;
+  --santa-label: #ced4da;
+  --santa-muted: #9aa0a6;
+  --santa-heading: #ff7b6e;
+  --santa-detail-value: #f1f3f5;
+  --santa-row-hover: #2a2224;
+  --santa-success-bg: linear-gradient(135deg, #16301c, #1c3d24);
+  --santa-success-border: #2e6b3a;
+  --santa-success-text: #b9f6c5;
+  --santa-tip-bg: #33290f;
+  --santa-tip-text: #ffe8a3;
+  --santa-footer-bg: #0d1013;
+  --santa-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+
+  --bs-body-bg: var(--santa-bg);
+  --bs-body-color: var(--santa-text);
+  --bs-secondary-color: var(--santa-muted);
+}
+
+[data-bs-theme="dark"] .card-santa,
+[data-bs-theme="dark"] .modal-content {
+  background-color: var(--santa-surface);
 }
 
 /* ─── Base ──────────────────────────────────────────────── */
 body {
-  background-color: var(--santa-snow);
+  background-color: var(--santa-bg);
   font-family: 'Segoe UI', system-ui, sans-serif;
-  color: #343a40;
+  color: var(--santa-text);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ─── Navbar ─────────────────────────────────────────────── */
@@ -61,7 +108,7 @@ body {
 
 /* ─── Section titles ─────────────────────────────────────── */
 .section-title {
-  color: var(--santa-red);
+  color: var(--santa-heading);
   font-weight: 700;
 }
 
@@ -104,7 +151,7 @@ body {
   text-align: center;
   padding: 2rem 1.25rem;
   height: 100%;
-  background: #fff;
+  background: var(--santa-surface);
   transition: transform 0.18s ease;
 }
 
@@ -138,7 +185,7 @@ body {
 /* ─── Form elements ──────────────────────────────────────── */
 .form-label {
   font-weight: 500;
-  color: #495057;
+  color: var(--santa-label);
   margin-bottom: 0.3rem;
 }
 
@@ -179,7 +226,7 @@ body {
   border: none;
 }
 
-.table-santa tbody tr:hover { background-color: #fff5f4; }
+.table-santa tbody tr:hover > * { --bs-table-bg-state: var(--santa-row-hover); }
 
 /* ─── Event detail badges ────────────────────────────────── */
 .detail-badge {
@@ -188,8 +235,8 @@ body {
   gap: 0.6rem;
   padding: 0.75rem 1rem;
   border-radius: 10px;
-  background: #fff;
-  border: 1px solid #f0dede;
+  background: var(--santa-surface);
+  border: 1px solid var(--santa-border);
   margin-bottom: 0.75rem;
 }
 
@@ -202,7 +249,7 @@ body {
 
 .detail-badge .detail-label {
   font-size: 0.78rem;
-  color: #888;
+  color: var(--santa-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1;
@@ -211,22 +258,54 @@ body {
 
 .detail-badge .detail-value {
   font-weight: 600;
-  color: var(--santa-dark);
+  color: var(--santa-detail-value);
   line-height: 1.2;
 }
 
 /* ─── Alert participant ──────────────────────────────────── */
 .alert-participant {
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-  border: 1px solid #a5d6a7;
+  background: var(--santa-success-bg);
+  border: 1px solid var(--santa-success-border);
   border-radius: 12px;
-  color: #1b5e20;
+  color: var(--santa-success-text);
   font-size: 1.05rem;
+}
+
+/* ─── Tip ────────────────────────────────────────────────── */
+.alert-tip-santa {
+  background: var(--santa-tip-bg);
+  color: var(--santa-tip-text);
+  border: 0;
+  border-left: 4px solid var(--santa-gold);
+  border-radius: 10px;
+}
+
+.alert-tip-santa .bi { color: var(--santa-gold); }
+
+/* ─── Theme toggle ──────────────────────────────────────── */
+.btn-theme-toggle {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.btn-theme-toggle:hover,
+.btn-theme-toggle:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
 .footer-santa {
-  background: var(--santa-dark);
+  background: var(--santa-footer-bg);
   color: #adb5bd;
   padding: 2rem 0;
   margin-top: 4rem;
