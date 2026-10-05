@@ -13,6 +13,8 @@ const routerEvent = require('@routes/eventRoutes');
 const routerParticipant = require('@routes/participantRoutes');
 const routerWishList = require('@routes/wishlistRoutes');
 const routerWebhook = require('@routes/webhookRoutes');
+const routerAuth = require('@routes/authRoutes');
+const { accessGate } = require('./middlewares/accessGate');
 
 const CDN = 'https://cdn.jsdelivr.net';
 
@@ -52,6 +54,9 @@ class AppController {
 
 		this.express.use(express.json({ limit: '50kb' }));
 		this.express.use(morgan(ACCESS_LOG_FORMAT, { stream: logger.stream }));
+
+		// Senha de acesso (ACCESS_GATE_ENABLED / ACCESS_PASSWORD no .env)
+		this.express.use(accessGate);
 	}
 
 	routes() {
@@ -63,6 +68,7 @@ class AppController {
 			message: { error: true, message: 'Muitas requisições. Tente novamente mais tarde.' },
 		});
 
+		this.express.use("/auth", routerAuth);
 		this.express.use("/event", apiLimiter, routerEvent);
 		this.express.use("/participant", apiLimiter, routerParticipant);
 		this.express.use('/wishlist', apiLimiter, routerWishList);
@@ -72,7 +78,7 @@ class AppController {
 
 		// 404 (manter sempre como ultima rota)
 		this.express.use((req, res) => {
-			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist|webhooks)\b/.test(req.path)) {
+			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist|webhooks|auth)\b/.test(req.path)) {
 				return res.status(404).json({ error: true, message: 'Recurso não encontrado.' });
 			}
 

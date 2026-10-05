@@ -12,6 +12,15 @@ const config = {
 		// Proxies confiaveis para obter o IP real (X-Forwarded-For). Padrao: nginx na mesma maquina
 		trustProxy: process.env.TRUST_PROXY || 'loopback',
 	},
+	access: {
+		// Exige senha para acessar a pagina inicial e criar eventos
+		enabled: process.env.ACCESS_GATE_ENABLED === 'true',
+		password: process.env.ACCESS_PASSWORD || '',
+		// Duracao da sessao apos o login
+		sessionDays: Number(process.env.ACCESS_SESSION_DAYS) || 30,
+		// Tentativas de login por IP a cada 15 minutos
+		loginAttemptsPer15Min: Number(process.env.ACCESS_LOGIN_ATTEMPTS) || 10,
+	},
 	limits: {
 		minParticipants: 3,
 		maxParticipants: 50,
