@@ -1,7 +1,7 @@
 Ola {NAME_FRIEND}
 
-Você esta participando da lista do amigo secreto gerado pelo sistema Secret Santa 
-e seu amigo secreto é o {NAME_RECEIVER}!
+VocÃª esta participando da lista do amigo secreto gerado pelo sistema Secret Santa 
+e seu amigo secreto Ã© o {NAME_RECEIVER}!
 
 Abaixo segue a mensagem deixada pelo organizador do evento {NAME_HOST}:
 {TEXT}
