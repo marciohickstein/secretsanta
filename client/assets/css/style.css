@@ -1,53 +1,77 @@
 :root {
-  --santa-red: #c0392b;
-  --santa-red-dark: #922b21;
-  --santa-green: #1e7e34;
-  --santa-green-light: #27ae60;
-  --santa-gold: #f39c12;
-  --santa-dark: #2c3e50;
-  --santa-snow: #fdf8f0;
-  --santa-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+  --santa-red: #e5383b;
+  --santa-red-dark: #a4161a;
+  --santa-green: #1b7a4b;
+  --santa-green-light: #2fb36d;
+  --santa-gold: #f5a524;
+  --santa-dark: #111827;
+  --santa-snow: #fbf7f4;
+  --santa-gradient: linear-gradient(135deg, #f0464a 0%, var(--santa-red) 45%, var(--santa-red-dark) 100%);
+  --santa-card-shadow: 0 1px 2px rgba(17, 24, 39, 0.04), 0 8px 28px -6px rgba(17, 24, 39, 0.10);
+  --santa-card-shadow-hover: 0 2px 4px rgba(17, 24, 39, 0.05), 0 18px 40px -10px rgba(17, 24, 39, 0.18);
+  --santa-glow: 0 8px 24px -6px rgba(229, 56, 59, 0.55);
+  --santa-radius: 20px;
 
   /* Tokens que mudam com o tema */
   --santa-bg: var(--santa-snow);
-  --santa-text: #343a40;
+  --santa-bg-glow-1: rgba(229, 56, 59, 0.08);
+  --santa-bg-glow-2: rgba(27, 122, 75, 0.07);
+  --santa-text: #374151;
+  --santa-title: #111827;
   --santa-surface: #fff;
-  --santa-border: #f0dede;
-  --santa-label: #495057;
-  --santa-muted: #888;
+  --santa-surface-2: #fdf9f7;
+  --santa-border: #f1e6e3;
+  --santa-label: #4b5563;
+  --santa-muted: #6b7280;
   --santa-heading: var(--santa-red);
+  --santa-chip-bg: #fdecec;
+  --santa-chip-text: var(--santa-red-dark);
   --santa-detail-value: var(--santa-dark);
-  --santa-row-hover: #fff5f4;
-  --santa-success-bg: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-  --santa-success-border: #a5d6a7;
-  --santa-success-text: #1b5e20;
-  --santa-tip-bg: #fff8e1;
-  --santa-tip-text: #664d03;
-  --santa-footer-bg: var(--santa-dark);
+  --santa-row-hover: #fff6f5;
+  --santa-success-bg: linear-gradient(135deg, #ecfdf3, #d3f5e2);
+  --santa-success-border: #a7e3c3;
+  --santa-success-text: #14532d;
+  --santa-tip-bg: #fff8e6;
+  --santa-tip-text: #6b4e05;
+  --santa-footer-bg: #111827;
+
+  /* Ajustes globais do Bootstrap */
+  --bs-body-font-family: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --bs-border-radius: 0.65rem;
+  --bs-border-radius-sm: 0.5rem;
+  --bs-border-radius-lg: 0.9rem;
 }
 
 /* ─── Tema escuro ────────────────────────────────────────── */
 [data-bs-theme="dark"] {
-  --santa-bg: #15191e;
-  --santa-text: #dee2e6;
-  --santa-surface: #1f252c;
-  --santa-border: #3a2f31;
-  --santa-label: #ced4da;
-  --santa-muted: #9aa0a6;
-  --santa-heading: #ff7b6e;
-  --santa-detail-value: #f1f3f5;
-  --santa-row-hover: #2a2224;
-  --santa-success-bg: linear-gradient(135deg, #16301c, #1c3d24);
-  --santa-success-border: #2e6b3a;
-  --santa-success-text: #b9f6c5;
-  --santa-tip-bg: #33290f;
-  --santa-tip-text: #ffe8a3;
-  --santa-footer-bg: #0d1013;
-  --santa-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --santa-bg: #0e1116;
+  --santa-bg-glow-1: rgba(229, 56, 59, 0.12);
+  --santa-bg-glow-2: rgba(47, 179, 109, 0.08);
+  --santa-text: #d1d5db;
+  --santa-title: #f9fafb;
+  --santa-surface: #171b22;
+  --santa-surface-2: #1c212a;
+  --santa-border: #2a2f39;
+  --santa-label: #cbd2da;
+  --santa-muted: #9ca3af;
+  --santa-heading: #ff7b72;
+  --santa-chip-bg: rgba(229, 56, 59, 0.16);
+  --santa-chip-text: #ff9a92;
+  --santa-detail-value: #f3f4f6;
+  --santa-row-hover: #1f242d;
+  --santa-success-bg: linear-gradient(135deg, #10291b, #143322);
+  --santa-success-border: #22573a;
+  --santa-success-text: #b7f5cf;
+  --santa-tip-bg: #2a220f;
+  --santa-tip-text: #ffe39e;
+  --santa-footer-bg: #090b0f;
+  --santa-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px -6px rgba(0, 0, 0, 0.55);
+  --santa-card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.35), 0 18px 40px -10px rgba(0, 0, 0, 0.7);
 
   --bs-body-bg: var(--santa-bg);
   --bs-body-color: var(--santa-text);
   --bs-secondary-color: var(--santa-muted);
+  --bs-border-color: var(--santa-border);
 }
 
 [data-bs-theme="dark"] .card-santa,
@@ -57,174 +81,315 @@
 
 /* ─── Base ──────────────────────────────────────────────── */
 body {
-  background-color: var(--santa-bg);
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 100% 0%, var(--santa-bg-glow-1), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, var(--santa-bg-glow-2), transparent 60%),
+    var(--santa-bg);
+  background-attachment: fixed;
+  font-family: var(--bs-body-font-family);
   color: var(--santa-text);
+  -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
+  letter-spacing: -0.02em;
+}
+
+::selection { background: rgba(229, 56, 59, 0.22); }
+
 /* ─── Navbar ─────────────────────────────────────────────── */
 .navbar-santa {
-  background: linear-gradient(135deg, var(--santa-red) 0%, var(--santa-red-dark) 100%);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.20);
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: rgba(164, 22, 26, 0.88);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
 }
 
 .navbar-santa .navbar-brand {
   color: #fff;
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.3px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
 }
 
-.navbar-santa .navbar-brand:hover { color: #ffe0de; }
+.navbar-santa .navbar-brand:hover { color: #fff; opacity: 0.9; }
 
 .navbar-santa .navbar-brand img {
-  height: 42px;
-  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+  height: 38px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
 }
+
+.navbar-santa .navbar-brand:hover img { transform: rotate(-8deg) scale(1.05); }
 
 /* ─── Hero ───────────────────────────────────────────────── */
 .hero-section {
-  background: linear-gradient(135deg, var(--santa-red) 0%, var(--santa-red-dark) 55%, #1a5c2a 100%);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(600px 400px at 10% 10%, rgba(255, 120, 110, 0.55), transparent 60%),
+    radial-gradient(700px 500px at 90% 90%, rgba(27, 122, 75, 0.85), transparent 60%),
+    radial-gradient(500px 300px at 85% 10%, rgba(245, 165, 36, 0.35), transparent 60%),
+    linear-gradient(135deg, var(--santa-red) 0%, var(--santa-red-dark) 60%, #5c0f12 100%);
   color: #fff;
-  padding: 64px 0 56px;
+  padding: 96px 0 120px;
   text-align: center;
+  border-radius: 0 0 40px 40px;
+}
+
+/* Neve sutil */
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.9) 1.5px, transparent 2px),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.7) 1px, transparent 1.5px),
+    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.6) 1px, transparent 1.5px);
+  background-size: 120px 120px, 90px 90px, 150px 150px;
+  opacity: 0.35;
+  animation: hero-snow 30s linear infinite;
+}
+
+@keyframes hero-snow {
+  to { background-position: 0 600px, 0 450px, 0 750px; }
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
 }
 
 .hero-section h1 {
-  font-size: 2.6rem;
+  font-size: clamp(2.4rem, 6vw, 4rem);
   font-weight: 800;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 }
 
 .hero-section p {
-  font-size: 1.15rem;
-  opacity: 0.92;
-  max-width: 620px;
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 600px;
   margin: 0 auto;
+}
+
+.hero-section .btn-light {
+  border-radius: 999px;
+  color: var(--santa-red-dark);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-section .btn-light:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55);
 }
 
 /* ─── Section titles ─────────────────────────────────────── */
 .section-title {
-  color: var(--santa-heading);
-  font-weight: 700;
+  color: var(--santa-title);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
 }
+
+.section-title .bi { color: var(--santa-heading); }
 
 .section-divider {
   border: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--santa-red), var(--santa-gold), var(--santa-green));
-  border-radius: 2px;
-  margin: 0.4rem 0 1.6rem;
-  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--santa-red), var(--santa-gold), var(--santa-green-light));
+  border-radius: 4px;
+  margin: 0.5rem 0 1.75rem;
+  width: 56px;
+  opacity: 1;
 }
 
 /* ─── Cards ──────────────────────────────────────────────── */
 .card-santa {
-  border: none;
-  border-radius: 14px;
+  border: 1px solid var(--santa-border);
+  border-radius: var(--santa-radius);
+  background: var(--santa-surface);
   box-shadow: var(--santa-card-shadow);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-santa:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  box-shadow: var(--santa-card-shadow-hover);
 }
 
 .card-santa .card-header-santa {
-  background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
-  color: #fff;
-  border-radius: 14px 14px 0 0;
+  display: flex;
+  align-items: center;
+  background: var(--santa-surface-2);
+  color: var(--santa-title);
+  border-bottom: 1px solid var(--santa-border);
   padding: 1rem 1.5rem;
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Icone do cabecalho vira um "chip" colorido */
+.card-santa .card-header-santa > .bi:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.75rem !important;
+  border-radius: 11px;
+  background: var(--santa-gradient);
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: var(--santa-glow);
 }
 
 /* ─── How it works steps ─────────────────────────────────── */
 .step-card {
-  border: none;
-  border-radius: 14px;
+  position: relative;
+  border: 1px solid var(--santa-border);
+  border-radius: var(--santa-radius);
   box-shadow: var(--santa-card-shadow);
   text-align: center;
-  padding: 2rem 1.25rem;
+  padding: 2.25rem 1.5rem;
   height: 100%;
   background: var(--santa-surface);
-  transition: transform 0.18s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.step-card:hover { transform: translateY(-4px); }
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--santa-card-shadow-hover);
+  border-color: rgba(229, 56, 59, 0.35);
+}
 
 .step-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  background: var(--santa-gradient);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
-  margin: 0 auto 1rem;
-  box-shadow: 0 4px 12px rgba(192,57,43,0.35);
+  font-size: 1.7rem;
+  margin: 0 auto 1.1rem;
+  box-shadow: var(--santa-glow);
+  transform: rotate(-6deg);
+  transition: transform 0.3s ease;
 }
+
+.step-card:hover .step-icon { transform: rotate(0) scale(1.06); }
 
 .step-number {
   display: inline-block;
-  background: var(--santa-gold);
-  color: #fff;
+  background: var(--santa-chip-bg);
+  color: var(--santa-chip-text);
   font-weight: 700;
-  font-size: 0.75rem;
-  border-radius: 50px;
-  padding: 2px 10px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  padding: 3px 12px;
   margin-bottom: 0.5rem;
 }
 
 /* ─── Form elements ──────────────────────────────────────── */
 .form-label {
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.92rem;
   color: var(--santa-label);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
+}
+
+.form-control, .form-select, .input-group-text {
+  border-color: var(--santa-border);
+}
+
+.form-control:not(.form-control-sm), .form-select:not(.form-select-sm) {
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+}
+
+.input-group-text {
+  background: var(--santa-surface-2);
+  color: var(--santa-muted);
 }
 
 .form-control:focus, .form-select:focus {
   border-color: var(--santa-red);
-  box-shadow: 0 0 0 0.2rem rgba(192,57,43,0.18);
+  box-shadow: 0 0 0 4px rgba(229, 56, 59, 0.15);
 }
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn-santa {
-  background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
+  background: var(--santa-gradient);
+  background-size: 150% 150%;
+  background-position: 0% 50%;
   border: none;
   color: #fff;
-  font-weight: 600;
-  padding: 0.6rem 1.6rem;
-  border-radius: 8px;
-  transition: opacity 0.15s ease, transform 0.12s ease;
+  font-weight: 700;
+  padding: 0.65rem 1.7rem;
+  border-radius: 999px;
+  box-shadow: var(--santa-glow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-position 0.4s ease;
 }
 
-.btn-santa:hover, .btn-santa:focus {
-  opacity: 0.9;
-  transform: translateY(-1px);
+.btn-santa:hover, .btn-santa:focus-visible {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -8px rgba(229, 56, 59, 0.65);
   color: #fff;
 }
 
-.btn-santa:active { transform: translateY(0); }
+.btn-santa:active { transform: translateY(0); color: #fff; }
+
+.btn-santa:disabled { color: #fff; opacity: 0.7; box-shadow: none; }
 
 .btn-santa-lg {
   font-size: 1.1rem;
-  padding: 0.8rem 2.4rem;
+  padding: 0.9rem 2.6rem;
 }
 
+.btn-outline-success, .btn-outline-danger, .btn-outline-secondary { border-radius: 999px; }
+
 /* ─── Table ──────────────────────────────────────────────── */
-.table-santa thead th {
-  background-color: var(--santa-red);
-  color: #fff;
-  font-weight: 600;
-  border: none;
+.table-santa {
+  --bs-table-bg: transparent;
 }
+
+.table-santa thead th {
+  background-color: var(--santa-surface-2);
+  color: var(--santa-muted);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--santa-border);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.table-santa tbody td { border-color: var(--santa-border); }
 
 .table-santa tbody tr:hover > * { --bs-table-bg-state: var(--santa-row-hover); }
 
@@ -233,7 +398,28 @@ body {
 .time-field { width: 5.25rem; }
 @media (min-width: 576px) { .time-field { width: 7.5rem; } }
 
-.date-chip { font-size: 0.8rem; padding: 0.15rem 0.7rem; }
+.date-chip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.8rem;
+  transition: transform 0.12s ease;
+}
+
+.date-chip:hover { transform: translateY(-1px); }
+
+.date-chip.btn-danger {
+  background: var(--santa-gradient);
+  border-color: transparent;
+  box-shadow: 0 4px 12px -4px rgba(229, 56, 59, 0.6);
+}
+
+.date-chip.btn-outline-secondary {
+  --bs-btn-color: var(--santa-label);
+  --bs-btn-border-color: var(--santa-border);
+  --bs-btn-hover-bg: var(--santa-chip-bg);
+  --bs-btn-hover-color: var(--santa-chip-text);
+  --bs-btn-hover-border-color: transparent;
+}
 
 /* Calendario (flatpickr) no tema escuro */
 [data-bs-theme="dark"] .flatpickr-calendar {
@@ -266,10 +452,12 @@ body {
 [data-bs-theme="dark"] .flatpickr-day.prevMonthDay,
 [data-bs-theme="dark"] .flatpickr-day.nextMonthDay { color: var(--bs-secondary-color); opacity: 0.5; }
 
-.flatpickr-day.selected,
-.flatpickr-day.selected:hover { background: #c0392b; border-color: #c0392b; color: #fff; }
+.flatpickr-calendar { border-radius: 14px; }
 
-.flatpickr-day.today { border-color: #c0392b; }
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover { background: var(--santa-red); border-color: var(--santa-red); color: #fff; }
+
+.flatpickr-day.today { border-color: var(--santa-red); }
 
 .date-preview {
   font-size: 0.875rem;
@@ -279,42 +467,54 @@ body {
 
 /* ─── Gift suggestions ───────────────────────────────────── */
 .suggestion-card {
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  border-radius: 14px;
   background: var(--santa-surface);
   border: 1px solid var(--santa-border);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.suggestion-card:hover {
+  border-color: rgba(229, 56, 59, 0.35);
+  transform: translateY(-2px);
 }
 
 /* ─── Event detail badges ────────────────────────────────── */
 .detail-badge {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
   background: var(--santa-surface);
   border: 1px solid var(--santa-border);
   margin-bottom: 0.75rem;
 }
 
 .detail-badge .detail-icon {
-  font-size: 1.4rem;
-  width: 36px;
-  text-align: center;
+  font-size: 1.25rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--santa-chip-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
 .detail-badge .detail-label {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--santa-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.06em;
   line-height: 1;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .detail-badge .detail-value {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--santa-detail-value);
   line-height: 1.2;
 }
@@ -323,7 +523,7 @@ body {
 .alert-participant {
   background: var(--santa-success-bg);
   border: 1px solid var(--santa-success-border);
-  border-radius: 12px;
+  border-radius: 16px;
   color: var(--santa-success-text);
   font-size: 1.05rem;
 }
@@ -331,29 +531,32 @@ body {
 /* ─── Message box ───────────────────────────────────────── */
 .modal-santa .modal-content {
   background-color: var(--santa-surface);
+  border-radius: 24px !important;
 }
+
+.modal-backdrop.show { opacity: 0.6; }
 
 .modal-santa-icon {
   width: 84px;
   height: 84px;
   margin: 0 auto;
-  border-radius: 50%;
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 2.6rem;
   color: #fff;
-  animation: modal-santa-pop 0.35s ease-out;
+  animation: modal-santa-pop 0.4s ease-out;
 }
 
 .modal-santa-icon-success {
   background: linear-gradient(135deg, var(--santa-green-light), var(--santa-green));
-  box-shadow: 0 6px 20px rgba(30, 126, 52, 0.35);
+  box-shadow: 0 10px 28px -6px rgba(27, 122, 75, 0.55);
 }
 
 .modal-santa-icon-error {
-  background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
-  box-shadow: 0 6px 20px rgba(192, 57, 43, 0.35);
+  background: var(--santa-gradient);
+  box-shadow: 0 10px 28px -6px rgba(229, 56, 59, 0.55);
   font-size: 2.2rem;
 }
 
@@ -361,8 +564,8 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
   background: var(--santa-success-bg);
   border: 1px solid var(--santa-success-border);
   color: var(--santa-success-text);
@@ -380,21 +583,23 @@ body {
 .modal-santa-steps li::marker { color: var(--santa-red); font-weight: 700; }
 
 @keyframes modal-santa-pop {
-  0%   { transform: scale(0.5); opacity: 0; }
-  70%  { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .modal-santa-icon { animation: none; }
+  0%   { transform: scale(0.5) rotate(-12deg); opacity: 0; }
+  70%  { transform: scale(1.08) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
 }
 
 /* ─── Compact hero ─────────────────────────────────────── */
 .hero-compact {
-  background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
-  padding: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(500px 250px at 90% 120%, rgba(27, 122, 75, 0.7), transparent 60%),
+    radial-gradient(400px 200px at 5% -20%, rgba(255, 120, 110, 0.5), transparent 60%),
+    linear-gradient(135deg, var(--santa-red), var(--santa-red-dark));
+  padding: 2.75rem 0;
   text-align: center;
   color: #fff;
+  border-radius: 0 0 32px 32px;
 }
 
 /* ─── Organizer panel ───────────────────────────────────── */
@@ -404,8 +609,8 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-radius: 12px;
+  padding: 1.1rem 1.35rem;
+  border-radius: 16px;
   border: 1px dashed var(--santa-gold);
   background: var(--santa-tip-bg);
 }
@@ -415,17 +620,24 @@ body {
   align-items: center;
   gap: 1rem;
   height: 100%;
-  padding: 1rem 1.25rem;
-  border-radius: 14px;
+  padding: 1.2rem 1.35rem;
+  border-radius: var(--santa-radius);
+  border: 1px solid var(--santa-border);
   background: var(--santa-surface);
   box-shadow: var(--santa-card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--santa-card-shadow-hover);
 }
 
 .panel-stat-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
-  border-radius: 12px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -433,14 +645,15 @@ body {
   color: #fff;
 }
 
-.panel-stat-success { background: linear-gradient(135deg, var(--santa-green-light), var(--santa-green)); }
-.panel-stat-danger  { background: linear-gradient(135deg, var(--santa-red), var(--santa-red-dark)); }
-.panel-stat-gold    { background: linear-gradient(135deg, #f7b733, var(--santa-gold)); }
-.panel-stat-muted   { background: #adb5bd; }
+.panel-stat-success { background: linear-gradient(135deg, var(--santa-green-light), var(--santa-green)); box-shadow: 0 8px 20px -6px rgba(27, 122, 75, 0.5); }
+.panel-stat-danger  { background: var(--santa-gradient); box-shadow: var(--santa-glow); }
+.panel-stat-gold    { background: linear-gradient(135deg, #ffc857, var(--santa-gold)); box-shadow: 0 8px 20px -6px rgba(245, 165, 36, 0.55); }
+.panel-stat-muted   { background: #9ca3af; }
 
 .panel-stat-value {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
   line-height: 1.1;
   color: var(--santa-detail-value);
 }
@@ -469,15 +682,17 @@ body {
   align-items: center;
   padding: 3rem 0;
   background:
-    radial-gradient(circle at 15% 20%, rgba(192, 57, 43, 0.10), transparent 40%),
-    radial-gradient(circle at 85% 80%, rgba(30, 126, 52, 0.10), transparent 40%);
+    radial-gradient(circle at 15% 20%, rgba(229, 56, 59, 0.14), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(27, 122, 75, 0.14), transparent 40%);
 }
 
 .login-page .footer-santa { margin-top: 0; }
 
+.login-card { border-radius: 28px; }
+
 .login-card:hover { transform: none; }
 
-.login-icon { width: 72px; height: 72px; font-size: 2rem; }
+.login-icon { width: 72px; height: 72px; font-size: 2rem; border-radius: 24px; }
 
 /* ─── Tip ────────────────────────────────────────────────── */
 .alert-tip-santa {
@@ -485,7 +700,7 @@ body {
   color: var(--santa-tip-text);
   border: 0;
   border-left: 4px solid var(--santa-gold);
-  border-radius: 10px;
+  border-radius: 14px;
 }
 
 .alert-tip-santa .bi { color: var(--santa-gold); }
@@ -493,7 +708,8 @@ body {
 /* ─── Theme toggle ──────────────────────────────────────── */
 .btn-theme-toggle {
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -501,27 +717,40 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  transition: background 0.15s ease, transform 0.3s ease;
 }
 
 .btn-theme-toggle:hover,
 .btn-theme-toggle:focus-visible {
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: rotate(20deg);
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
 .footer-santa {
+  position: relative;
   background: var(--santa-footer-bg);
-  color: #adb5bd;
-  padding: 2rem 0;
+  color: #9ca3af;
+  padding: 2.5rem 0;
   margin-top: 4rem;
   font-size: 0.88rem;
 }
 
+.footer-santa::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--santa-red), var(--santa-gold), var(--santa-green-light));
+}
+
 .footer-santa a {
-  color: #ffe0de;
+  color: #fecaca;
   text-decoration: none;
 }
 
@@ -539,9 +768,28 @@ body {
 }
 
 .page-404 .number-404 {
-  font-size: 8rem;
-  font-weight: 900;
-  color: var(--santa-red);
+  font-size: clamp(6rem, 18vw, 10rem);
+  font-weight: 800;
+  letter-spacing: -0.06em;
   line-height: 1;
-  text-shadow: 4px 4px 0 rgba(192,57,43,0.15);
+  background: linear-gradient(135deg, var(--santa-red), var(--santa-gold) 60%, var(--santa-green-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ─── Movimento reduzido ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .modal-santa-icon,
+  .hero-section::before { animation: none; }
+
+  .card-santa, .step-card, .step-icon, .panel-stat, .suggestion-card,
+  .btn-santa, .date-chip, .btn-theme-toggle, .navbar-santa .navbar-brand img {
+    transition: none;
+  }
+
+  .step-card:hover, .step-icon, .step-card:hover .step-icon, .panel-stat:hover,
+  .suggestion-card:hover, .btn-santa:hover, .date-chip:hover, .btn-theme-toggle:hover {
+    transform: none;
+  }
 }
