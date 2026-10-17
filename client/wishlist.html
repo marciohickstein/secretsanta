@@ -118,6 +118,7 @@
                     <th>Presente</th>
                     <th>Preço Estimado</th>
                     <th>Informações Extras</th>
+                    <th>Onde comprar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -128,9 +129,16 @@
                       <span class="badge text-bg-success fs-6 fw-normal">{{wl.price}}</span>
                     </td>
                     <td class="text-muted small">{{wl.infoExtra}}</td>
+                    <td>
+                      <div class="d-flex flex-wrap gap-1">
+                        <a ng-repeat="l in wl.links" ng-href="{{l.url}}" target="_blank" rel="sponsored noopener noreferrer"
+                          class="btn btn-sm btn-outline-secondary text-nowrap" title="Pesquisar {{wl.product}} na {{l.store}}">
+                          <i class="bi bi-search me-1"></i>{{l.store}}</a>
+                      </div>
+                    </td>
                   </tr>
                   <tr ng-show="wishlist.length === 0">
-                    <td colspan="4" class="text-center text-muted py-4">
+                    <td colspan="5" class="text-center text-muted py-4">
                       <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                       Nenhum presente cadastrado ainda.
                     </td>
@@ -138,6 +146,39 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── Sugestoes de presente (links de afiliado) ── -->
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-10 col-lg-8" ng-controller="ctrlSuggestions" ng-init="getSuggestions()" ng-show="suggestions.length">
+        <div class="card-santa card">
+          <div class="card-header-santa">
+            <i class="bi bi-lightbulb-fill me-2"></i>Ideias de presente para {{participant.name || 'seu amigo secreto'}}
+          </div>
+          <div class="card-body p-4">
+            <p class="small text-muted mb-3">Sem inspiração? Sugestões para <span ng-show="profileLabel">{{profileLabel}}</span><span ng-hide="profileLabel">qualquer pessoa</span><span ng-show="maxAmount"> de até R$ {{maxAmount}}</span>, já filtradas pelo valor do evento.</p>
+            <div class="row g-3">
+              <div class="col-sm-6 col-lg-6" ng-repeat="s in suggestions">
+                <div class="suggestion-card h-100">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi fs-4 text-danger" ng-class="s.icon"></i>
+                    <div>
+                      <div class="fw-semibold">{{s.title}}</div>
+                      <div class="small text-muted">a partir de R$ {{s.from}}</div>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <a ng-repeat="l in s.links" ng-href="{{l.url}}" target="_blank" rel="sponsored noopener noreferrer"
+                      class="btn btn-sm btn-outline-secondary"><i class="bi bi-box-arrow-up-right me-1"></i>{{l.store}}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="small text-muted mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Alguns links são de parceiros: podemos receber uma comissão pelas compras, sem custo extra para você.</p>
           </div>
         </div>
       </div>
@@ -163,6 +204,8 @@
   <script src="./assets/js/services/eventService.js" defer></script>
   <script src="./assets/js/controllers/participantController.js" defer></script>
   <script src="./assets/js/services/participantService.js" defer></script>
+  <script src="./assets/js/controllers/suggestionController.js" defer></script>
+  <script src="./assets/js/services/suggestionService.js" defer></script>
 
 </body>
 </html>

@@ -57,6 +57,16 @@ const config = {
 		// Tempo minimo entre reenvios para o mesmo participante
 		resendCooldownMs: 10 * 60 * 1000,
 	},
+	suggestions: {
+		// Lojas exibidas nas sugestoes de presente, na ordem (amazon, mercadolivre, magalu)
+		stores: (process.env.SUGGESTION_STORES || 'amazon,mercadolivre,magalu').split(',').map(s => s.trim()).filter(Boolean),
+		// Tag do Amazon Associados (ex.: meusite-20)
+		amazonTag: process.env.AFFILIATE_AMAZON_TAG || '',
+		// Parametros de afiliado do Mercado Livre anexados a busca (ex.: matt_word=meusite&matt_tool=123456)
+		mercadoLivreParams: (process.env.AFFILIATE_MERCADOLIVRE_PARAMS || '').replace(/^\?/, ''),
+		// Loja do Parceiro Magalu (ex.: magazinemeusite); sem ela a Magalu nao aparece
+		magaluStore: process.env.AFFILIATE_MAGALU_STORE || '',
+	},
 	templates: {
 		emailHost: `emailhost.html`,
 		emailParticipant: `emailparticipant.html`,

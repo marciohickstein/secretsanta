@@ -48,6 +48,7 @@ async function buildView(event) {
 			name: participant.name,
 			email: participant.email,
 			celphone: participant.celphone || '',
+			profile: participant.profile || '',
 			isHost,
 			emailStatus: notifications.emailStatusView(participant),
 			wishlistItems: wishlist ? (wishlist.wishlist || []).length : null,

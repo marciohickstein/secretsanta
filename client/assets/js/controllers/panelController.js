@@ -142,13 +142,16 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 			.finally(() => { $scope.busy = false; });
 	};
 
+	const PROFILE_LABELS = { crianca: 'Criança', mulher: 'Mulher', homem: 'Homem' };
+	$scope.profileLabel = (profile) => PROFILE_LABELS[profile] || '';
+
 	$scope.openEdit = (p) => {
-		$scope.edit = { id: p.id, name: p.name, email: p.email, celphone: p.celphone, canResend: p.canResend };
+		$scope.edit = { id: p.id, name: p.name, email: p.email, celphone: p.celphone, profile: p.profile || '', canResend: p.canResend };
 		modalOf('editModal').show();
 	};
 
 	$scope.saveEdit = () => {
-		const { id, name, email, celphone } = $scope.edit;
+		const { id, name, email, celphone, profile } = $scope.edit;
 
 		if (!name || !email) {
 			showMessage({ title: 'Quase lá!', message: 'Informe o nome e um e-mail válido.' });
@@ -157,7 +160,7 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 
 		$scope.busy = true;
 
-		panelService.updateParticipant(eventId, token, id, { name, email, celphone: celphone || '' })
+		panelService.updateParticipant(eventId, token, id, { name, email, celphone: celphone || '', profile: profile || '' })
 			.then((response) => {
 				applyData(response.data);
 				modalOf('editModal').hide();

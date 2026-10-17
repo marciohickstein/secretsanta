@@ -181,6 +181,8 @@
                     <div class="fw-semibold">
                       {{p.name}}
                       <span ng-show="p.isHost" class="badge text-bg-warning ms-1"><i class="bi bi-star-fill me-1"></i>Organizador</span>
+                      <span ng-show="p.profile" class="badge bg-body-tertiary text-body-secondary border ms-1">{{ profileLabel(p.profile) }}</span>
+                      <span ng-show="!p.profile" class="badge text-bg-light border border-warning text-warning-emphasis ms-1" title="Edite para informar o perfil e melhorar as sugestões de presente">Sem perfil</span>
                     </div>
                     <div class="small text-muted text-break">{{p.email}}</div>
                     <div class="small text-muted" ng-show="p.celphone"><i class="bi bi-phone me-1"></i>{{p.celphone}}</div>
@@ -249,6 +251,16 @@
               <div class="mb-0">
                 <label for="edit_celphone" class="form-label">Celular</label>
                 <input id="edit_celphone" type="text" class="form-control" ng-model="edit.celphone" maxlength="20">
+              </div>
+              <div class="mt-3">
+                <label for="edit_profile" class="form-label">Perfil</label>
+                <select id="edit_profile" class="form-select" ng-model="edit.profile">
+                  <option value="">Não informado</option>
+                  <option value="crianca">Criança</option>
+                  <option value="mulher">Mulher</option>
+                  <option value="homem">Homem</option>
+                </select>
+                <div class="form-text">Usado para sugerir presentes a quem tirar esta pessoa.</div>
               </div>
               <div class="small text-muted mt-3" ng-show="edit.canResend">
                 <i class="bi bi-info-circle me-1"></i>Depois de salvar, use <strong>Reenviar</strong> para mandar o e-mail para o endereço corrigido.

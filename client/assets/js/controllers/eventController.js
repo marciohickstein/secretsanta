@@ -21,17 +21,20 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			{
 				name: "Marcio Hickstein",
 				email: "marcio.hickstein@gmail.com",
-				celphone: "51984120669"
+				celphone: "51984120669",
+				profile: "homem"
 			},
 			{
 				name: "Ana Paula Fernandes",
 				email: "marcio.inetsoft@gmail.com",
-				celphone: "51984120669"
+				celphone: "51984120669",
+				profile: "mulher"
 			},
 			{
 				name: "Leo Hickstein",
 				email: "hicky.kt@gmail.com",
-				celphone: "51984120669"
+				celphone: "51984120669",
+				profile: "crianca"
 			}
 		];
 	}
@@ -86,6 +89,12 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			if (!p.name || !p.email || !p.celphone) {
 				const who = index === 0 ? 'do organizador (participante 1)' : `do participante ${index + 1}`;
 				return `Preencha nome, e-mail válido e celular ${who}.`;
+			}
+
+			// O perfil define as sugestoes de presente (crianca, mulher ou homem)
+			if (!p.profile) {
+				const who = index === 0 ? 'do organizador (participante 1)' : `do participante ${index + 1}`;
+				return `Informe se ${who} é criança, mulher ou homem. Usamos isso para sugerir presentes.`;
 			}
 		}
 

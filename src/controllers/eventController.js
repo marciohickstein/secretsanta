@@ -70,6 +70,11 @@ eventController.create = async (req, res) => {
 		created_at: Date.now(),
 	});
 
+	// Vincula os participantes ao evento (usado nas sugestoes de presente pelo valor maximo)
+	for (const participant of created) {
+		await ParticipantModel.update(participant.id, { eventId: eventCreated.id });
+	}
+
 	logger.info('Evento criado com sucesso', { eventId: eventCreated.id, participants: created.length });
 
 	const baseUrl = getBaseUrl(req);

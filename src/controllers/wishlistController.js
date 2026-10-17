@@ -4,6 +4,7 @@ require('module-alias/register');
 
 const WishListModel = require('@models/wishlistModel');
 const ParticipantModel = require('@models/participantModel');
+const suggestionService = require('@services/suggestionService');
 const { validateWishlist } = require('@utils/validation');
 const { safeEqual } = require('@utils/security');
 
@@ -15,7 +16,10 @@ controller.getOne = async (req, res) => {
 	if (!item)
 		return res.status(404).json({ error: true, message: "Lista de presentes não encontrada" });
 
-	return res.status(200).json({ id: item.id, wishlist: item.wishlist || [] });
+	// Cada presente vem com links de busca nas lojas parceiras (afiliados)
+	const wishlist = (item.wishlist || []).map(gift => ({ ...gift, links: suggestionService.searchLinks(gift.product) }));
+
+	return res.status(200).json({ id: item.id, wishlist });
 };
 
 /* Cria ou atualiza a lista do participante. Exige o token de edicao enviado somente ao proprio participante */

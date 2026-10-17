@@ -228,6 +228,14 @@ body {
 
 .table-santa tbody tr:hover > * { --bs-table-bg-state: var(--santa-row-hover); }
 
+/* ─── Gift suggestions ───────────────────────────────────── */
+.suggestion-card {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--santa-surface);
+  border: 1px solid var(--santa-border);
+}
+
 /* ─── Event detail badges ────────────────────────────────── */
 .detail-badge {
   display: flex;

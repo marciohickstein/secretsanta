@@ -1,6 +1,7 @@
 "use strict"
 
 process.env.TEST = 2;
+process.env.AFFILIATE_MERCADOLIVRE_PARAMS = '';
 
 require('module-alias/register');
 const request = require('supertest');
@@ -65,6 +66,14 @@ describe(`API /wishlist`, () => {
 
 		const response = await request(app).get(`/wishlist/${participant.id}`).expect(200);
 		expect(response.body.wishlist).toHaveLength(1);
+	});
+
+	it(`retorna links de busca do presente nas lojas parceiras`, async () => {
+		const response = await request(app).get(`/wishlist/${participant.id}`).expect(200);
+		const [amazon, ml] = response.body.wishlist[0].links;
+
+		expect(amazon).toStrictEqual({ store: 'Amazon', url: expect.stringMatching(/^https:\/\/www\.amazon\.com\.br\/s\?k=iphone/) });
+		expect(ml).toStrictEqual({ store: 'Mercado Livre', url: expect.stringMatching(/^https:\/\/lista\.mercadolivre\.com\.br\/iphone$/) });
 	});
 
 	it(`rejeita lista invalida`, async () => {

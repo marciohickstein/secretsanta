@@ -152,6 +152,41 @@
           </div>
         </div>
 
+
+    <!-- ── Sugestoes de presente (links de afiliado) ── -->
+    <div class="row mt-4 mb-4">
+      <div class="col-12" ng-controller="ctrlSuggestions" ng-init="getSuggestions()" ng-show="suggestions.length">
+        <div class="card-santa card">
+          <div class="card-header-santa">
+            <i class="bi bi-lightbulb-fill me-2"></i>Precisa de ideias?
+          </div>
+          <div class="card-body p-4">
+            <p class="small text-muted mb-3">Sugestões<span ng-show="maxAmount"> de até R$ {{maxAmount}}</span>. Clique em <strong>+</strong> para adicionar à sua lista e depois em <strong>Salvar Lista</strong>.</p>
+            <div class="row g-3">
+              <div class="col-sm-6 col-lg-4" ng-repeat="s in suggestions">
+                <div class="suggestion-card h-100">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi fs-4 text-danger" ng-class="s.icon"></i>
+                    <div>
+                      <div class="fw-semibold">{{s.title}}</div>
+                      <div class="small text-muted">a partir de R$ {{s.from}}</div>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <a ng-repeat="l in s.links" ng-href="{{l.url}}" target="_blank" rel="sponsored noopener noreferrer"
+                      class="btn btn-sm btn-outline-secondary"><i class="bi bi-box-arrow-up-right me-1"></i>{{l.store}}</a>
+                    <button type="button" class="btn btn-sm btn-outline-success" ng-show="canEdit" ng-click="addSuggestion(s)" title="Adicionar à minha lista">
+                      <i class="bi bi-plus-lg"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="small text-muted mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Alguns links são de parceiros: podemos receber uma comissão pelas compras, sem custo extra para você.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
         <!-- Dica -->
         <div class="alert alert-tip-santa d-flex gap-2 mt-4" role="alert">
           <i class="bi bi-lightbulb-fill fs-5 mt-1"></i>
@@ -179,6 +214,8 @@
   <script src="./assets/js/script.js"></script>
   <script src="./assets/js/controllers/wishlistController.js"></script>
   <script src="./assets/js/services/wishlistService.js"></script>
+  <script src="./assets/js/controllers/suggestionController.js"></script>
+  <script src="./assets/js/services/suggestionService.js"></script>
 
 </body>
 </html>

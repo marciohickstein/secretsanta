@@ -12,6 +12,9 @@ class ValidationError extends Error {
 	}
 }
 
+/* Perfil do participante, usado nas sugestoes de presente */
+const PROFILES = ['crianca', 'mulher', 'homem'];
+
 const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
 function text(value, field, { required = false, max = 200 } = {}) {
@@ -54,6 +57,12 @@ function celphone(value, field) {
 	return str;
 }
 
+function profile(value, field) {
+	if (value === undefined || value === null || value === '') return '';
+	if (!PROFILES.includes(value)) throw new ValidationError(`Perfil inválido: ${field}.`);
+	return value;
+}
+
 function participant(value, field) {
 	if (!isPlainObject(value)) throw new ValidationError(`Participante inválido: ${field}.`);
 
@@ -61,6 +70,7 @@ function participant(value, field) {
 		name: text(value.name, `${field}.name`, { required: true, max: 100 }),
 		email: email(value.email, `${field}.email`),
 		celphone: celphone(value.celphone, `${field}.celphone`),
+		profile: profile(value.profile, `${field}.profile`),
 	};
 }
 
@@ -126,10 +136,11 @@ function validateParticipantUpdate(body) {
 	if (body.name !== undefined) update.name = text(body.name, 'name', { required: true, max: 100 });
 	if (body.email !== undefined) update.email = email(body.email, 'email');
 	if (body.celphone !== undefined) update.celphone = celphone(body.celphone, 'celphone');
+	if (body.profile !== undefined) update.profile = profile(body.profile, 'profile');
 
 	if (Object.keys(update).length === 0) throw new ValidationError('Nenhum dado para atualizar.');
 
 	return update;
 }
 
-module.exports = { ValidationError, validateEvent, validateWishlist, validateParticipantUpdate };
+module.exports = { PROFILES, ValidationError, validateEvent, validateWishlist, validateParticipantUpdate };

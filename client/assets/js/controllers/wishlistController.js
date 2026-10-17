@@ -63,6 +63,12 @@ appSecretSanta.controller("ctrlWishList", ($scope, wishlistService, idParticipan
 		$scope.save = true;
 	}
 
+	// Adiciona uma ideia do card de sugestoes (ctrlSuggestions e um escopo filho deste)
+	$scope.addSuggestion = (suggestion) => {
+		$scope.wishlistTemp.push({ product: suggestion.title, price: '', infoExtra: '' });
+		$scope.save = true;
+	}
+
 	$scope.delItem = (item) => {
 		const idxToDel = $scope.wishlistTemp.indexOf(item);
 		$scope.wishlistTemp.splice(idxToDel, 1);

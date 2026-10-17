@@ -95,7 +95,7 @@
               <div class="step-icon"><i class="bi bi-pencil-fill"></i></div>
               <span class="step-number">Passo 1</span>
               <h5 class="fw-bold mt-2">Crie o evento</h5>
-              <p class="text-muted small mb-0">Preencha a data, local, valor máximo e adicione ao menos 3 participantes. O primeiro é o operador da lista.</p>
+              <p class="text-muted small mb-0">Preencha a data, local, valor máximo e adicione ao menos 3 participantes. O primeiro é o operador da lista. Informe se cada pessoa é criança, mulher ou homem para receber ideias de presente certeiras.</p>
             </div>
           </div>
           <div class="col-md-4">
@@ -170,6 +170,7 @@
                       <th>Nome</th>
                       <th>E-mail</th>
                       <th>Celular</th>
+                      <th style="width:150px">Perfil</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -179,6 +180,14 @@
                       <td><input ng-model="participant.name" class="form-control form-control-sm" type="text" placeholder="Nome completo"></td>
                       <td><input ng-model="participant.email" class="form-control form-control-sm" type="email" placeholder="email@exemplo.com"></td>
                       <td><input ng-model="participant.celphone" class="form-control form-control-sm" type="text" placeholder="+55 11 9..."></td>
+                      <td>
+                        <select ng-model="participant.profile" class="form-select form-select-sm" aria-label="Perfil do participante">
+                          <option value="">Selecione...</option>
+                          <option value="crianca">Criança</option>
+                          <option value="mulher">Mulher</option>
+                          <option value="homem">Homem</option>
+                        </select>
+                      </td>
                       <td class="text-end pe-3">
                         <span ng-show="participants.indexOf(participant) === 0" class="badge text-bg-warning">
                           <i class="bi bi-star-fill me-1"></i>Operador
