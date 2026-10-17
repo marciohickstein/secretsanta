@@ -1,5 +1,6 @@
 "use strict"
 
+const dns = require('dns').promises;
 const config = require('../config');
 
 const EMAIL = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:"]{2,}$/;
@@ -143,4 +144,46 @@ function validateParticipantUpdate(body) {
 	return update;
 }
 
-module.exports = { PROFILES, ValidationError, validateEvent, validateWishlist, validateParticipantUpdate };
+// Resolver com timeout curto: uma falha de rede no DNS nao pode travar o cadastro
+const resolver = new dns.Resolver({ timeout: 3000, tries: 2 });
+
+// Respostas que indicam que o dominio realmente nao recebe e-mails (timeout e afins nao bloqueiam)
+const NO_DOMAIN = new Set(['ENOTFOUND', 'ENODATA']);
+
+async function domainReceivesEmail(domain) {
+	try {
+		const mx = await resolver.resolveMx(domain);
+		// "Null MX" (RFC 7505): o dominio declara que nao recebe e-mails
+		return !(mx.length === 1 && mx[0].exchange === '');
+	} catch (err) {
+		if (err.code === 'ENOTFOUND') return false;
+		if (!NO_DOMAIN.has(err.code)) return true;
+	}
+
+	// Sem MX, a entrega vai para o endereco do proprio dominio (RFC 5321)
+	for (const resolve of [resolver.resolve4, resolver.resolve6]) {
+		try {
+			if ((await resolve.call(resolver, domain)).length) return true;
+		} catch (err) {
+			if (!NO_DOMAIN.has(err.code)) return true;
+		}
+	}
+
+	return false;
+}
+
+/* Confere no DNS se os dominios dos e-mails existem; lanca ValidationError no primeiro invalido */
+async function checkEmailDomains(emails) {
+	if (!config.email.checkDomains) return;
+
+	const domains = [...new Set(emails.map(e => e.slice(e.lastIndexOf('@') + 1)))];
+	const results = await Promise.all(domains.map(domainReceivesEmail));
+	const invalid = domains.filter((_, i) => !results[i]);
+
+	if (invalid.length) {
+		const bad = emails.find(e => e.endsWith(`@${invalid[0]}`));
+		throw new ValidationError(`O e-mail ${bad} não existe: o domínio "${invalid[0]}" não recebe e-mails. Confira se foi digitado corretamente.`);
+	}
+}
+
+module.exports = { PROFILES, ValidationError, validateEvent, validateWishlist, validateParticipantUpdate, checkEmailDomains };

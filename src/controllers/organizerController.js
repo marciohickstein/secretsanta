@@ -8,7 +8,7 @@ const ParticipantModel = require('@models/participantModel');
 const WishListModel = require('@models/wishlistModel');
 const drawService = require('@services/drawService');
 const notifications = require('@services/notificationService');
-const { validateParticipantUpdate } = require('@utils/validation');
+const { validateParticipantUpdate, checkEmailDomains } = require('@utils/validation');
 const { safeEqual } = require('@utils/security');
 const { getBaseUrl } = require('@utils/util');
 const logger = require('@utils/logger');
@@ -142,6 +142,8 @@ organizerController.updateParticipant = async (req, res) => {
 	const update = validateParticipantUpdate(req.body);
 
 	if (update.email) {
+		await checkEmailDomains([update.email]);
+
 		for (const id of [event.host, ...(event.participants || [])]) {
 			if (id === participantId) continue;
 
