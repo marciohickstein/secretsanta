@@ -8,14 +8,82 @@ if (!appSecretSanta) {
 const idEvent = getUrlParameter('idevent');
 appSecretSanta.value("idEvent", idEvent ? idEvent : '');
 
+const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const defaultTime = () => new Date(1970, 0, 1, 20, 0);
+const sameDay = (a, b) => a instanceof Date && b instanceof Date && a.toDateString() === b.toDateString();
+
+// Proxima ocorrencia de um dia do ano (ex.: 24/12) a partir de hoje
+const nextDayOfYear = (month, day) => {
+	const today = startOfToday();
+	const d = new Date(today.getFullYear(), month, day);
+	if (d < today) d.setFullYear(d.getFullYear() + 1);
+	return d;
+};
+
+// Proximo dia da semana (0 = domingo); se hoje for o dia, pula para a semana seguinte
+const nextWeekday = (weekday) => {
+	const d = startOfToday();
+	d.setDate(d.getDate() + (((weekday - d.getDay() + 7) % 7) || 7));
+	return d;
+};
+
+/* Junta a data e o horario escolhidos; null se algum estiver vazio ou invalido */
+const combineDateTime = (date, time) => {
+	if (!(date instanceof Date) || isNaN(date) || !(time instanceof Date) || isNaN(time)) return null;
+	return new Date(date.getFullYear(), date.getMonth(), date.getDate(), time.getHours(), time.getMinutes());
+};
+
+// Ex.: "quinta-feira, 24/12/2026 às 20:00" (texto exibido nos e-mails e no painel)
+const formatPartyDate = (d) =>
+	`${d.toLocaleDateString('pt-BR', { weekday: 'long' })}, ${d.toLocaleDateString('pt-BR')} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
 appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	$scope.events = [];
 	$scope.idEvent = idEvent;
 
+	$scope.eventTime = defaultTime();
+
+	$scope.dateShortcuts = [
+		{ label: 'Véspera de Natal', date: () => nextDayOfYear(11, 24) },
+		{ label: 'Natal', date: () => nextDayOfYear(11, 25) },
+		{ label: 'Próxima sexta', date: () => nextWeekday(5) },
+		{ label: 'Próximo sábado', date: () => nextWeekday(6) },
+	];
+
+	// Valores mais comuns para o presente
+	$scope.amountShortcuts = [50, 100, 150, 200];
+	$scope.setAmount = (value) => { $scope.eventAmount = value; };
+
+	$scope.setDate = (shortcut) => {
+		$scope.eventDate = shortcut.date();
+		if (!$scope.eventTime) $scope.eventTime = defaultTime();
+	};
+
+	$scope.isDateShortcut = (shortcut) => sameDay($scope.eventDate, shortcut.date());
+
+	// Ex.: "Quinta-feira, 24 de dezembro de 2026 às 20:00"
+	$scope.datePreview = () => {
+		const d = combineDateTime($scope.eventDate, $scope.eventTime);
+		if (!d) return '';
+
+		const text = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+		return `${text.charAt(0).toUpperCase()}${text.slice(1)} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+	};
+
+	$scope.daysLeft = () => {
+		if (!($scope.eventDate instanceof Date)) return '';
+
+		const days = Math.round(($scope.eventDate - startOfToday()) / 86400000);
+		if (days < 0) return '';
+		if (days === 0) return 'é hoje!';
+		if (days === 1) return 'é amanhã!';
+		return `faltam ${days} dias`;
+	};
+
 	if (_TEST_) {
-		$scope.eventDate = new Date(2021, 11, 25, 21, 0);
+		$scope.eventDate = nextDayOfYear(11, 24);
 		$scope.eventLocal = "Av. Tulio de Rose, 260 - Salao de Festas";
-		$scope.eventAmount = 300.00;
+		$scope.eventAmount = 100;
 		$scope.eventMessage = "Ola pessoal, nosso amigo secreto foi gerado pelo SecretSanta Generator. Por favor sigam as instrucoes e boas festas!";
 		$scope.participants = [
 			{
@@ -67,6 +135,7 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 
 	const resetForm = () => {
 		$scope.eventDate = null;
+		$scope.eventTime = defaultTime();
 		$scope.eventLocal = '';
 		$scope.eventAmount = null;
 		$scope.eventMessage = '';
@@ -74,9 +143,24 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	};
 
 	$scope.validInput = function () {
+		// Valida a data da festa
+		const partyDate = combineDateTime($scope.eventDate, $scope.eventTime);
+
+		if (!partyDate) {
+			return "Escolha a data e o horário da festa. Dica: use os atalhos, como \"Véspera de Natal\".";
+		}
+
+		if (partyDate < new Date()) {
+			return "A data da festa já passou. Escolha uma data e horário a partir de agora.";
+		}
+
 		// Valida campos do evento
-		if (!$scope.eventLocal || !$scope.eventAmount || !$scope.eventMessage) {
-			return "Preencha o local da festa, o valor máximo do presente e a mensagem para os convidados.";
+		if (!($scope.eventAmount > 0)) {
+			return "Informe o valor do presente, por exemplo R$ 100. Dica: use os atalhos abaixo do campo.";
+		}
+
+		if (!$scope.eventLocal || !$scope.eventMessage) {
+			return "Preencha o local da festa e a mensagem para os convidados.";
 		}
 
 		// Valida participantes
@@ -125,7 +209,7 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		const hostEmail = $scope.participants[0].email;
 
 		const event = {
-			date: $scope.eventDate ? new Date($scope.eventDate).toLocaleString() : new Date().toLocaleString(),
+			date: formatPartyDate(combineDateTime($scope.eventDate, $scope.eventTime)),
 			location: $scope.eventLocal,
 			amount: $scope.eventAmount,
 			host: $scope.participants[0],

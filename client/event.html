@@ -10,6 +10,8 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"
+    integrity="sha384-RkASv+6KfBMW9eknReJIJ6b3UnjKOKC5bOUaNgIY778NFbQ8MtWq9Lr/khUgqtTt" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg">
   <script src="./assets/js/theme.js"></script>
@@ -131,26 +133,61 @@
             </div>
             <div class="card-body p-4">
               <div class="row g-3">
-                <div class="col-md-4">
+                <div class="col-lg-4">
                   <label for="party_eventdate" class="form-label">
-                    <i class="bi bi-calendar3 me-1 text-danger"></i>Data da festa
+                    <i class="bi bi-calendar3 me-1 text-danger"></i>Quando vai ser a festa?
                   </label>
-                  <input type="datetime-local" ng-model="eventDate" id="party_eventdate"
-                    name="party[eventdate]" required class="form-control">
+                  <div class="row g-2">
+                    <div class="col">
+                      <div class="input-group">
+                        <span class="input-group-text d-none d-sm-flex"><i class="bi bi-calendar-event"></i></span>
+                        <input type="text" ss-date-picker ss-model="eventDate" id="party_eventdate" name="party[eventdate]"
+                          placeholder="dd/mm/aaaa" inputmode="numeric" autocomplete="off" required class="form-control bg-body" aria-label="Data da festa">
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <div class="input-group time-field">
+                        <span class="input-group-text d-none d-sm-flex"><i class="bi bi-clock"></i></span>
+                        <input type="text" ss-date-picker="time" ss-model="eventTime" id="party_eventtime" name="party[eventtime]"
+                          placeholder="hh:mm" inputmode="numeric" autocomplete="off" required class="form-control bg-body" aria-label="Horário da festa">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Atalhos de data">
+                    <button type="button" ng-repeat="s in dateShortcuts" ng-click="setDate(s)"
+                      class="btn btn-sm rounded-pill date-chip" ng-class="isDateShortcut(s) ? 'btn-danger' : 'btn-outline-secondary'">
+                      {{s.label}}
+                    </button>
+                  </div>
+                  <div class="date-preview mt-2" ng-show="datePreview()" aria-live="polite">
+                    <i class="bi bi-check-circle-fill me-1"></i>{{datePreview()}}
+                    <span class="text-muted" ng-show="daysLeft()">· {{daysLeft()}}</span>
+                  </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-8 col-lg-5">
                   <label for="party_location" class="form-label">
                     <i class="bi bi-geo-alt me-1 text-danger"></i>Local da festa
                   </label>
                   <input type="text" ng-model="eventLocal" id="party_location"
                     name="party[location]" required class="form-control" placeholder="Ex: Casa da Ana">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 col-lg-3">
                   <label for="party_amount" class="form-label">
-                    <i class="bi bi-currency-dollar me-1 text-danger"></i>Valor máximo (R$)
+                    <i class="bi bi-cash-coin me-1 text-danger"></i>Valor do presente
                   </label>
-                  <input type="number" ng-model="eventAmount" id="party_amount"
-                    name="party[amount]" required class="form-control" placeholder="Ex: 80">
+                  <div class="input-group">
+                    <span class="input-group-text fw-semibold">R$</span>
+                    <input type="text" ss-money ng-model="eventAmount" id="party_amount" name="party[amount]"
+                      inputmode="decimal" autocomplete="off" maxlength="12" required class="form-control"
+                      placeholder="0" aria-describedby="party_amount_help">
+                  </div>
+                  <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Valores sugeridos em reais">
+                    <button type="button" ng-repeat="v in amountShortcuts" ng-click="setAmount(v)" aria-label="R$ {{v}}"
+                      class="btn btn-sm rounded-pill date-chip" ng-class="eventAmount === v ? 'btn-danger' : 'btn-outline-secondary'">
+                      {{v}}
+                    </button>
+                  </div>
+                  <div id="party_amount_help" class="form-text">Valor máximo que cada um vai gastar.</div>
                 </div>
               </div>
             </div>
@@ -248,9 +285,15 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"
+    integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"
+    integrity="sha384-agbVpcY312cNMSL1b3CUo060bj9FmbwUX8HUCNSE17+jOU/en4yz3w9ro9IWVusF" crossorigin="anonymous"></script>
   <script src="./libs/angular.min.js"></script>
   <script src="./assets/js/script.js"></script>
   <script src="./assets/js/controllers/eventController.js"></script>
+  <script src="./assets/js/directives/datePicker.js"></script>
+  <script src="./assets/js/directives/moneyInput.js"></script>
   <script src="./assets/js/services/eventService.js"></script>
 
 </body>

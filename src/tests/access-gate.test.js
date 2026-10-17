@@ -65,7 +65,12 @@ describe('Senha de acesso', () => {
 
 		const cookie = cookieOf(response);
 
-		await request(app).get('/').set('Cookie', cookie).expect(200);
+		// A pagina inicial e o event.html; o antigo index.html redireciona mantendo a query string
+		const home = await request(app).get('/').set('Cookie', cookie).expect(200);
+		expect(home.text).toMatch(/id="party_eventdate"/);
+
+		const old = await request(app).get('/index.html?test=1').set('Cookie', cookie).expect(302);
+		expect(old.headers.location).toBe('/event.html?test=1');
 		await request(app).post('/event').set('Cookie', cookie).send(event).expect(201);
 
 		const status = await request(app).get('/auth/status').set('Cookie', cookie);

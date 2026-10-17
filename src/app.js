@@ -73,8 +73,9 @@ class AppController {
 		this.express.use("/participant", apiLimiter, routerParticipant);
 		this.express.use('/wishlist', apiLimiter, routerWishList);
 
-		// Paginas da aplicacao cliente
-		this.express.use("/", express.static('client/'));
+		// Paginas da aplicacao cliente. A pagina inicial e o event.html (o antigo index.html redireciona para ele)
+		this.express.get('/index.html', (req, res) => res.redirect(302, req.originalUrl.replace('/index.html', '/event.html')));
+		this.express.use("/", express.static('client/', { index: 'event.html' }));
 
 		// 404 (manter sempre como ultima rota)
 		this.express.use((req, res) => {
