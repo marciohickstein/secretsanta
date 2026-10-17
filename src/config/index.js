@@ -56,6 +56,8 @@ const config = {
 		statusCheckMaxAgeMs: 3 * 24 * 60 * 60 * 1000,
 		// Tempo minimo entre reenvios para o mesmo participante
 		resendCooldownMs: 10 * 60 * 1000,
+		// Recusa e-mails cujo dominio nao existe no DNS (ex.: gmail.comx)
+		checkDomains: !process.env.TEST && process.env.EMAIL_CHECK_DOMAINS !== 'false',
 	},
 	suggestions: {
 		// Lojas exibidas nas sugestoes de presente, na ordem (amazon, mercadolivre, magalu)

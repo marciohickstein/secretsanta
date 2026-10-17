@@ -8,7 +8,7 @@ const ParticipantModel = require('@models/participantModel');
 const whatsapp = require('@utils/whatsAppSender');
 const sms = require('@utils/smsSender');
 const drawService = require('@services/drawService');
-const { validateEvent } = require('@utils/validation');
+const { validateEvent, checkEmailDomains } = require('@utils/validation');
 const { newToken, safeEqual } = require('@utils/security');
 const { getBaseUrl } = require('@utils/util');
 const logger = require('@utils/logger');
@@ -56,6 +56,7 @@ eventController.getOne = async (req, res) => {
 
 eventController.create = async (req, res) => {
 	const { event, host, participants } = validateEvent(req.body);
+	await checkEmailDomains([host, ...participants].map(p => p.email));
 
 	const created = [];
 	for (const participant of [host, ...participants]) {
