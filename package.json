@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.3",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.7.0",
@@ -41,5 +41,19 @@
     "@controllers": "./src/controllers",
     "@models": "./src/models",
     "@services": "./src/services"
+  },
+  "overrides": {
+    "test-exclude": "^8.0.0",
+    "@istanbuljs/load-nyc-config": {
+      "js-yaml": "^4.1.0"
+    }
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "unrs-resolver": false,
+    "better-sqlite3": false
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
