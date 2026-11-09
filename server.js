@@ -13,7 +13,25 @@ require('module-alias/register');
 
 const app = require('@app');
 const config = require('@config');
+const { closeDatabase } = require('./src/db/database');
 
-app.listen(config.app.port, () => {
+const server = app.listen(config.app.port, () => {
 	console.log(`Server running on ${config.app.port}`)
 })
+
+// Encerramento limpo (docker stop / Ctrl+C): para de aceitar conexoes e fecha o SQLite (checkpoint do WAL)
+function shutdown(signal) {
+	console.log(`${signal} recebido, encerrando...`);
+	server.close(() => {
+		closeDatabase();
+		process.exit(0);
+	});
+	// Conexoes keep-alive podem segurar o close; forca a saida apos 8s
+	setTimeout(() => {
+		closeDatabase();
+		process.exit(0);
+	}, 8000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

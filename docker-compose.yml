@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    image: secretsanta:latest
+    container_name: secretsanta
+    restart: unless-stopped
+    init: true
+    # Roda com o mesmo uid/gid do usuario dono de data/ e logs/ no host (no servidor: usuario "app").
+    # Defina APP_UID/APP_GID no .env (ex.: APP_UID=$(id -u app)); padrao 1000.
+    user: "${APP_UID:-1000}:${APP_GID:-1000}"
+    env_file: .env
+    environment:
+      PORT: 3333
+      # O nginx do host chega pelo gateway da rede do Docker (ex.: 172.17.0.1), nao por loopback
+      TRUST_PROXY: uniquelocal
+    ports:
+      # So acessivel pela propria maquina (nginx faz o proxy publico)
+      - "127.0.0.1:3333:3333"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
