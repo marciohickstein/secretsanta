@@ -64,8 +64,12 @@ appSecretSanta.controller("ctrlWishList", ($scope, wishlistService, idParticipan
 	}
 
 	// Adiciona uma ideia do card de sugestoes (ctrlSuggestions e um escopo filho deste)
+	// Ja preenche o valor sugerido ("a partir de") e as lojas onde o presente pode ser encontrado
 	$scope.addSuggestion = (suggestion) => {
-		$scope.wishlistTemp.push({ product: suggestion.title, price: '', infoExtra: '' });
+		const price = suggestion.from ? Number(suggestion.from).toFixed(2).replace('.', ',') : '';
+		const stores = (suggestion.links || []).map(l => l.store).join(', ');
+
+		$scope.wishlistTemp.push({ product: suggestion.title, price, infoExtra: stores ? `Lojas: ${stores}` : '' });
 		$scope.save = true;
 	}
 

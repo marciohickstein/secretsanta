@@ -23,7 +23,18 @@ const requestEvent = {
 	participants,
 };
 
-const PUBLIC_FIELDS = ['amount', 'date', 'drawn', 'id', 'location', 'participantsCount'];
+const address = {
+	place: "Casa do Marcio",
+	cep: "91340-110",
+	street: "Avenida Túlio de Rose",
+	number: "260",
+	complement: "Apto 3",
+	district: "Passo d'Areia",
+	city: "Porto Alegre",
+	state: "RS",
+};
+
+const PUBLIC_FIELDS = ['amount', 'date', 'drawn', 'id', 'location', 'mapUrl', 'participantsCount'];
 
 describe('API /event', () => {
 	let eventId;
@@ -72,6 +83,9 @@ describe('API /event', () => {
 		['e-mails repetidos', { participants: [participants[0], participants[0]] }],
 		['mensagem muito longa', { message: 'x'.repeat(1001) }],
 		['valor invalido', { amount: 'abc' }],
+		['CEP invalido', { address: { ...address, cep: '123' } }],
+		['endereco sem numero', { address: { ...address, number: '' } }],
+		['UF invalida', { address: { ...address, state: 'XX' } }],
 	])('rejeita evento com %s', async (_, override) => {
 		const response = await request(app)
 			.post('/event')
@@ -79,6 +93,19 @@ describe('API /event', () => {
 			.expect(400);
 
 		expect(response.body.error).toBe(true);
+	});
+
+	it('monta o local a partir do endereco estruturado', async () => {
+		const response = await request(app)
+			.post('/event')
+			.send({ ...requestEvent, location: undefined, address: { ...address, cep: '91340110', state: 'rs' } })
+			.expect(201);
+
+		expect(response.body.location).toBe('Casa do Marcio — Avenida Túlio de Rose, 260, Apto 3 - Passo d\'Areia - Porto Alegre/RS - CEP 91340-110');
+		expect(response.body.mapUrl).toBe(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Avenida Túlio de Rose, 260, Apto 3 - Passo d\'Areia - Porto Alegre/RS - CEP 91340-110')}`);
+
+		const [event] = await EventModel.get(response.body.id);
+		expect(event.address).toMatchObject({ cep: '91340-110', number: '260', state: 'RS' });
 	});
 
 	it('nao expoe listagem nem exclusao de eventos', async () => {

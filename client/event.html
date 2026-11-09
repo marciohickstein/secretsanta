@@ -136,7 +136,7 @@
             </div>
             <div class="card-body p-4">
               <div class="row g-3">
-                <div class="col-lg-4">
+                <div class="col-md-7 col-lg-6">
                   <label for="party_eventdate" class="form-label">
                     <i class="bi bi-calendar3 me-1 text-danger"></i>Quando vai ser a festa?
                   </label>
@@ -167,14 +167,7 @@
                     <span class="text-muted" ng-show="daysLeft()">· {{daysLeft()}}</span>
                   </div>
                 </div>
-                <div class="col-md-8 col-lg-5">
-                  <label for="party_location" class="form-label">
-                    <i class="bi bi-geo-alt me-1 text-danger"></i>Local da festa
-                  </label>
-                  <input type="text" ng-model="eventLocal" id="party_location"
-                    name="party[location]" required class="form-control" placeholder="Ex: Casa da Ana">
-                </div>
-                <div class="col-md-4 col-lg-3">
+                <div class="col-md-5 col-lg-4 ms-lg-auto">
                   <label for="party_amount" class="form-label">
                     <i class="bi bi-cash-coin me-1 text-danger"></i>Valor do presente
                   </label>
@@ -191,6 +184,75 @@
                     </button>
                   </div>
                   <div id="party_amount_help" class="form-text">Valor máximo que cada um vai gastar.</div>
+                </div>
+              </div>
+
+              <!-- Endereco da festa (o CEP preenche rua, bairro, cidade e UF) -->
+              <div class="address-block mt-4 pt-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+                  <span class="form-label mb-0"><i class="bi bi-geo-alt me-1 text-danger"></i>Onde vai ser a festa?</span>
+                  <a class="small text-muted" href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-search me-1"></i>Não sei o CEP
+                  </a>
+                </div>
+                <div class="row g-3">
+                  <div class="col-sm-5 col-lg-3">
+                    <label for="party_cep" class="form-label">CEP</label>
+                    <div class="input-group">
+                      <input type="text" ng-model="address.cep" ng-change="onCepChange()" id="party_cep" name="party[cep]"
+                        inputmode="numeric" autocomplete="postal-code" maxlength="9" required class="form-control"
+                        placeholder="00000-000" aria-describedby="party_cep_status">
+                      <span class="input-group-text cep-status" ng-switch="cepStatus">
+                        <span ng-switch-when="loading" class="spinner-border spinner-border-sm text-danger" aria-hidden="true"></span>
+                        <i ng-switch-when="found" class="bi bi-check-circle-fill text-success"></i>
+                        <i ng-switch-when="notfound" class="bi bi-exclamation-circle-fill text-warning"></i>
+                        <i ng-switch-when="error" class="bi bi-wifi-off text-warning"></i>
+                        <i ng-switch-default class="bi bi-mailbox"></i>
+                      </span>
+                    </div>
+                    <div id="party_cep_status" class="form-text" aria-live="polite">{{cepMessage || 'Preenchemos o endereço para você.'}}</div>
+                  </div>
+                  <div class="col-sm-7 col-lg-9">
+                    <label for="party_place" class="form-label">Nome do local <span class="text-muted fw-normal">(opcional)</span></label>
+                    <input type="text" ng-model="address.place" id="party_place" name="party[place]" maxlength="100"
+                      class="form-control" placeholder="Ex: Casa da Ana, Salão de festas do prédio">
+                  </div>
+                  <div class="col-md-8 col-lg-6">
+                    <label for="party_street" class="form-label">Rua</label>
+                    <input type="text" ng-model="address.street" id="party_street" name="party[street]" maxlength="150"
+                      autocomplete="address-line1" required class="form-control" placeholder="Rua, avenida...">
+                  </div>
+                  <div class="col-4 col-md-4 col-lg-2">
+                    <label for="party_number" class="form-label">Número</label>
+                    <input type="text" ng-model="address.number" id="party_number" name="party[number]" maxlength="20"
+                      required class="form-control" placeholder="Ex: 260">
+                  </div>
+                  <div class="col-8 col-lg-4">
+                    <label for="party_complement" class="form-label">Complemento <span class="text-muted fw-normal">(opcional)</span></label>
+                    <input type="text" ng-model="address.complement" id="party_complement" name="party[complement]" maxlength="100"
+                      autocomplete="address-line2" class="form-control" placeholder="Apto, bloco...">
+                  </div>
+                  <div class="col-md-5">
+                    <label for="party_district" class="form-label">Bairro</label>
+                    <input type="text" ng-model="address.district" id="party_district" name="party[district]" maxlength="100"
+                      class="form-control" placeholder="Bairro">
+                  </div>
+                  <div class="col-8 col-md-5">
+                    <label for="party_city" class="form-label">Cidade</label>
+                    <input type="text" ng-model="address.city" id="party_city" name="party[city]" maxlength="100"
+                      autocomplete="address-level2" required class="form-control" placeholder="Cidade">
+                  </div>
+                  <div class="col-4 col-md-2">
+                    <label for="party_state" class="form-label">UF</label>
+                    <select ng-model="address.state" id="party_state" name="party[state]" required class="form-select"
+                      ng-options="uf for uf in ufs" autocomplete="address-level1">
+                      <option value="">UF</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="date-preview mt-3" ng-show="addressPreview()">
+                  <i class="bi bi-pin-map-fill me-1"></i>{{addressPreview()}}
+                  <a ng-href="{{addressMapUrl()}}" target="_blank" rel="noopener noreferrer" class="ms-1 fw-normal">ver no mapa</a>
                 </div>
               </div>
             </div>
@@ -298,6 +360,7 @@
   <script src="./assets/js/directives/datePicker.js"></script>
   <script src="./assets/js/directives/moneyInput.js"></script>
   <script src="./assets/js/services/eventService.js"></script>
+  <script src="./assets/js/services/addressService.js"></script>
 
 </body>
 </html>
