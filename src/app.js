@@ -14,6 +14,7 @@ const routerParticipant = require('@routes/participantRoutes');
 const routerWishList = require('@routes/wishlistRoutes');
 const routerWebhook = require('@routes/webhookRoutes');
 const routerAuth = require('@routes/authRoutes');
+const routerAddress = require('@routes/addressRoutes');
 const { accessGate } = require('./middlewares/accessGate');
 
 const CDN = 'https://cdn.jsdelivr.net';
@@ -72,6 +73,7 @@ class AppController {
 		this.express.use("/event", apiLimiter, routerEvent);
 		this.express.use("/participant", apiLimiter, routerParticipant);
 		this.express.use('/wishlist', apiLimiter, routerWishList);
+		this.express.use('/address', apiLimiter, routerAddress);
 
 		// Paginas da aplicacao cliente. A pagina inicial e o event.html (o antigo index.html redireciona para ele)
 		this.express.get('/index.html', (req, res) => res.redirect(302, req.originalUrl.replace('/index.html', '/event.html')));
@@ -79,7 +81,7 @@ class AppController {
 
 		// 404 (manter sempre como ultima rota)
 		this.express.use((req, res) => {
-			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist|webhooks|auth)\b/.test(req.path)) {
+			if (req.accepts(['html', 'json']) === 'json' || /^\/(event|participant|wishlist|webhooks|auth|address)\b/.test(req.path)) {
 				return res.status(404).json({ error: true, message: 'Recurso não encontrado.' });
 			}
 

@@ -793,3 +793,8 @@ h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
     transform: none;
   }
 }
+
+/* ─── Party address ──────────────────────────────────────── */
+.address-block { border-top: 1px dashed var(--santa-border); }
+
+.cep-status { min-width: 2.75rem; justify-content: center; }

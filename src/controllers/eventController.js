@@ -10,6 +10,7 @@ const sms = require('@utils/smsSender');
 const drawService = require('@services/drawService');
 const { validateEvent, checkEmailDomains } = require('@utils/validation');
 const { newToken, safeEqual } = require('@utils/security');
+const { mapUrl } = require('@utils/address');
 const { getBaseUrl } = require('@utils/util');
 const logger = require('@utils/logger');
 
@@ -20,6 +21,7 @@ const toPublicEvent = (event) => ({
 	id: event.id,
 	date: event.date,
 	location: event.location,
+	mapUrl: mapUrl(event),
 	amount: event.amount,
 	participantsCount: (event.participants || []).length + 1,
 	drawn: Boolean(event.event_drawn),

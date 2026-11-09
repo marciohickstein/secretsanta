@@ -2,98 +2,138 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
     <title>Amigo Secreto</title>
-
-    <!-- Bootstrap 5 -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      body { margin: 0; padding: 0; }
+      a { text-decoration: none; }
+      @media (max-width: 600px) {
+        .px { padding-left: 24px !important; padding-right: 24px !important; }
+        .title { font-size: 26px !important; }
+        .reveal-name { font-size: 28px !important; }
+        .btn-cell { display: block !important; width: 100% !important; padding: 0 0 10px !important; }
+        .btn-cell a { display: block !important; }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-          <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-              <h3 class="card-title text-center mb-4">🎁 Amigo Secreto</h3>
-
-              <p class="fs-5">Olá <strong>{NAME_FRIEND}</strong>,</p>
-
-              <p>
-                Você está participando da lista do
-                <strong>Amigo Secreto</strong> gerado pelo sistema
-                <strong>Secret Santa</strong>.
-              </p>
-
-              <div class="alert alert-success text-center my-4">
-                <p class="mb-1">Seu amigo secreto é:</p>
-                <h4 class="fw-bold mb-0">🎉 {NAME_RECEIVER} 🎉</h4>
-              </div>
-
-              <p>
-                Abaixo segue a mensagem deixada pelo organizador do evento
-                <strong>{NAME_HOST}</strong>:
-              </p>
-
-              <blockquote class="blockquote border-start ps-3 text-muted my-3">
-                <i>{TEXT}</i>
-              </blockquote>
-
-              <table
-                align="center"
-                cellpadding="0"
-                cellspacing="0"
-                role="presentation"
-                style="margin: 20px auto"
-              >
-                <tr>
-                  <td style="padding-right: 12px">
-                    <a
-                      href="{URL_SHOW_WISHLIST}"
-                      style="
-                        display: inline-block;
-                        padding: 10px 16px;
-                        border: 1px solid #0d6efd;
-                        color: #0d6efd;
-                        text-decoration: none;
-                        border-radius: 4px;
-                        font-weight: 500;
-                        font-family: Arial, sans-serif;
-                      "
-                    >
-                      Ver lista de compras
-                    </a>
-                  </td>
-
-                  <td>
-                    <a
-                      href="{URL_ADD_WISHLIST}"
-                      style="
-                        display: inline-block;
-                        padding: 10px 16px;
-                        background-color: #0d6efd;
-                        color: #ffffff;
-                        text-decoration: none;
-                        border-radius: 4px;
-                        font-weight: 500;
-                        font-family: Arial, sans-serif;
-                      "
-                    >
-                      Adicionar item
-                    </a>
-                  </td>
-                </tr>
-              </table>
-
-              <p class="text-center fw-bold mt-4 mb-0">
-                Espero que curtam 😉 !!!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Estilos inline: Gmail e Outlook ignoram folhas de estilo externas -->
+  <body style="margin:0; padding:0; background-color:#fbf7f4;">
+    <!-- Texto de pre-visualizacao na caixa de entrada -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+      O sorteio foi feito! Abra para descobrir quem é o seu amigo secreto 🤫
     </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fbf7f4" style="background-color:#fbf7f4;">
+      <tr>
+        <td align="center" style="padding:32px 12px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+            style="max-width:560px; background-color:#ffffff; border:1px solid #f1e6e3; border-radius:20px; overflow:hidden; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; color:#374151;">
+
+            <!-- Cabecalho -->
+            <tr>
+              <td align="center" bgcolor="#c81e24" class="px"
+                style="background-color:#c81e24; background-image:linear-gradient(135deg,#f0464a 0%,#e5383b 40%,#a4161a 75%,#1b7a4b 140%); padding:40px 40px 36px;">
+                <div style="display:inline-block; padding:6px 14px; border-radius:999px; background-color:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); color:#ffffff; font-size:12px; font-weight:600; letter-spacing:0.3px;">
+                  ✨ O sorteio foi feito
+                </div>
+                <div style="font-size:44px; line-height:1; margin:20px 0 8px;">🎁</div>
+                <h1 class="title" style="margin:0; color:#ffffff; font-size:30px; line-height:1.15; font-weight:800; letter-spacing:-0.5px;">
+                  Amigo Secreto
+                </h1>
+              </td>
+            </tr>
+
+            <!-- Conteudo -->
+            <tr>
+              <td class="px" style="padding:36px 40px 8px;">
+                <p style="margin:0 0 16px; font-size:18px; color:#111827;">
+                  Olá, <strong>{NAME_FRIEND}</strong> 👋
+                </p>
+                <p style="margin:0 0 28px; font-size:15px; line-height:1.65;">
+                  Você está participando do <strong>Amigo Secreto</strong> organizado por
+                  <strong>{NAME_HOST}</strong>. Chegou a hora da revelação!
+                </p>
+
+                <!-- Revelacao -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+                  <tr>
+                    <td align="center" bgcolor="#fff8e6"
+                      style="background-color:#fff8e6; border:2px dashed #f5a524; border-radius:18px; padding:26px 20px;">
+                      <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#6b4e05;">
+                        🤫 Seu amigo secreto é
+                      </p>
+                      <p class="reveal-name" style="margin:0; font-size:32px; line-height:1.2; font-weight:800; letter-spacing:-0.5px; color:#c81e24;">
+                        {NAME_RECEIVER}
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Mensagem do organizador -->
+                <p style="margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#6b7280;">
+                  💌 Mensagem de {NAME_HOST}
+                </p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:30px;">
+                  <tr>
+                    <td bgcolor="#fdf9f7"
+                      style="background-color:#fdf9f7; border:1px solid #f1e6e3; border-left:4px solid #e5383b; border-radius:12px; padding:16px 20px; font-size:15px; line-height:1.65; font-style:italic; color:#4b5563; white-space:pre-line;">{TEXT}</td>
+                  </tr>
+                </table>
+
+                <!-- Lista de presentes -->
+                <p style="margin:0 0 6px; font-size:16px; font-weight:700; color:#111827; text-align:center;">
+                  🛍️ Lista de presentes
+                </p>
+                <p style="margin:0 0 18px; font-size:14px; line-height:1.55; color:#6b7280; text-align:center;">
+                  Veja o que seu amigo secreto gostaria de ganhar e monte a sua lista.
+                </p>
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;">
+                  <tr>
+                    <td class="btn-cell" align="center" style="padding:0 6px 0 0;">
+                      <a href="{URL_SHOW_WISHLIST}" target="_blank"
+                        style="display:inline-block; padding:13px 24px; border:2px solid #e5383b; border-radius:999px; color:#c81e24; font-size:15px; font-weight:700; text-decoration:none; text-align:center;">
+                        Ver lista dele(a)
+                      </a>
+                    </td>
+                    <td class="btn-cell" align="center" style="padding:0 0 0 6px;">
+                      <a href="{URL_ADD_WISHLIST}" target="_blank"
+                        style="display:inline-block; padding:15px 26px; border-radius:999px; background-color:#e5383b; background-image:linear-gradient(135deg,#f0464a,#e5383b 45%,#a4161a); color:#ffffff; font-size:15px; font-weight:700; text-decoration:none; text-align:center;">
+                        Montar minha lista
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Rodape -->
+            <tr>
+              <td class="px" align="center" style="padding:32px 40px 32px; font-size:14px; color:#6b7280;">
+                Shhh… não conte para ninguém! Boa festa 🎉
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td height="4" bgcolor="#e5383b" style="background-color:#e5383b; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#f5a524" style="background-color:#f5a524; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#2fb36d" style="background-color:#2fb36d; font-size:0; line-height:0;">&nbsp;</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <p style="margin:20px 0 0; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; color:#9ca3af;">
+            <strong style="color:#6b7280;">Secret Santa</strong> · Organizador gratuito de Amigo Secreto
+          </p>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

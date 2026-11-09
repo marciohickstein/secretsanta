@@ -10,6 +10,7 @@ const drawService = require('@services/drawService');
 const notifications = require('@services/notificationService');
 const { validateParticipantUpdate, checkEmailDomains } = require('@utils/validation');
 const { safeEqual } = require('@utils/security');
+const { mapUrl } = require('@utils/address');
 const { getBaseUrl } = require('@utils/util');
 const logger = require('@utils/logger');
 
@@ -68,6 +69,7 @@ async function buildView(event) {
 			id: event.id,
 			date: event.date,
 			location: event.location,
+			mapUrl: mapUrl(event),
 			amount: event.amount,
 			message: event.message,
 			createdAt: event.created_at || null,

@@ -2,6 +2,7 @@
 
 const dns = require('dns').promises;
 const config = require('../config');
+const { UFS, formatAddress } = require('./address');
 
 const EMAIL = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:"]{2,}$/;
 
@@ -64,6 +65,28 @@ function profile(value, field) {
 	return value;
 }
 
+/* Endereco da festa: CEP, rua, numero, cidade e UF obrigatorios */
+function address(value) {
+	if (!isPlainObject(value)) throw new ValidationError('Endereço da festa inválido.');
+
+	const cep = text(value.cep, 'CEP', { required: true, max: 9 }).replace(/\D/g, '');
+	if (cep.length !== 8) throw new ValidationError('CEP inválido: informe os 8 dígitos.');
+
+	const state = text(value.state, 'UF', { required: true, max: 2 }).toUpperCase();
+	if (!UFS.includes(state)) throw new ValidationError('UF inválida.');
+
+	return {
+		place: text(value.place, 'nome do local', { max: 100 }),
+		cep: `${cep.slice(0, 5)}-${cep.slice(5)}`,
+		street: text(value.street, 'rua', { required: true, max: 150 }),
+		number: text(value.number, 'número', { required: true, max: 20 }),
+		complement: text(value.complement, 'complemento', { max: 100 }),
+		district: text(value.district, 'bairro', { max: 100 }),
+		city: text(value.city, 'cidade', { required: true, max: 100 }),
+		state,
+	};
+}
+
 function participant(value, field) {
 	if (!isPlainObject(value)) throw new ValidationError(`Participante inválido: ${field}.`);
 
@@ -95,10 +118,14 @@ function validateEvent(body) {
 	const emails = new Set([host.email, ...participants.map(p => p.email)]);
 	if (emails.size !== total) throw new ValidationError('Há e-mails repetidos entre os participantes.');
 
+	// O endereco estruturado gera o texto do local; o texto livre (location) segue aceito para clientes antigos
+	const place = body.address !== undefined ? address(body.address) : null;
+
 	return {
 		event: {
 			date: text(body.date, 'date', { max: 50 }),
-			location: text(body.location, 'location', { required: true, max: 200 }),
+			location: place ? formatAddress(place) : text(body.location, 'location', { required: true, max: 200 }),
+			...(place && { address: place }),
 			amount: amount(body.amount, 'amount'),
 			message: text(body.message, 'message', { required: true, max: 1000 }),
 		},

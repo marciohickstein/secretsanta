@@ -2,55 +2,132 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
     <title>Amigo Secreto</title>
-
-    <!-- Bootstrap 5 -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      body { margin: 0; padding: 0; }
+      a { text-decoration: none; }
+      @media (max-width: 600px) {
+        .px { padding-left: 24px !important; padding-right: 24px !important; }
+        .title { font-size: 26px !important; }
+      }
+    </style>
   </head>
 
-  <body class="bg-light">
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-          <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-              <h3 class="card-title text-center mb-4">🎁 Amigo Secreto</h3>
-
-              <p class="fs-5">
-                Olá <strong>{HOST_NAME}</strong>,
-              </p>
-
-              <p>
-                Seu evento de <strong>Amigo Secreto</strong> foi criado!
-                No painel do organizador você acompanha os participantes,
-                faz o sorteio e reenvia e-mails quando precisar:
-              </p>
-
-              <div class="d-grid gap-2 my-4">
-                <a
-                  href="{URL_PANEL}"
-                  class="btn btn-success btn-lg"
-                >
-                  Abrir painel do organizador
-                </a>
-              </div>
-
-              <div class="alert alert-info" role="alert">
-                <strong>Guarde este e-mail:</strong> o link acima é o seu
-                acesso ao painel. Ao clicar em <strong>Sortear</strong>, cada
-                participante recebe um e-mail com o seu amigo secreto.
-              </div>
-
-              <p class="text-muted text-center mt-4 mb-0">
-                Boa sorte e bom evento! 🎉
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Estilos inline: Gmail e Outlook ignoram folhas de estilo externas -->
+  <body style="margin:0; padding:0; background-color:#fbf7f4;">
+    <!-- Texto de pre-visualizacao na caixa de entrada -->
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+      Seu amigo secreto foi criado! Abra o painel do organizador para fazer o sorteio.
     </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fbf7f4" style="background-color:#fbf7f4;">
+      <tr>
+        <td align="center" style="padding:32px 12px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+            style="max-width:560px; background-color:#ffffff; border:1px solid #f1e6e3; border-radius:20px; overflow:hidden; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; color:#374151;">
+
+            <!-- Cabecalho -->
+            <tr>
+              <td align="center" bgcolor="#c81e24" class="px"
+                style="background-color:#c81e24; background-image:linear-gradient(135deg,#f0464a 0%,#e5383b 40%,#a4161a 75%,#1b7a4b 140%); padding:40px 40px 36px;">
+                <div style="display:inline-block; padding:6px 14px; border-radius:999px; background-color:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); color:#ffffff; font-size:12px; font-weight:600; letter-spacing:0.3px;">
+                  ✨ Painel do organizador
+                </div>
+                <div style="font-size:44px; line-height:1; margin:20px 0 8px;">🎁</div>
+                <h1 class="title" style="margin:0; color:#ffffff; font-size:30px; line-height:1.15; font-weight:800; letter-spacing:-0.5px;">
+                  Seu evento foi criado!
+                </h1>
+              </td>
+            </tr>
+
+            <!-- Conteudo -->
+            <tr>
+              <td class="px" style="padding:36px 40px 8px;">
+                <p style="margin:0 0 16px; font-size:18px; color:#111827;">
+                  Olá, <strong>{HOST_NAME}</strong> 👋
+                </p>
+                <p style="margin:0 0 28px; font-size:15px; line-height:1.65;">
+                  Seu <strong>Amigo Secreto</strong> está pronto. No painel do organizador você
+                  acompanha os participantes, faz o sorteio e reenvia e-mails quando precisar.
+                </p>
+
+                <!-- Botao -->
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 32px;">
+                  <tr>
+                    <td align="center" bgcolor="#e5383b"
+                      style="border-radius:999px; background-color:#e5383b; background-image:linear-gradient(135deg,#f0464a,#e5383b 45%,#a4161a); box-shadow:0 8px 24px -6px rgba(229,56,59,0.55);">
+                      <a href="{URL_PANEL}" target="_blank"
+                        style="display:inline-block; padding:15px 34px; color:#ffffff; font-size:16px; font-weight:700; border-radius:999px; text-decoration:none;">
+                        Abrir painel do organizador →
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Proximos passos -->
+                <p style="margin:0 0 14px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#6b7280;">
+                  Próximos passos
+                </p>
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+                  <tr>
+                    <td width="40" valign="top" style="padding:0 0 14px;">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">1</div>
+                    </td>
+                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5;">Confira os participantes no painel.</td>
+                  </tr>
+                  <tr>
+                    <td width="40" valign="top" style="padding:0 0 14px;">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">2</div>
+                    </td>
+                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5;">Clique em <strong>Sortear agora</strong>: cada um recebe por e-mail o seu amigo secreto.</td>
+                  </tr>
+                  <tr>
+                    <td width="40" valign="top">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">3</div>
+                    </td>
+                    <td valign="top" style="padding:4px 0 0; font-size:15px; line-height:1.5;">Acompanhe a entrega dos e-mails e as listas de presentes.</td>
+                  </tr>
+                </table>
+
+                <!-- Dica -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td bgcolor="#fff8e6" style="background-color:#fff8e6; border-left:4px solid #f5a524; border-radius:12px; padding:14px 18px; color:#6b4e05; font-size:14px; line-height:1.55;">
+                      💡 <strong>Guarde este e-mail:</strong> o botão acima é o seu acesso ao painel.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- Rodape -->
+            <tr>
+              <td class="px" align="center" style="padding:28px 40px 32px; font-size:14px; color:#6b7280;">
+                Boa sorte e boa festa! 🎉
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td height="4" bgcolor="#e5383b" style="background-color:#e5383b; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#f5a524" style="background-color:#f5a524; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#2fb36d" style="background-color:#2fb36d; font-size:0; line-height:0;">&nbsp;</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <p style="margin:20px 0 0; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; color:#9ca3af;">
+            <strong style="color:#6b7280;">Secret Santa</strong> · Organizador gratuito de Amigo Secreto
+          </p>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

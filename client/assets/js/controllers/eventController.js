@@ -37,7 +37,18 @@ const combineDateTime = (date, time) => {
 const formatPartyDate = (d) =>
 	`${d.toLocaleDateString('pt-BR', { weekday: 'long' })}, ${d.toLocaleDateString('pt-BR')} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 
-appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
+const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
+
+const onlyDigits = (value) => String(value || '').replace(/\D/g, '');
+
+// Ex.: "Rua das Flores, 260 - Centro - Porto Alegre/RS" (o servidor monta o texto final, com o CEP)
+const formatAddress = (a) => {
+	const street = [a.street, a.number, a.complement].filter(Boolean).join(', ');
+	const city = a.city && a.state ? `${a.city}/${a.state}` : a.city;
+	return [street, a.district, city].filter(Boolean).join(' - ');
+};
+
+appSecretSanta.controller('ctrlEvent', ($scope, eventService, addressService, idEvent) => {
 	$scope.events = [];
 	$scope.idEvent = idEvent;
 
@@ -70,6 +81,65 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 		return `${text.charAt(0).toUpperCase()}${text.slice(1)} às ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 	};
 
+	// ── Endereco da festa ──
+	$scope.ufs = UFS;
+	$scope.address = {};
+	$scope.cepStatus = null;
+	$scope.cepMessage = '';
+	let lastCep = '';
+
+	// Mascara 00000-000 e busca automatica ao completar os 8 digitos
+	$scope.onCepChange = () => {
+		const digits = onlyDigits($scope.address.cep).slice(0, 8);
+		$scope.address.cep = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
+
+		if (digits.length < 8) {
+			lastCep = '';
+			$scope.cepStatus = null;
+			$scope.cepMessage = '';
+			return;
+		}
+
+		if (digits === lastCep) return;
+		lastCep = digits;
+
+		$scope.cepStatus = 'loading';
+		$scope.cepMessage = 'Buscando endereço...';
+
+		addressService.lookupCep(digits)
+			.then((response) => {
+				if (lastCep !== digits) return; // o CEP mudou enquanto buscava
+
+				const found = response.data;
+				Object.assign($scope.address, {
+					street: found.street || $scope.address.street,
+					district: found.district || $scope.address.district,
+					city: found.city,
+					state: found.state,
+				});
+
+				$scope.cepStatus = 'found';
+				$scope.cepMessage = found.street ? 'Endereço encontrado! Falta só o número.' : 'CEP geral da cidade: informe a rua e o número.';
+
+				// Leva o cursor para o proximo campo que falta preencher
+				const next = found.street ? 'party_number' : 'party_street';
+				setTimeout(() => { const el = document.getElementById(next); if (el) el.focus(); });
+			})
+			.catch((err) => {
+				if (lastCep !== digits) return;
+
+				$scope.cepStatus = err.status === 404 || err.status === 400 ? 'notfound' : 'error';
+				$scope.cepMessage = (err.data && err.data.message) || 'Não foi possível buscar o CEP. Preencha o endereço manualmente.';
+			});
+	};
+
+	$scope.addressPreview = () => {
+		const a = $scope.address;
+		return a.street && a.number && a.city ? `${a.place ? `${a.place} — ` : ''}${formatAddress(a)}` : '';
+	};
+
+	$scope.addressMapUrl = () => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formatAddress($scope.address))}`;
+
 	$scope.daysLeft = () => {
 		if (!($scope.eventDate instanceof Date)) return '';
 
@@ -82,7 +152,7 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 
 	if (_TEST_) {
 		$scope.eventDate = nextDayOfYear(11, 24);
-		$scope.eventLocal = "Av. Tulio de Rose, 260 - Salao de Festas";
+		$scope.address = { cep: '91340-110', place: 'Salão de Festas', street: 'Avenida Túlio de Rose', number: '260', district: 'Jardim Europa', city: 'Porto Alegre', state: 'RS' };
 		$scope.eventAmount = 100;
 		$scope.eventMessage = "Ola pessoal, nosso amigo secreto foi gerado pelo SecretSanta Generator. Por favor sigam as instrucoes e boas festas!";
 		$scope.participants = [
@@ -136,7 +206,10 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 	const resetForm = () => {
 		$scope.eventDate = null;
 		$scope.eventTime = defaultTime();
-		$scope.eventLocal = '';
+		$scope.address = {};
+		$scope.cepStatus = null;
+		$scope.cepMessage = '';
+		lastCep = '';
 		$scope.eventAmount = null;
 		$scope.eventMessage = '';
 		$scope.participants = [{}, {}, {}];
@@ -159,8 +232,19 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 			return "Informe o valor do presente, por exemplo R$ 100. Dica: use os atalhos abaixo do campo.";
 		}
 
-		if (!$scope.eventLocal || !$scope.eventMessage) {
-			return "Preencha o local da festa e a mensagem para os convidados.";
+		// Valida o endereco da festa
+		const a = $scope.address;
+
+		if (onlyDigits(a.cep).length !== 8) {
+			return "Informe o CEP do local da festa (8 números). Com ele preenchemos o endereço para você.";
+		}
+
+		if (!a.street || !a.number || !a.city || !a.state) {
+			return "Complete o endereço da festa: rua, número, cidade e UF.";
+		}
+
+		if (!$scope.eventMessage) {
+			return "Escreva uma mensagem para os convidados.";
 		}
 
 		// Valida participantes
@@ -210,7 +294,7 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, idEvent) => {
 
 		const event = {
 			date: formatPartyDate(combineDateTime($scope.eventDate, $scope.eventTime)),
-			location: $scope.eventLocal,
+			address: $scope.address,
 			amount: $scope.eventAmount,
 			host: $scope.participants[0],
 			message: $scope.eventMessage,
