@@ -65,6 +65,20 @@ appSecretSanta.controller('ctrlEvent', ($scope, eventService, addressService, id
 	$scope.amountShortcuts = [50, 100, 150, 200];
 	$scope.setAmount = (value) => { $scope.eventAmount = value; };
 
+	// Sugestoes para o nome do local (evita digitar)
+	$scope.placeSuggestions = ['Salão de festas do prédio', 'Minha casa', 'Casa da vó', 'Churrasqueira do condomínio', 'Escritório', 'Restaurante'];
+	$scope.setPlace = (place) => { $scope.address.place = place; };
+
+	// Mensagens prontas para os convidados
+	$scope.messageSuggestions = [
+		{ label: 'Natal em família', text: 'Olá, família! Chegou a hora do nosso amigo secreto de Natal. Confira quem você tirou, capriche no presente e venha preparado para muita alegria. Boas festas!' },
+		{ label: 'Turma do trabalho', text: 'Oi, pessoal! Vamos fechar o ano em clima de festa com o nosso amigo secreto. Respeitem o valor combinado e guardem segredo até o dia da revelação!' },
+		{ label: 'Entre amigos', text: 'E aí, galera! O sorteio do nosso amigo secreto está feito. Mantenham o segredo, caprichem na escolha e bora comemorar juntos!' },
+		{ label: 'Curta e direta', text: 'Sorteio feito! Veja quem você tirou e não conte para ninguém. Nos vemos na festa!' },
+		{ label: 'Divertida', text: 'Atenção, Papais Noéis disfarçados! O sorteio já rolou. Proibido dar spoiler, proibido presente de última hora e obrigatório chegar com fome. Ho ho ho!' },
+	];
+	$scope.setMessage = (m) => { $scope.eventMessage = m.text; };
+
 	$scope.setDate = (shortcut) => {
 		$scope.eventDate = shortcut.date();
 		if (!$scope.eventTime) $scope.eventTime = defaultTime();

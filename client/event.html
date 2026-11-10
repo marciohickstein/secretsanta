@@ -196,6 +196,17 @@
                   </a>
                 </div>
                 <div class="row g-3">
+                  <div class="col-12">
+                    <label for="party_place" class="form-label">Nome do local <span class="text-muted fw-normal">(opcional)</span></label>
+                    <input type="text" ng-model="address.place" id="party_place" name="party[place]" maxlength="100"
+                      class="form-control" placeholder="Ex: Salão de festas do prédio">
+                    <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Sugestões de local">
+                      <button type="button" ng-repeat="p in placeSuggestions" ng-click="setPlace(p)"
+                        class="btn btn-sm rounded-pill date-chip" ng-class="address.place === p ? 'btn-danger' : 'btn-outline-secondary'">
+                        {{p}}
+                      </button>
+                    </div>
+                  </div>
                   <div class="col-sm-5 col-lg-3">
                     <label for="party_cep" class="form-label">CEP</label>
                     <div class="input-group">
@@ -211,11 +222,6 @@
                       </span>
                     </div>
                     <div id="party_cep_status" class="form-text" aria-live="polite">{{cepMessage || 'Preenchemos o endereço para você.'}}</div>
-                  </div>
-                  <div class="col-sm-7 col-lg-9">
-                    <label for="party_place" class="form-label">Nome do local <span class="text-muted fw-normal">(opcional)</span></label>
-                    <input type="text" ng-model="address.place" id="party_place" name="party[place]" maxlength="100"
-                      class="form-control" placeholder="Ex: Casa da Ana, Salão de festas do prédio">
                   </div>
                   <div class="col-md-8 col-lg-6">
                     <label for="party_street" class="form-label">Rua</label>
@@ -281,7 +287,7 @@
                       <td class="text-muted fw-semibold">{{participants.indexOf(participant) + 1}}</td>
                       <td><input ng-model="participant.name" class="form-control form-control-sm" type="text" placeholder="Nome completo"></td>
                       <td><input ng-model="participant.email" class="form-control form-control-sm" type="email" placeholder="email@exemplo.com"></td>
-                      <td><input ng-model="participant.celphone" class="form-control form-control-sm" type="text" placeholder="+55 11 9..."></td>
+                      <td><input ng-model="participant.celphone" class="form-control form-control-sm" type="text" placeholder="51 9...." inputmode="tel"></td>
                       <td>
                         <select ng-model="participant.profile" class="form-select form-select-sm" aria-label="Perfil do participante">
                           <option value="">Selecione...</option>
@@ -322,6 +328,13 @@
               <textarea ng-model="eventMessage" id="party_message" name="party[message]"
                 required rows="5" class="form-control"
                 placeholder="Ex: Feliz Natal a todos! Mal posso esperar pela nossa festa..."></textarea>
+              <div class="form-text mb-1 mt-2">Sem ideias? Escolha uma mensagem pronta:</div>
+              <div class="d-flex flex-wrap gap-1" role="group" aria-label="Mensagens prontas">
+                <button type="button" ng-repeat="m in messageSuggestions" ng-click="setMessage(m)" title="{{m.text}}"
+                  class="btn btn-sm rounded-pill date-chip" ng-class="eventMessage === m.text ? 'btn-danger' : 'btn-outline-secondary'">
+                  {{m.label}}
+                </button>
+              </div>
             </div>
           </div>
 
