@@ -1,7 +1,6 @@
 "use strict"
 
 const whatsapp = require('./whatsAppSender');
-const sms = require('./smsSender');
 const config = require('../config');
 const Template = require('./template');
 
@@ -93,17 +92,11 @@ function buildParticipantMessage(templateName, secret, hostName, text) {
 	return template.replace();
 }
 
-/* WhatsApp e SMS (o e-mail tem envio rastreado em services/notificationService) */
+/* WhatsApp (e-mail e SMS tem envio rastreado em services/notificationService e smsNotificationService) */
 function sendTextMessages(listFriendsSorted, hostName, subject, text) {
 	listFriendsSorted.forEach(secret => {
 		whatsapp.send(secret.friend.celphone, subject, buildParticipantMessage(config.templates.textParticipant, secret, hostName, text));
 	});
 }
 
-function sendSms(listFriendsSorted, hostName, subject, text) {
-	listFriendsSorted.forEach(secret => {
-		sms.send(secret.friend.celphone, subject, buildParticipantMessage(config.templates.textParticipant, secret, hostName, text));
-	});
-}
-
-module.exports = { shuffleArray, createListFriends, drawParticipants, getRootPath, resolvePath, getBaseUrl, buildParticipantMessage, sendTextMessages, sendSms };
+module.exports = { shuffleArray, createListFriends, drawParticipants, getRootPath, resolvePath, getBaseUrl, buildParticipantMessage, sendTextMessages };

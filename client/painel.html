@@ -114,7 +114,7 @@
           <div class="panel-draw mt-3" ng-if="!data.event.drawn">
             <div>
               <div class="fw-semibold">Tudo pronto para o sorteio?</div>
-              <div class="small text-muted">Confira os e-mails abaixo. Ao sortear, cada participante recebe por e-mail o nome do seu amigo secreto.</div>
+              <div class="small text-muted">Confira os e-mails abaixo. Ao sortear, cada participante recebe por e-mail{{ data.smsEnabled ? ' e SMS' : '' }} o nome do seu amigo secreto.</div>
             </div>
             <button type="button" class="btn btn-santa btn-santa-lg flex-shrink-0" ng-click="confirmDraw()" ng-disabled="busy">
               <i class="bi bi-shuffle me-2"></i>Sortear agora
@@ -125,7 +125,7 @@
 
       <!-- ── Resumo ── -->
       <div class="row g-3 mb-4">
-        <div class="col-md-4">
+        <div ng-class="data.smsEnabled ? 'col-md-6 col-xl-3' : 'col-md-4'">
           <div class="panel-stat">
             <div class="panel-stat-icon panel-stat-success"><i class="bi bi-envelope-check-fill"></i></div>
             <div>
@@ -134,7 +134,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div ng-class="data.smsEnabled ? 'col-md-6 col-xl-3' : 'col-md-4'">
           <div class="panel-stat">
             <div class="panel-stat-icon" ng-class="summary.problems ? 'panel-stat-danger' : 'panel-stat-muted'"><i class="bi bi-exclamation-octagon-fill"></i></div>
             <div>
@@ -143,7 +143,16 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6 col-xl-3" ng-if="data.smsEnabled">
+          <div class="panel-stat">
+            <div class="panel-stat-icon" ng-class="summary.smsProblems ? 'panel-stat-danger' : 'panel-stat-success'"><i class="bi bi-chat-dots-fill"></i></div>
+            <div>
+              <div class="panel-stat-value">{{summary.smsDelivered}} / {{summary.smsTotal}}</div>
+              <div class="panel-stat-label">SMS entregues<span ng-show="summary.smsProblems"> · {{summary.smsProblems}} com problema</span></div>
+            </div>
+          </div>
+        </div>
+        <div ng-class="data.smsEnabled ? 'col-md-6 col-xl-3' : 'col-md-4'">
           <div class="panel-stat">
             <div class="panel-stat-icon panel-stat-gold"><i class="bi bi-bag-heart-fill"></i></div>
             <div>
@@ -174,6 +183,7 @@
                 <tr>
                   <th>Participante</th>
                   <th>Status do e-mail</th>
+                  <th ng-if="data.smsEnabled">Status do SMS</th>
                   <th>Lista de presentes</th>
                   <th class="text-end pe-3">Ações</th>
                 </tr>
@@ -202,6 +212,19 @@
                       Enviado para {{p.emailStatus.sentTo}} (e-mail alterado depois)
                     </div>
                   </td>
+                  <td ng-if="data.smsEnabled">
+                    <span class="badge panel-status" ng-class="smsStatus(p).css" title="{{smsStatus(p).hint || ''}}">
+                      <i class="bi me-1" ng-class="smsStatus(p).icon"></i>{{smsStatus(p).label}}
+                    </span>
+                    <div class="small text-muted mt-1" ng-show="p.smsStatus">
+                      {{ kindLabel(p.smsStatus.kind) }} · {{ formatDate(p.smsStatus.updatedAt || p.smsStatus.sentAt) }}
+                    </div>
+                    <div class="small text-warning-emphasis mt-1" ng-show="p.smsStatus.status === 'queued'">{{smsStatus(p).hint}}</div>
+                    <div class="small text-danger mt-1" ng-show="p.smsStatus.error">{{p.smsStatus.error}}</div>
+                    <div class="small text-warning-emphasis mt-1" ng-show="smsNumberChanged(p)">
+                      Enviado para {{p.smsStatus.sentTo}} (celular alterado depois)
+                    </div>
+                  </td>
                   <td>
                     <span ng-show="p.wishlistItems > 0" class="badge text-bg-success"><i class="bi bi-check2 me-1"></i>{{p.wishlistItems}} {{ p.wishlistItems === 1 ? 'item' : 'itens' }}</span>
                     <span ng-show="!p.wishlistItems" class="badge bg-body-tertiary text-body-secondary border">Ainda não preencheu</span>
@@ -213,6 +236,11 @@
                     <button type="button" class="btn btn-sm btn-outline-success" ng-show="p.canResend" ng-click="resend(p)"
                       ng-disabled="busy || p.resendAvailableAt > now" title="{{ p.resendAvailableAt > now ? 'Disponível às ' + formatTime(p.resendAvailableAt) : 'Reenviar e-mail' }}">
                       <i class="bi bi-send-fill"></i><span class="d-none d-lg-inline ms-1">Reenviar</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success ms-1" ng-show="data.smsEnabled && p.canResendSms" ng-click="resend(p, 'sms')"
+                      ng-disabled="busy || p.smsResendAvailableAt > now" title="{{ p.smsResendAvailableAt > now ? 'Disponível às ' + formatTime(p.smsResendAvailableAt) : 'Reenviar SMS' }}"
+                      aria-label="Reenviar SMS">
+                      <i class="bi bi-chat-dots-fill"></i><span class="d-none d-lg-inline ms-1">SMS</span>
                     </button>
                   </td>
                 </tr>
@@ -228,7 +256,7 @@
         <div class="small">
           <strong>Guarde este link:</strong> ele é o seu acesso ao painel e também está no e-mail que você recebeu.
           Para manter a surpresa (inclusive a sua!), o painel não mostra quem tirou quem nem o conteúdo das listas.
-          Se um e-mail voltar, corrija o endereço em <strong>Editar</strong> e clique em <strong>Reenviar</strong>.
+          Se um e-mail ou SMS falhar, corrija o endereço ou o celular em <strong>Editar</strong> e clique em <strong>Reenviar</strong> (ou <strong>SMS</strong>).
         </div>
       </div>
     </div>

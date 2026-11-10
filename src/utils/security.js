@@ -58,4 +58,23 @@ function verifyWebhookSignature(secret, headers, rawBody, { toleranceSeconds = 3
 		.some(signature => safeEqual(signature, expected));
 }
 
-module.exports = { newId, newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature };
+/*
+ * Valida a assinatura dos webhooks do SMS Gateway for Android.
+ * Cabecalhos X-Signature (hex) e X-Timestamp (segundos); conteudo assinado: "<corpo bruto><timestamp>", HMAC-SHA256 com a Signing Key.
+ */
+function verifySmsGatewaySignature(key, headers, rawBody, { toleranceSeconds = 300, now = Date.now() } = {}) {
+	const signature = headers['x-signature'];
+	const timestamp = headers['x-timestamp'];
+
+	if (!key || !signature || !timestamp) return false;
+
+	const ts = Number(timestamp);
+	if (!Number.isFinite(ts) || Math.abs(now / 1000 - ts) > toleranceSeconds) return false;
+
+	const body = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody ?? '');
+	const expected = crypto.createHmac('sha256', String(key)).update(`${body}${timestamp}`).digest('hex');
+
+	return safeEqual(String(signature).toLowerCase(), expected);
+}
+
+module.exports = { newId, newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature, verifySmsGatewaySignature };

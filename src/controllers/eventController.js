@@ -6,7 +6,6 @@ const config = require('@config');
 const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
 const whatsapp = require('@utils/whatsAppSender');
-const sms = require('@utils/smsSender');
 const drawService = require('@services/drawService');
 const { validateEvent, checkEmailDomains } = require('@utils/validation');
 const { newToken, safeEqual } = require('@utils/security');
@@ -88,9 +87,8 @@ eventController.create = async (req, res) => {
 		whatsapp.send(host.celphone, 'Amigo Secreto', template.replace());
 	}
 
-	if (host.celphone && config.notifications.sms) {
-		template.setTemplate(config.templates.textHost, true);
-		sms.send(host.celphone, 'Amigo Secreto', template.replace());
+	if (config.notifications.sms) {
+		drawService.sendOrganizerSms(baseUrl, eventCreated, created[0]);
 	}
 
 	// O link do painel vai somente para quem criou o evento

@@ -15,6 +15,17 @@ const EMAIL_STATUS = {
 	suppressed: { label: 'Endereço bloqueado', icon: 'bi-slash-circle',    css: 'text-bg-danger' },
 };
 
+// Status do ultimo SMS enviado ao participante
+const SMS_STATUS = {
+	sending:   { label: 'Enviando...',        icon: 'bi-hourglass-split', css: 'text-bg-secondary' },
+	queued:    { label: 'Na fila do celular', icon: 'bi-phone-vibrate',   css: 'text-bg-warning', hint: 'O celular do SMS Gateway ainda não enviou. Confira se ele está ligado, com o app aberto e sem economia de bateria.' },
+	sent:      { label: 'Enviado',            icon: 'bi-send-check',      css: 'text-bg-info' },
+	delivered: { label: 'Entregue',           icon: 'bi-check2-circle',   css: 'text-bg-success' },
+	failed:    { label: 'Falha no envio',     icon: 'bi-x-octagon-fill',  css: 'text-bg-danger' },
+};
+
+const SMS_PENDING = ['sending', 'queued', 'sent'];
+
 const DELIVERED = ['delivered', 'opened', 'clicked'];
 const PROBLEMS = ['bounced', 'failed', 'complained', 'suppressed'];
 const PENDING = ['sending', 'sent', 'delayed'];
@@ -28,7 +39,7 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 	$scope.loading = false;
 	$scope.busy = false;
 	$scope.accessError = '';
-	$scope.summary = { total: 0, delivered: 0, problems: 0, wishlists: 0 };
+	$scope.summary = { total: 0, delivered: 0, problems: 0, wishlists: 0, smsTotal: 0, smsDelivered: 0, smsProblems: 0 };
 	$scope.edit = {};
 	$scope.modal = {};
 	$scope.now = Date.now();
@@ -53,10 +64,15 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 			delivered: participants.filter(p => p.emailStatus && DELIVERED.includes(p.emailStatus.status)).length,
 			problems: participants.filter(p => p.emailStatus && PROBLEMS.includes(p.emailStatus.status)).length,
 			wishlists: participants.filter(p => p.wishlistItems > 0).length,
+			smsTotal: participants.filter(p => p.celphone).length,
+			smsDelivered: participants.filter(p => p.smsStatus && p.smsStatus.status === 'delivered').length,
+			smsProblems: participants.filter(p => p.smsStatus && p.smsStatus.status === 'failed').length,
 		};
 	};
 
-	const hasPending = () => $scope.data && $scope.data.participants.some(p => p.emailStatus && PENDING.includes(p.emailStatus.status));
+	const hasPending = () => $scope.data && $scope.data.participants.some(p =>
+		(p.emailStatus && PENDING.includes(p.emailStatus.status))
+		|| (p.smsStatus && SMS_PENDING.includes(p.smsStatus.status)));
 
 	$scope.load = () => {
 		if (!eventId || !token) {
@@ -77,7 +93,7 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 			.finally(() => { $scope.loading = false; });
 	};
 
-	// Atualiza automaticamente enquanto houver e-mails a caminho
+	// Atualiza automaticamente enquanto houver e-mails ou SMS a caminho
 	const timer = $interval(() => {
 		$scope.now = Date.now();
 		if (hasPending() && !$scope.loading && !$scope.busy) $scope.load();
@@ -93,6 +109,21 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 
 		return { label: 'Não enviado', icon: 'bi-dash-circle', css: 'bg-body-tertiary text-body-secondary border' };
 	};
+
+	$scope.smsStatus = (p) => {
+		if (p.smsStatus) return SMS_STATUS[p.smsStatus.status] || SMS_STATUS.sent;
+
+		if (!p.celphone)
+			return { label: 'Sem celular', icon: 'bi-phone', css: 'bg-body-tertiary text-body-secondary border' };
+
+		if (!$scope.data.event.drawn && !p.isHost)
+			return { label: 'Aguardando sorteio', icon: 'bi-hourglass', css: 'bg-body-tertiary text-body-secondary border' };
+
+		return { label: 'Não enviado', icon: 'bi-dash-circle', css: 'bg-body-tertiary text-body-secondary border' };
+	};
+
+	const sameNumber = (a, b) => String(a || '').replace(/\D/g, '') === String(b || '').replace(/\D/g, '');
+	$scope.smsNumberChanged = (p) => p.smsStatus && p.smsStatus.sentTo && !sameNumber(p.smsStatus.sentTo, p.celphone);
 
 	$scope.kindLabel = (kind) => kind === 'organizer' ? 'Link do painel' : 'Resultado do sorteio';
 
@@ -112,7 +143,9 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 					type: 'success',
 					icon: 'bi-check-lg',
 					title: 'Sorteio realizado! 🎉',
-					message: 'Os e-mails estão sendo enviados agora. Acompanhe a entrega de cada um aqui no painel.',
+					message: $scope.data.smsEnabled
+						? 'Os e-mails e SMS estão sendo enviados agora. Acompanhe a entrega de cada um aqui no painel.'
+						: 'Os e-mails estão sendo enviados agora. Acompanhe a entrega de cada um aqui no painel.',
 					button: 'Ótimo!'
 				});
 			})
@@ -124,17 +157,20 @@ appSecretSanta.controller('ctrlPanel', ($scope, $interval, panelService) => {
 			.finally(() => { $scope.busy = false; });
 	};
 
-	$scope.resend = (p) => {
+	$scope.resend = (p, channel = 'email') => {
+		const isSms = channel === 'sms';
 		$scope.busy = true;
 
-		panelService.resend(eventId, token, p.id)
+		panelService.resend(eventId, token, p.id, channel)
 			.then((response) => {
 				applyData(response.data);
 				showMessage({
 					type: 'success',
 					icon: 'bi-send-check',
-					title: 'E-mail reenviado',
-					message: `Um novo e-mail foi enviado para ${p.name} (${p.email}).`,
+					title: isSms ? 'SMS reenviado' : 'E-mail reenviado',
+					message: isSms
+						? `Um novo SMS foi enviado para ${p.name} (${p.celphone}).`
+						: `Um novo e-mail foi enviado para ${p.name} (${p.email}).`,
 					button: 'Ok'
 				});
 			})

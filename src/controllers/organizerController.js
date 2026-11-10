@@ -8,6 +8,7 @@ const ParticipantModel = require('@models/participantModel');
 const WishListModel = require('@models/wishlistModel');
 const drawService = require('@services/drawService');
 const notifications = require('@services/notificationService');
+const smsNotifications = require('@services/smsNotificationService');
 const { validateParticipantUpdate, checkEmailDomains } = require('@utils/validation');
 const { safeEqual } = require('@utils/security');
 const { mapUrl } = require('@utils/address');
@@ -43,6 +44,7 @@ async function buildView(event) {
 		const [wishlist] = await WishListModel.get(id);
 		const isHost = id === event.host;
 		const canResend = config.notifications.email && (drawn || isHost);
+		const canResendSms = config.notifications.sms && Boolean(participant.celphone) && (drawn || isHost);
 
 		participants.push({
 			id: participant.id,
@@ -55,6 +57,9 @@ async function buildView(event) {
 			wishlistItems: wishlist ? (wishlist.wishlist || []).length : null,
 			canResend,
 			resendAvailableAt: canResend ? notifications.resendAvailableAt(participant, now) : 0,
+			smsStatus: smsNotifications.smsStatusView(participant),
+			canResendSms,
+			smsResendAvailableAt: canResendSms ? smsNotifications.resendAvailableAt(participant, now) : 0,
 		});
 	}
 
@@ -62,6 +67,12 @@ async function buildView(event) {
 	if (config.notifications.email) {
 		notifications.refreshPendingStatuses(loaded).catch(err =>
 			logger.warn('Falha ao consultar status dos e-mails', { eventId: event.id, error: err.message }));
+	}
+
+	// Sem webhook do celular, consulta o SMS Gateway em segundo plano
+	if (config.notifications.sms) {
+		smsNotifications.refreshPendingStatuses(loaded).catch(err =>
+			logger.warn('Falha ao consultar status dos SMS', { eventId: event.id, error: err.message }));
 	}
 
 	return {
@@ -77,6 +88,7 @@ async function buildView(event) {
 			drawnAt: event.event_drawn || null,
 		},
 		emailEnabled: config.notifications.email,
+		smsEnabled: config.notifications.sms,
 		participants,
 	};
 }
@@ -105,9 +117,11 @@ organizerController.draw = async (req, res) => {
 organizerController.resend = async (req, res) => {
 	const event = req.event;
 	const { participantId } = req.params;
+	const channel = req.body && req.body.channel === 'sms' ? 'sms' : 'email';
+	const isSms = channel === 'sms';
 
-	if (!config.notifications.email)
-		return res.status(409).json({ error: true, message: "O envio de e-mails está desativado no servidor." });
+	if (!(isSms ? config.notifications.sms : config.notifications.email))
+		return res.status(409).json({ error: true, message: isSms ? "O envio de SMS está desativado no servidor." : "O envio de e-mails está desativado no servidor." });
 
 	if (!findParticipant(event, participantId))
 		return res.status(404).json({ error: true, message: "Participante não encontrado." });
@@ -117,19 +131,23 @@ organizerController.resend = async (req, res) => {
 	if (!participant)
 		return res.status(404).json({ error: true, message: "Participante não encontrado." });
 
-	const availableAt = notifications.resendAvailableAt(participant);
+	if (isSms && !participant.celphone)
+		return res.status(400).json({ error: true, message: `${participant.name} não tem celular cadastrado.` });
+
+	const availableAt = isSms ? smsNotifications.resendAvailableAt(participant) : notifications.resendAvailableAt(participant);
+	const what = isSms ? 'o SMS' : 'o e-mail';
 
 	if (availableAt) {
 		const minutes = Math.ceil((availableAt - Date.now()) / 60000);
-		return res.status(429).json({ error: true, message: `Aguarde ${minutes} minuto(s) para reenviar o e-mail para ${participant.name}.` });
+		return res.status(429).json({ error: true, message: `Aguarde ${minutes} minuto(s) para reenviar ${what} para ${participant.name}.` });
 	}
 
-	const sent = await drawService.resend(getBaseUrl(req), event, participant);
+	const sent = await drawService.resend(getBaseUrl(req), event, participant, channel);
 
 	if (!sent)
-		return res.status(409).json({ error: true, message: "Os participantes recebem o e-mail quando o sorteio for feito." });
+		return res.status(409).json({ error: true, message: `Os participantes recebem ${what} quando o sorteio for feito.` });
 
-	logger.info('E-mail reenviado pelo organizador', { eventId: event.id, participantId });
+	logger.info(isSms ? 'SMS reenviado pelo organizador' : 'E-mail reenviado pelo organizador', { eventId: event.id, participantId });
 
 	return res.status(200).json(await buildView(event));
 };

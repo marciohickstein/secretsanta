@@ -42,6 +42,16 @@ const config = {
 		url: process.env.SMS_GATEWAY_URL || 'https://api.sms-gate.app/3rdparty/v1',
 		username: process.env.SMS_GATEWAY_USERNAME,
 		password: process.env.SMS_GATEWAY_PASSWORD,
+		// Chave de assinatura dos webhooks (no app: Configuracoes > Webhooks > Signing Key). Opcional.
+		webhookKey: process.env.SMS_GATEWAY_WEBHOOK_KEY,
+	},
+	sms: {
+		// Intervalo minimo entre consultas de status ao SMS Gateway para o mesmo SMS (alternativa ao webhook)
+		statusCheckIntervalMs: process.env.TEST ? 0 : 30 * 1000,
+		// Depois deste tempo o status deixa de ser consultado
+		statusCheckMaxAgeMs: 3 * 24 * 60 * 60 * 1000,
+		// Tempo minimo entre reenvios de SMS para o mesmo participante
+		resendCooldownMs: 10 * 60 * 1000,
 	},
 	email: {
 		from: process.env.RESEND_FROM,

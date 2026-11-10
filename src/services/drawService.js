@@ -7,8 +7,9 @@ const EventModel = require('@models/eventModel');
 const ParticipantModel = require('@models/participantModel');
 const Template = require('@utils/template');
 const notifications = require('@services/notificationService');
+const smsNotifications = require('@services/smsNotificationService');
 const { newToken } = require('@utils/security');
-const { drawParticipants, buildParticipantMessage, sendTextMessages, sendSms } = require('@utils/util');
+const { drawParticipants, buildParticipantMessage, sendTextMessages } = require('@utils/util');
 const logger = require('@utils/logger');
 
 const SUBJECT = 'Amigo Secreto';
@@ -66,6 +67,31 @@ function sendOrganizerEmail(baseUrl, event, host) {
 	return template;
 }
 
+/* SMS do organizador com o link do painel */
+function sendOrganizerSms(baseUrl, event, host) {
+	if (!host.celphone) return null;
+
+	const template = new Template();
+	template.assign('HOST_NAME', host.name);
+	template.assign('URL_PANEL', organizerUrl(baseUrl, event));
+	template.setTemplate(config.templates.textHost, true);
+
+	return smsNotifications.sendTrackedSms(host, 'organizer', SUBJECT, template.replace());
+}
+
+/* SMS do sorteio para um participante (friend), indicando quem ele tirou (receiver) */
+function sendDrawSms(baseUrl, event, hostName, friend, receiver) {
+	if (!friend.celphone) return null;
+
+	const secret = {
+		friend: withLinks(baseUrl, event.id, friend),
+		receiver: withLinks(baseUrl, event.id, receiver),
+	};
+
+	const text = buildParticipantMessage(config.templates.textParticipant, secret, hostName, event.message);
+	return smsNotifications.sendTrackedSms(secret.friend, 'draw', SUBJECT, text);
+}
+
 /* E-mail do sorteio para um participante (friend), indicando quem ele tirou (receiver) */
 function sendDrawEmail(baseUrl, event, hostName, friend, receiver) {
 	const secret = {
@@ -113,20 +139,29 @@ async function draw(baseUrl, event) {
 	}));
 
 	if (config.notifications.whatsapp) sendTextMessages(linked, hostName, SUBJECT, event.message);
-	if (config.notifications.sms)      sendSms(linked, hostName, SUBJECT, event.message);
+
+	if (config.notifications.sms) {
+		for (const { friend, receiver } of pairs) {
+			sendDrawSms(baseUrl, updated, hostName, friend, receiver);
+		}
+	}
 
 	logger.info('Sorteio realizado', { eventId: event.id, participants: participants.length });
 
 	return updated;
 }
 
-/* Reenvia o e-mail adequado ao momento do evento para um participante */
-async function resend(baseUrl, event, participant) {
+/*
+ * Reenvia a mensagem adequada ao momento do evento para um participante.
+ * channel: 'email' (padrao) ou 'sms'
+ */
+async function resend(baseUrl, event, participant, channel = 'email') {
 	const [host] = await ParticipantModel.get(event.host);
 
 	if (!event.event_drawn) {
 		if (participant.id !== event.host) return false;
-		sendOrganizerEmail(baseUrl, event, participant);
+		if (channel === 'sms') sendOrganizerSms(baseUrl, event, participant);
+		else sendOrganizerEmail(baseUrl, event, participant);
 		return true;
 	}
 
@@ -136,8 +171,9 @@ async function resend(baseUrl, event, participant) {
 	let [receiver] = await ParticipantModel.get(pair.receiver);
 	if (!receiver) return false;
 
-	sendDrawEmail(baseUrl, event, host ? host.name : '', participant, receiver);
+	if (channel === 'sms') sendDrawSms(baseUrl, event, host ? host.name : '', participant, receiver);
+	else sendDrawEmail(baseUrl, event, host ? host.name : '', participant, receiver);
 	return true;
 }
 
-module.exports = { organizerToken, organizerUrl, ensureOrganizerToken, loadParticipants, sendOrganizerEmail, draw, resend };
+module.exports = { organizerToken, organizerUrl, ensureOrganizerToken, loadParticipants, sendOrganizerEmail, sendOrganizerSms, draw, resend };

@@ -5,8 +5,8 @@ angular.module('secretSanta').factory('panelService', ($http) => {
 	return {
 		get: (eventId, token) => $http.get(base(eventId), options(token)),
 		draw: (eventId, token) => $http.post(`${base(eventId)}/draw`, {}, options(token)),
-		resend: (eventId, token, participantId) =>
-			$http.post(`${base(eventId)}/participants/${encodeURIComponent(participantId)}/resend`, {}, options(token)),
+		resend: (eventId, token, participantId, channel = 'email') =>
+			$http.post(`${base(eventId)}/participants/${encodeURIComponent(participantId)}/resend`, { channel }, options(token)),
 		updateParticipant: (eventId, token, participantId, data) =>
 			$http.patch(`${base(eventId)}/participants/${encodeURIComponent(participantId)}`, data, options(token)),
 	};
