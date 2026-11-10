@@ -513,6 +513,8 @@ h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 {
   margin-bottom: 4px;
 }
 
+.detail-badge .min-w-0 { min-width: 0; }
+
 .detail-badge .detail-value {
   font-weight: 700;
   color: var(--santa-detail-value);

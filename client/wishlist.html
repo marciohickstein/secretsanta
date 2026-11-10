@@ -48,38 +48,38 @@
           </div>
           <div class="card-body p-4">
             <div class="row g-2">
-              <div class="col-sm-6 col-lg-3">
-                <div class="detail-badge">
-                  <span class="detail-icon">📅</span>
-                  <div>
-                    <div class="detail-label">Data</div>
-                    <div class="detail-value">{{event.date}}</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-5">
-                <div class="detail-badge">
+              <div class="col-12">
+                <div class="detail-badge h-100 mb-0">
                   <span class="detail-icon">📍</span>
-                  <div>
+                  <div class="min-w-0">
                     <div class="detail-label">Local</div>
                     <div class="detail-value">{{event.location}}</div>
                     <a ng-if="event.mapUrl" ng-href="{{event.mapUrl}}" target="_blank" rel="noopener noreferrer" class="small"><i class="bi bi-map me-1"></i>Ver no mapa</a>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-6 col-lg-2">
-                <div class="detail-badge">
+              <div class="col-sm-6 col-xl-4">
+                <div class="detail-badge h-100 mb-0">
+                  <span class="detail-icon">📅</span>
+                  <div class="min-w-0">
+                    <div class="detail-label">Data</div>
+                    <div class="detail-value">{{event.date}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 col-xl-4">
+                <div class="detail-badge h-100 mb-0">
                   <span class="detail-icon">💰</span>
-                  <div>
+                  <div class="min-w-0">
                     <div class="detail-label">Valor máx.</div>
                     <div class="detail-value">{{event.amount}}</div>
                   </div>
                 </div>
               </div>
-              <div class="col-sm-6 col-lg-2">
-                <div class="detail-badge">
+              <div class="col-sm-6 col-xl-4">
+                <div class="detail-badge h-100 mb-0">
                   <span class="detail-icon">👥</span>
-                  <div>
+                  <div class="min-w-0">
                     <div class="detail-label">Participantes</div>
                     <div class="detail-value">{{event.participantsCount}} pessoas</div>
                   </div>
