@@ -7,33 +7,34 @@
     const input = document.getElementById('password');
     const toggle = document.getElementById('toggle-password');
     const submit = document.getElementById('login-submit');
-    const spinner = submit.querySelector('.spinner-border');
     const errorBox = document.getElementById('login-error');
+    const submitLabel = submit.innerHTML;
 
     const next = new URLSearchParams(window.location.search).get('next') || '/';
 
     const showError = (message) => {
         errorBox.querySelector('span').textContent = message;
-        errorBox.classList.remove('d-none');
-        input.classList.add('is-invalid');
+        errorBox.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
     };
 
     const setLoading = (loading) => {
         submit.disabled = loading;
-        spinner.classList.toggle('d-none', !loading);
+        submit.innerHTML = loading ? '<span class="spinner" aria-hidden="true"></span>Entrando...' : submitLabel;
     };
 
     toggle.addEventListener('click', () => {
         const visible = input.type === 'text';
         input.type = visible ? 'password' : 'text';
-        toggle.innerHTML = `<i class="bi ${visible ? 'bi-eye' : 'bi-eye-slash'}"></i>`;
+        toggle.innerHTML = `<i class="bi ${visible ? 'bi-eye' : 'bi-eye-slash'}" aria-hidden="true"></i>`;
         toggle.setAttribute('aria-label', visible ? 'Mostrar senha' : 'Ocultar senha');
+        toggle.setAttribute('title', visible ? 'Mostrar senha' : 'Ocultar senha');
         input.focus();
     });
 
     input.addEventListener('input', () => {
-        errorBox.classList.add('d-none');
-        input.classList.remove('is-invalid');
+        errorBox.hidden = true;
+        input.removeAttribute('aria-invalid');
     });
 
     form.addEventListener('submit', async (event) => {

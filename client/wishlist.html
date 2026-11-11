@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-BR" ng-csp="no-unsafe-eval">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e4d3a">
   <title>Secret Santa — Lista de Presentes</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/plus-jakarta-sans@5.2.8/index.css"
     integrity="sha384-CriTXMxa9KSWUY4RPeIP7Xe+CI39CEWYo20uac1eZ4erQw31mZTTxvq6xZdWgidR" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5.2.8/index.css"
+    integrity="sha384-UBknwUyCRagPAN9+nvtWtCb093nCPkOISFaGse71TTL3t2t0EqJ9O1m1TVvmH68a" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg">
   <script src="./assets/js/theme.js"></script>
@@ -19,197 +19,55 @@
 
 <body>
 
-  <!-- ── Navbar ── -->
-  <nav class="navbar navbar-santa navbar-expand-lg">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="event.html">
-        <img src="./assets/img/logo_secret_santa.png" alt="Secret Santa">
-        <span>Secret Santa</span>
-      </a>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="event.html"><span class="brand-mark"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>Secret <em>Santa</em></a>
+      <nav class="topbar-nav" aria-label="Principal"></nav>
     </div>
-  </nav>
+  </header>
 
-  <!-- ── Hero banner (compact) ── -->
-  <div style="background:linear-gradient(135deg,#c0392b,#922b21);padding:2rem 0;text-align:center;color:#fff;">
-    <div class="container">
-      <h2 class="fw-bold mb-1"><i class="bi bi-gift-fill me-2"></i>Lista de Presentes</h2>
-      <p class="mb-0 opacity-75 small">Veja o que seu Amigo Secreto deseja ganhar</p>
-    </div>
-  </div>
-
-  <div class="container py-5" ng-app="secretSanta">
-
-    <!-- ── Detalhes do evento ── -->
-    <div class="row justify-content-center mb-4">
-      <div class="col-md-10 col-lg-8" ng-controller="ctrlEvent" ng-init="getEvent()">
-        <div class="card-santa card">
-          <div class="card-header-santa">
-            <i class="bi bi-calendar-event me-2"></i>Detalhes do Evento
-          </div>
-          <div class="card-body p-4">
-            <div class="row g-2">
-              <div class="col-12">
-                <div class="detail-badge h-100 mb-0">
-                  <span class="detail-icon">📍</span>
-                  <div class="min-w-0">
-                    <div class="detail-label">Local</div>
-                    <div class="detail-value">{{event.location}}</div>
-                    <a ng-if="event.mapUrl" ng-href="{{event.mapUrl}}" target="_blank" rel="noopener noreferrer" class="small"><i class="bi bi-map me-1"></i>Ver no mapa</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-xl-4">
-                <div class="detail-badge h-100 mb-0">
-                  <span class="detail-icon">📅</span>
-                  <div class="min-w-0">
-                    <div class="detail-label">Data</div>
-                    <div class="detail-value">{{event.date}}</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-xl-4">
-                <div class="detail-badge h-100 mb-0">
-                  <span class="detail-icon">💰</span>
-                  <div class="min-w-0">
-                    <div class="detail-label">Valor máx.</div>
-                    <div class="detail-value">{{event.amount}}</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6 col-xl-4">
-                <div class="detail-badge h-100 mb-0">
-                  <span class="detail-icon">👥</span>
-                  <div class="min-w-0">
-                    <div class="detail-label">Participantes</div>
-                    <div class="detail-value">{{event.participantsCount}} pessoas</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <main>
+    <div class="wrap wrap-narrow">
+      <div class="page-head">
+        <span class="eyebrow"><i class="bi bi-gift-fill" aria-hidden="true"></i>Lista de presentes</span>
+        <h1>O que seu amigo secreto quer ganhar</h1>
       </div>
-    </div>
 
-    <!-- ── Nome do amigo secreto ── -->
-    <div class="row justify-content-center mb-4">
-      <div class="col-md-10 col-lg-8" ng-controller="ctrlParticipant" ng-init="getParticipant()">
-        <div class="alert alert-participant d-flex align-items-center gap-3 py-3">
-          <i class="bi bi-person-heart fs-3"></i>
-          <div>
-            <div class="fw-semibold">Seu Amigo Secreto é:</div>
-            <div class="fs-5 fw-bold">{{participant.name}}</div>
-            <div class="small mt-1 opacity-75">Abaixo está a lista de presentes que ele(a) deseja ✨</div>
-          </div>
-        </div>
+      <div class="reveal" style="margin-bottom:20px">
+        <div class="reveal-k">Seu amigo secreto é</div>
+        <div class="reveal-name" id="friend-name"><span class="skeleton" style="display:inline-block;width:8ch">&nbsp;</span></div>
+        <p>Abaixo está a lista de presentes que ele(a) deseja ✨ Guarde segredo!</p>
       </div>
-    </div>
 
-    <!-- ── Lista de presentes ── -->
-    <div class="row justify-content-center">
-      <div class="col-md-10 col-lg-8" ng-controller="ctrlWishList" ng-init="getWishList()">
-        <div class="card-santa card">
-          <div class="card-header-santa">
-            <i class="bi bi-bag-heart-fill me-2"></i>Lista de Presentes Desejados
-          </div>
-          <div class="card-body p-0">
-            <div class="table-responsive">
-              <table class="table table-santa align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th style="width:48px">#</th>
-                    <th>Presente</th>
-                    <th>Preço Estimado</th>
-                    <th>Informações Extras</th>
-                    <th>Onde comprar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="wl in wishlist">
-                    <td class="text-muted fw-semibold">{{wishlist.indexOf(wl) + 1}}</td>
-                    <td class="fw-semibold">{{wl.product}}</td>
-                    <td>
-                      <span class="badge text-bg-success fs-6 fw-normal">{{wl.price}}</span>
-                    </td>
-                    <td class="text-muted small">{{wl.infoExtra}}</td>
-                    <td>
-                      <div class="d-flex flex-wrap gap-1">
-                        <a ng-repeat="l in wl.links" ng-href="{{l.url}}" target="_blank" rel="sponsored noopener noreferrer"
-                          class="btn btn-sm btn-outline-secondary text-nowrap" title="Pesquisar {{wl.product}} na {{l.store}}">
-                          <i class="bi bi-search me-1"></i>{{l.store}}</a>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr ng-show="wishlist.length === 0">
-                    <td colspan="5" class="text-center text-muted py-4">
-                      <i class="bi bi-inbox fs-3 d-block mb-2"></i>
-                      Nenhum presente cadastrado ainda.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+      <section class="card" style="margin-bottom:20px" id="event-card" hidden>
+        <div class="card-head"><h2 class="card-title">A festa</h2></div>
+        <div class="card-pad"><div class="facts" id="event-facts"></div></div>
+      </section>
+
+      <section class="card" style="margin-bottom:20px">
+        <div class="card-head"><h2 class="card-title">Lista de desejos</h2></div>
+        <div class="card-pad"><ul class="gifts" id="gifts"><li class="center-state" style="padding:24px"><span class="spinner"></span></li></ul></div>
+      </section>
+
+      <section class="card" id="ideas-card" hidden>
+        <div class="card-head"><h2 class="card-title" id="ideas-title">Ideias de presente</h2></div>
+        <div class="card-pad">
+          <p class="small muted" id="ideas-lead" style="margin-bottom:16px"></p>
+          <div class="ideas" id="ideas"></div>
+          <p class="xs muted" style="margin-top:16px"><i class="bi bi-info-circle" aria-hidden="true"></i> Alguns links são de parceiros: podemos receber uma comissão pelas compras, sem custo extra para você.</p>
         </div>
-      </div>
+      </section>
     </div>
+  </main>
 
-
-    <!-- ── Sugestoes de presente (links de afiliado) ── -->
-    <div class="row justify-content-center mt-4">
-      <div class="col-md-10 col-lg-8" ng-controller="ctrlSuggestions" ng-init="getSuggestions()" ng-show="suggestions.length">
-        <div class="card-santa card">
-          <div class="card-header-santa">
-            <i class="bi bi-lightbulb-fill me-2"></i>Ideias de presente para {{participant.name || 'seu amigo secreto'}}
-          </div>
-          <div class="card-body p-4">
-            <p class="small text-muted mb-3">Sem inspiração? Sugestões para <span ng-show="profileLabel">{{profileLabel}}</span><span ng-hide="profileLabel">qualquer pessoa</span><span ng-show="maxAmount"> de até R$ {{maxAmount}}</span>, já filtradas pelo valor do evento.</p>
-            <div class="row g-3">
-              <div class="col-sm-6 col-lg-6" ng-repeat="s in suggestions">
-                <div class="suggestion-card h-100">
-                  <div class="d-flex align-items-center gap-2 mb-2">
-                    <i class="bi fs-4 text-danger" ng-class="s.icon"></i>
-                    <div>
-                      <div class="fw-semibold">{{s.title}}</div>
-                      <div class="small text-muted">a partir de R$ {{s.from}}</div>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-wrap gap-1">
-                    <a ng-repeat="l in s.links" ng-href="{{l.url}}" target="_blank" rel="sponsored noopener noreferrer"
-                      class="btn btn-sm btn-outline-secondary"><i class="bi bi-box-arrow-up-right me-1"></i>{{l.store}}</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p class="small text-muted mt-3 mb-0"><i class="bi bi-info-circle me-1"></i>Alguns links são de parceiros: podemos receber uma comissão pelas compras, sem custo extra para você.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /container -->
-
-  <!-- ── Footer ── -->
-  <footer class="footer-santa">
-    <div class="container text-center">
-      <p class="mb-1"><i class="bi bi-gift-fill me-1 text-danger"></i><strong class="text-white">Secret Santa</strong> — Organizador gratuito de Amigo Secreto</p>
-      <p class="mb-0">Feito com <i class="bi bi-heart-fill text-danger"></i> para tornar o Natal mais especial</p>
+  <footer class="footer" style="margin-top:64px">
+    <div class="wrap">
+      <span class="brand"><span class="brand-mark"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>Secret <em>Santa</em></span>
+      <span>Organizador gratuito de amigo secreto · feito com <i class="bi bi-heart-fill" style="color:var(--berry)" aria-label="amor"></i> para o Natal</span>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="./libs/angular.min.js"></script>
-  <script src="./assets/js/script.js"></script>
-  <script src="./assets/js/controllers/wishlistController.js" defer></script>
-  <script src="./assets/js/services/wishlistService.js" defer></script>
-  <script src="./assets/js/controllers/eventController.js" defer></script>
-  <script src="./assets/js/services/eventService.js" defer></script>
-  <script src="./assets/js/services/addressService.js" defer></script>
-  <script src="./assets/js/controllers/participantController.js" defer></script>
-  <script src="./assets/js/services/participantService.js" defer></script>
-  <script src="./assets/js/controllers/suggestionController.js" defer></script>
-  <script src="./assets/js/services/suggestionService.js" defer></script>
+  <script type="module" src="./assets/js/pages/wishlist.js"></script>
 
 </body>
 </html>

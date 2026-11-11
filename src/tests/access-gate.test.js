@@ -33,7 +33,7 @@ describe('Senha de acesso', () => {
 	});
 
 	it('mantem liberados o login, os arquivos e os links enviados por e-mail', async () => {
-		for (const path of ['/login.html', '/painel.html', '/wishlist.html', '/crudWishlist.html', '/assets/css/style.css', '/libs/angular.min.js']) {
+		for (const path of ['/login.html', '/painel.html', '/wishlist.html', '/crudWishlist.html', '/assets/css/style.css', '/assets/js/pages/event.js']) {
 			await request(app).get(path).expect(200);
 		}
 

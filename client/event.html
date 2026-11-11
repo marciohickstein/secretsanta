@@ -1,379 +1,267 @@
 <!DOCTYPE html>
-<html lang="pt-BR" ng-csp="no-unsafe-eval">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e4d3a">
+  <meta name="description" content="Organize seu amigo secreto online, grátis: sorteio por e-mail e SMS e lista de presentes para cada participante.">
   <title>Secret Santa — Crie seu Amigo Secreto</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"
     integrity="sha384-RkASv+6KfBMW9eknReJIJ6b3UnjKOKC5bOUaNgIY778NFbQ8MtWq9Lr/khUgqtTt" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/plus-jakarta-sans@5.2.8/index.css"
     integrity="sha384-CriTXMxa9KSWUY4RPeIP7Xe+CI39CEWYo20uac1eZ4erQw31mZTTxvq6xZdWgidR" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/fraunces@5.2.8/index.css"
+    integrity="sha384-UBknwUyCRagPAN9+nvtWtCb093nCPkOISFaGse71TTL3t2t0EqJ9O1m1TVvmH68a" crossorigin="anonymous">
   <link rel="stylesheet" href="./assets/css/style.css">
   <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg">
   <script src="./assets/js/theme.js"></script>
-  <script src="./assets/js/auth.js"></script>
 </head>
 
 <body>
 
-  <!-- ── Navbar ── -->
-  <nav class="navbar navbar-santa navbar-expand-lg">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-        <img src="./assets/img/logo_secret_santa.png" alt="Secret Santa">
-        <span>Secret Santa</span>
-      </a>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="event.html"><span class="brand-mark"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>Secret <em>Santa</em></a>
+      <nav class="topbar-nav" aria-label="Principal">
+        <a class="link" href="#como-funciona">Como funciona</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <!-- ── Hero ── -->
-  <section class="hero-section">
-    <div class="container">
-      <span class="hero-eyebrow"><i class="bi bi-stars"></i>100% gratuito · Sorteio por e-mail e SMS</span>
-      <h1><i class="bi bi-gift-fill me-2"></i>Secret Santa</h1>
-      <p class="mt-3">Organize sua troca de presentes online de forma simples, gratuita e divertida!</p>
-      <a href="#criar-evento" class="btn btn-light btn-lg mt-4 fw-semibold px-4">
-        <i class="bi bi-plus-circle-fill me-2"></i>Criar meu evento
-      </a>
-    </div>
-  </section>
+  <main>
 
-  <!-- ── AngularJS app root ── -->
-  <div ng-app="secretSanta" ng-controller="ctrlEvent">
-
-    <!-- ── Caixa de mensagem (sucesso / erro) ── -->
-    <div class="modal fade modal-santa" id="messageModal" tabindex="-1" aria-labelledby="messageModalTitle" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 rounded-4 shadow-lg">
-          <div class="modal-body text-center px-4 pt-5 pb-3 px-md-5">
-            <div class="modal-santa-icon" ng-class="'modal-santa-icon-' + modal.type">
-              <i class="bi" ng-class="modal.icon"></i>
-            </div>
-            <h4 class="fw-bold mt-4 mb-2" id="messageModalTitle">{{modal.title}}</h4>
-            <p class="text-muted mb-0">{{modal.message}}</p>
-
-            <div ng-if="modal.type === 'success'" class="text-start mt-4">
-              <div class="modal-santa-email">
-                <i class="bi bi-envelope-paper-heart-fill"></i>
-                <div>Enviamos o link do painel para <strong class="text-break">{{modal.email}}</strong></div>
-              </div>
-              <ol class="modal-santa-steps">
-                <li>No <strong>painel do organizador</strong>, confira os participantes.</li>
-                <li>Clique em <strong>"Sortear agora"</strong>: cada um recebe por e-mail e SMS o seu amigo secreto.</li>
-                <li>Acompanhe a entrega dos e-mails e as listas de presentes pelo painel.</li>
-              </ol>
-            </div>
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow"><i class="bi bi-stars" aria-hidden="true"></i>100% gratuito</span>
+          <h1>O amigo secreto da turma, <em>sem papelzinho</em>.</h1>
+          <p class="lead">Cadastre os participantes, sorteie com um clique e cada pessoa recebe por e-mail e SMS quem tirou — com uma lista de presentes para não errar.</p>
+          <div class="hero-actions">
+            <a href="#criar-evento" class="btn btn-primary btn-lg"><i class="bi bi-plus-lg" aria-hidden="true"></i>Criar meu evento</a>
+            <a href="#como-funciona" class="btn btn-lg">Como funciona</a>
           </div>
-          <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
-            <a ng-if="modal.link" ng-href="{{modal.link}}" class="btn btn-santa px-4">
-              <i class="bi bi-clipboard2-check-fill me-2"></i>Abrir painel do organizador
-            </a>
-            <button type="button" class="btn px-4" ng-class="modal.link ? 'btn-outline-secondary' : 'btn-santa px-5'" data-bs-dismiss="modal">{{modal.button}}</button>
+          <div class="hero-facts">
+            <span><i class="bi bi-envelope-check-fill" aria-hidden="true"></i>Sorteio por e-mail e SMS</span>
+            <span><i class="bi bi-shield-lock-fill" aria-hidden="true"></i>Ninguém vê quem tirou quem</span>
+            <span><i class="bi bi-bag-heart-fill" aria-hidden="true"></i>Lista de presentes</span>
+          </div>
+        </div>
+        <div class="tag-art" aria-hidden="true">
+          <div class="tag-back"></div>
+          <div class="tag-card">
+            <div class="tag-hole"></div>
+            <div>
+              <div class="tag-to">Seu amigo secreto é…</div>
+              <div class="tag-name">Segredo<span class="q">!</span></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="container py-5">
-
-      <!-- ── O que é? ── -->
-      <section class="mb-5">
-        <h2 class="section-title"><i class="bi bi-question-circle me-2"></i>O que é Secret Santa?</h2>
-        <hr class="section-divider">
-        <p class="lead">É um <strong>organizador de troca de presentes</strong> online e <strong>gratuito</strong>! Convide amigos, família ou colegas de trabalho e deixe a mágica do sorteio acontecer.</p>
-        <p class="text-muted">Após receber o e-mail do organizador, cada participante pode adicionar sua <strong>lista de presentes desejados</strong> — visível apenas para seu Amigo Secreto.</p>
-      </section>
-
-      <!-- ── Como funciona ── -->
-      <section class="mb-5">
-        <h2 class="section-title"><i class="bi bi-list-ol me-2"></i>Como funciona?</h2>
-        <hr class="section-divider">
-        <div class="row g-4 mt-1">
-          <div class="col-md-4">
-            <div class="step-card">
-              <div class="step-icon"><i class="bi bi-pencil-fill"></i></div>
-              <span class="step-number">Passo 1</span>
-              <h5 class="fw-bold mt-2">Crie o evento</h5>
-              <p class="text-muted small mb-0">Preencha a data, local, valor máximo e adicione ao menos 3 participantes. O primeiro é o operador da lista. Informe se cada pessoa é criança, mulher ou homem para receber ideias de presente certeiras.</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="step-card">
-              <div class="step-icon"><i class="bi bi-envelope-check-fill"></i></div>
-              <span class="step-number">Passo 2</span>
-              <h5 class="fw-bold mt-2">Confirme por e-mail</h5>
-              <p class="text-muted small mb-0">O operador recebe um e-mail de validação e clica em "Sortear Amigo Secreto" para disparar o sorteio.</p>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="step-card">
-              <div class="step-icon"><i class="bi bi-gift-fill"></i></div>
-              <span class="step-number">Passo 3</span>
-              <h5 class="fw-bold mt-2">Receba o resultado</h5>
-              <p class="text-muted small mb-0">Cada participante recebe um e-mail e um SMS com o nome do seu Amigo Secreto e pode acessar a lista de presentes.</p>
-            </div>
-          </div>
+    <!-- ── Como funciona ── -->
+    <section class="section" id="como-funciona">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Como funciona</span>
+          <h2>Três passos até a troca de presentes</h2>
+          <p>Após o sorteio, cada participante pode montar sua lista de desejos — visível apenas para quem o tirou.</p>
         </div>
-      </section>
+        <div class="steps">
+          <article class="step">
+            <span class="step-num">1</span>
+            <h3>Crie o evento</h3>
+            <p>Data, local, valor do presente e pelo menos 3 participantes. O primeiro é o organizador. Informe se cada pessoa é criança, mulher ou homem para receber ideias de presente certeiras.</p>
+          </article>
+          <article class="step">
+            <span class="step-num">2</span>
+            <h3>Sorteie pelo painel</h3>
+            <p>O organizador recebe por e-mail o link do painel, confere os participantes e clica em "Sortear agora".</p>
+          </article>
+          <article class="step">
+            <span class="step-num">3</span>
+            <h3>Cada um descobre o seu</h3>
+            <p>Todos recebem por e-mail e SMS o nome do seu amigo secreto e o link da lista de presentes dele.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-      <!-- ── Formulário ── -->
-      <section id="criar-evento">
-        <h2 class="section-title"><i class="bi bi-calendar-plus me-2"></i>Criar Evento</h2>
-        <hr class="section-divider">
+    <!-- ── Formulario ── -->
+    <section class="section" id="criar-evento" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Criar evento</span>
+          <h2>Monte o seu amigo secreto</h2>
+        </div>
 
-        <form name="event" novalidate>
+        <form id="event-form" class="builder" novalidate>
+          <div>
 
-          <!-- Detalhes do evento -->
-          <div class="card-santa card mb-4">
-            <div class="card-header-santa">
-              <i class="bi bi-info-circle me-2"></i>Detalhes do evento
-            </div>
-            <div class="card-body p-4">
-              <div class="row g-3">
-                <div class="col-md-7 col-lg-6">
-                  <label for="party_eventdate" class="form-label">
-                    <i class="bi bi-calendar3 me-1 text-danger"></i>Quando vai ser a festa?
-                  </label>
-                  <div class="row g-2">
-                    <div class="col">
-                      <div class="input-group">
-                        <span class="input-group-text d-none d-sm-flex"><i class="bi bi-calendar-event"></i></span>
-                        <input type="text" ss-date-picker ss-model="eventDate" id="party_eventdate" name="party[eventdate]"
-                          placeholder="dd/mm/aaaa" inputmode="numeric" autocomplete="off" required class="form-control bg-body" aria-label="Data da festa">
-                      </div>
-                    </div>
-                    <div class="col-auto">
-                      <div class="input-group time-field">
-                        <span class="input-group-text d-none d-sm-flex"><i class="bi bi-clock"></i></span>
-                        <input type="text" ss-date-picker="time" ss-model="eventTime" id="party_eventtime" name="party[eventtime]"
-                          placeholder="hh:mm" inputmode="numeric" autocomplete="off" required class="form-control bg-body" aria-label="Horário da festa">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Atalhos de data">
-                    <button type="button" ng-repeat="s in dateShortcuts" ng-click="setDate(s)"
-                      class="btn btn-sm rounded-pill date-chip" ng-class="isDateShortcut(s) ? 'btn-danger' : 'btn-outline-secondary'">
-                      {{s.label}}
-                    </button>
-                  </div>
-                  <div class="date-preview mt-2" ng-show="datePreview()" aria-live="polite">
-                    <i class="bi bi-check-circle-fill me-1"></i>{{datePreview()}}
-                    <span class="text-muted" ng-show="daysLeft()">· {{daysLeft()}}</span>
-                  </div>
-                </div>
-                <div class="col-md-5 col-lg-4 ms-lg-auto">
-                  <label for="party_amount" class="form-label">
-                    <i class="bi bi-cash-coin me-1 text-danger"></i>Valor do presente
-                  </label>
-                  <div class="input-group">
-                    <span class="input-group-text fw-semibold">R$</span>
-                    <input type="text" ss-money ng-model="eventAmount" id="party_amount" name="party[amount]"
-                      inputmode="decimal" autocomplete="off" maxlength="12" required class="form-control"
-                      placeholder="0" aria-describedby="party_amount_help">
-                  </div>
-                  <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Valores sugeridos em reais">
-                    <button type="button" ng-repeat="v in amountShortcuts" ng-click="setAmount(v)" aria-label="R$ {{v}}"
-                      class="btn btn-sm rounded-pill date-chip" ng-class="eventAmount === v ? 'btn-danger' : 'btn-outline-secondary'">
-                      {{v}}
-                    </button>
-                  </div>
-                  <div id="party_amount_help" class="form-text">Valor máximo que cada um vai gastar.</div>
+            <!-- 1. Quando e quanto -->
+            <section class="card block" id="block-when" aria-labelledby="block-when-title">
+              <div class="block-head">
+                <span class="block-num">1</span>
+                <div>
+                  <h3 id="block-when-title">Quando e quanto</h3>
+                  <p>Data da festa e valor máximo de cada presente.</p>
                 </div>
               </div>
-
-              <!-- Endereco da festa (o CEP preenche rua, bairro, cidade e UF) -->
-              <div class="address-block mt-4 pt-4">
-                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
-                  <span class="form-label mb-0"><i class="bi bi-geo-alt me-1 text-danger"></i>Onde vai ser a festa?</span>
-                  <a class="small text-muted" href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" rel="noopener noreferrer">
-                    <i class="bi bi-search me-1"></i>Não sei o CEP
-                  </a>
+              <div class="block-body">
+                <div class="grid">
+                  <div class="field col-6">
+                    <label class="label" for="party_eventdate">Data da festa</label>
+                    <div class="row" style="flex-wrap:nowrap">
+                      <div class="affix" style="flex:1;min-width:0">
+                        <i class="bi bi-calendar-event affix-icon" aria-hidden="true"></i>
+                        <input type="text" id="party_eventdate" class="input" placeholder="dd/mm/aaaa" inputmode="numeric" autocomplete="off" required>
+                      </div>
+                      <div class="affix" style="width:128px;flex-shrink:0">
+                        <i class="bi bi-clock affix-icon" aria-hidden="true"></i>
+                        <input type="text" id="party_eventtime" class="input" placeholder="hh:mm" inputmode="numeric" autocomplete="off" required aria-label="Horário da festa">
+                      </div>
+                    </div>
+                    <div class="chips" id="date-chips" role="group" aria-label="Atalhos de data"></div>
+                  </div>
+                  <div class="field col-6">
+                    <label class="label" for="party_amount">Valor do presente</label>
+                    <div class="affix">
+                      <span class="affix-icon">R$</span>
+                      <input type="text" id="party_amount" class="input" inputmode="decimal" autocomplete="off" maxlength="12" placeholder="0" required aria-describedby="party_amount_help">
+                    </div>
+                    <div class="chips" id="amount-chips" role="group" aria-label="Valores sugeridos em reais"></div>
+                    <span class="hint" id="party_amount_help">Valor máximo que cada um vai gastar.</span>
+                  </div>
                 </div>
-                <div class="row g-3">
-                  <div class="col-12">
-                    <label for="party_place" class="form-label">Nome do local <span class="text-muted fw-normal">(opcional)</span></label>
-                    <input type="text" ng-model="address.place" id="party_place" name="party[place]" maxlength="100"
-                      class="form-control" placeholder="Ex: Salão de festas do prédio">
-                    <div class="d-flex flex-wrap gap-1 mt-2" role="group" aria-label="Sugestões de local">
-                      <button type="button" ng-repeat="p in placeSuggestions" ng-click="setPlace(p)"
-                        class="btn btn-sm rounded-pill date-chip" ng-class="address.place === p ? 'btn-danger' : 'btn-outline-secondary'">
-                        {{p}}
-                      </button>
+                <div class="preview" id="date-preview" hidden aria-live="polite"></div>
+              </div>
+            </section>
+
+            <!-- 2. Onde -->
+            <section class="card block" id="block-where" aria-labelledby="block-where-title">
+              <div class="block-head">
+                <span class="block-num">2</span>
+                <div>
+                  <h3 id="block-where-title">Onde</h3>
+                  <p>Digite o CEP e preenchemos o endereço para você.</p>
+                </div>
+              </div>
+              <div class="block-body">
+                <div class="grid">
+                  <div class="field col-12">
+                    <label class="label" for="party_place">Nome do local <span class="opt">(opcional)</span></label>
+                    <input type="text" id="party_place" data-addr="place" class="input" maxlength="100" placeholder="Ex: Salão de festas do prédio">
+                    <div class="chips" id="place-chips" role="group" aria-label="Sugestões de local"></div>
+                  </div>
+                  <div class="field col-cep">
+                    <label class="label" for="party_cep">CEP</label>
+                    <div class="affix">
+                      <input type="text" id="party_cep" class="input has-end" inputmode="numeric" autocomplete="postal-code" maxlength="9" placeholder="00000-000" required aria-describedby="party_cep_status">
+                      <span class="affix-end" id="cep-icon"><i class="bi bi-mailbox" aria-hidden="true"></i></span>
                     </div>
+                    <span class="hint" id="party_cep_status" aria-live="polite">Preenchemos o endereço para você.</span>
+                    <a class="hint" href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" rel="noopener noreferrer"><i class="bi bi-search" aria-hidden="true"></i> Não sei o CEP</a>
                   </div>
-                  <div class="col-sm-5 col-lg-3">
-                    <label for="party_cep" class="form-label">CEP</label>
-                    <div class="input-group">
-                      <input type="text" ng-model="address.cep" ng-change="onCepChange()" id="party_cep" name="party[cep]"
-                        inputmode="numeric" autocomplete="postal-code" maxlength="9" required class="form-control"
-                        placeholder="00000-000" aria-describedby="party_cep_status">
-                      <span class="input-group-text cep-status" ng-switch="cepStatus">
-                        <span ng-switch-when="loading" class="spinner-border spinner-border-sm text-danger" aria-hidden="true"></span>
-                        <i ng-switch-when="found" class="bi bi-check-circle-fill text-success"></i>
-                        <i ng-switch-when="notfound" class="bi bi-exclamation-circle-fill text-warning"></i>
-                        <i ng-switch-when="error" class="bi bi-wifi-off text-warning"></i>
-                        <i ng-switch-default class="bi bi-mailbox"></i>
-                      </span>
-                    </div>
-                    <div id="party_cep_status" class="form-text" aria-live="polite">{{cepMessage || 'Preenchemos o endereço para você.'}}</div>
+                  <div class="field col-8">
+                    <label class="label" for="party_street">Rua</label>
+                    <input type="text" id="party_street" data-addr="street" class="input" maxlength="150" autocomplete="address-line1" placeholder="Rua, avenida..." required>
                   </div>
-                  <div class="col-md-8 col-lg-6">
-                    <label for="party_street" class="form-label">Rua</label>
-                    <input type="text" ng-model="address.street" id="party_street" name="party[street]" maxlength="150"
-                      autocomplete="address-line1" required class="form-control" placeholder="Rua, avenida...">
+                  <div class="field col-4">
+                    <label class="label" for="party_number">Número</label>
+                    <input type="text" id="party_number" data-addr="number" class="input" maxlength="20" placeholder="Ex: 260" required>
                   </div>
-                  <div class="col-4 col-md-4 col-lg-2">
-                    <label for="party_number" class="form-label">Número</label>
-                    <input type="text" ng-model="address.number" id="party_number" name="party[number]" maxlength="20"
-                      required class="form-control" placeholder="Ex: 260">
+                  <div class="field col-8">
+                    <label class="label" for="party_complement">Complemento <span class="opt">(opcional)</span></label>
+                    <input type="text" id="party_complement" data-addr="complement" class="input" maxlength="100" autocomplete="address-line2" placeholder="Apto, bloco...">
                   </div>
-                  <div class="col-8 col-lg-4">
-                    <label for="party_complement" class="form-label">Complemento <span class="text-muted fw-normal">(opcional)</span></label>
-                    <input type="text" ng-model="address.complement" id="party_complement" name="party[complement]" maxlength="100"
-                      autocomplete="address-line2" class="form-control" placeholder="Apto, bloco...">
+                  <div class="field col-6">
+                    <label class="label" for="party_district">Bairro</label>
+                    <input type="text" id="party_district" data-addr="district" class="input" maxlength="100" placeholder="Bairro">
                   </div>
-                  <div class="col-md-5">
-                    <label for="party_district" class="form-label">Bairro</label>
-                    <input type="text" ng-model="address.district" id="party_district" name="party[district]" maxlength="100"
-                      class="form-control" placeholder="Bairro">
+                  <div class="field col-city">
+                    <label class="label" for="party_city">Cidade</label>
+                    <input type="text" id="party_city" data-addr="city" class="input" maxlength="100" autocomplete="address-level2" placeholder="Cidade" required>
                   </div>
-                  <div class="col-8 col-md-5">
-                    <label for="party_city" class="form-label">Cidade</label>
-                    <input type="text" ng-model="address.city" id="party_city" name="party[city]" maxlength="100"
-                      autocomplete="address-level2" required class="form-control" placeholder="Cidade">
-                  </div>
-                  <div class="col-4 col-md-2">
-                    <label for="party_state" class="form-label">UF</label>
-                    <select ng-model="address.state" id="party_state" name="party[state]" required class="form-select"
-                      ng-options="uf for uf in ufs" autocomplete="address-level1">
+                  <div class="field col-2">
+                    <label class="label" for="party_state">UF</label>
+                    <select id="party_state" data-addr="state" class="select" autocomplete="address-level1" required>
                       <option value="">UF</option>
                     </select>
                   </div>
                 </div>
-                <div class="date-preview mt-3" ng-show="addressPreview()">
-                  <i class="bi bi-pin-map-fill me-1"></i>{{addressPreview()}}
-                  <a ng-href="{{addressMapUrl()}}" target="_blank" rel="noopener noreferrer" class="ms-1 fw-normal">ver no mapa</a>
+                <div class="preview" id="address-preview" hidden></div>
+              </div>
+            </section>
+
+            <!-- 3. Participantes -->
+            <section class="card block" id="block-who" aria-labelledby="block-who-title">
+              <div class="block-head">
+                <span class="block-num">3</span>
+                <div>
+                  <h3 id="block-who-title">Quem participa</h3>
+                  <p>Pelo menos 3 pessoas. A primeira é você, o organizador.</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Participantes -->
-          <div class="card-santa card mb-4">
-            <div class="card-header-santa">
-              <i class="bi bi-people-fill me-2"></i>Participantes
-            </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-santa align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th style="width:48px">#</th>
-                      <th>Nome</th>
-                      <th>E-mail</th>
-                      <th>Celular</th>
-                      <th style="width:150px">Perfil</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="participant in participants">
-                      <td class="text-muted fw-semibold">{{participants.indexOf(participant) + 1}}</td>
-                      <td><input ng-model="participant.name" class="form-control form-control-sm" type="text" placeholder="Nome completo"></td>
-                      <td><input ng-model="participant.email" class="form-control form-control-sm" type="email" placeholder="email@exemplo.com"></td>
-                      <td><input ng-model="participant.celphone" class="form-control form-control-sm" type="text" placeholder="51 9...." inputmode="tel"></td>
-                      <td>
-                        <select ng-model="participant.profile" class="form-select form-select-sm" aria-label="Perfil do participante">
-                          <option value="">Selecione...</option>
-                          <option value="crianca">Criança</option>
-                          <option value="mulher">Mulher</option>
-                          <option value="homem">Homem</option>
-                        </select>
-                      </td>
-                      <td class="text-end pe-3">
-                        <span ng-show="participants.indexOf(participant) === 0" class="badge text-bg-warning">
-                          <i class="bi bi-star-fill me-1"></i>Operador
-                        </span>
-                        <button ng-show="participants.indexOf(participant) > 0"
-                          ng-click="delParticipant(participant)"
-                          class="btn btn-outline-danger btn-sm">
-                          <i class="bi bi-trash3"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="block-body">
+                <ol class="people" id="people"></ol>
+                <button type="button" class="add-row" id="add-person"><i class="bi bi-person-plus-fill" aria-hidden="true"></i>Adicionar pessoa</button>
               </div>
-              <div class="p-3 text-end border-top">
-                <button ng-click="addParticipant()" class="btn btn-outline-success btn-sm">
-                  <i class="bi bi-person-plus-fill me-1"></i>Adicionar Pessoa
-                </button>
+            </section>
+
+            <!-- 4. Mensagem -->
+            <section class="card block" id="block-message" aria-labelledby="block-message-title">
+              <div class="block-head">
+                <span class="block-num">4</span>
+                <div>
+                  <h3 id="block-message-title">Mensagem para os convidados</h3>
+                  <p>Vai junto com o resultado do sorteio.</p>
+                </div>
               </div>
-            </div>
-          </div>
-
-          <!-- Mensagem pessoal -->
-          <div class="card-santa card mb-4">
-            <div class="card-header-santa">
-              <i class="bi bi-chat-heart me-2"></i>Mensagem pessoal
-            </div>
-            <div class="card-body p-4">
-              <label for="party_message" class="form-label">Escreva uma mensagem para seus convidados</label>
-              <textarea ng-model="eventMessage" id="party_message" name="party[message]"
-                required rows="5" class="form-control"
-                placeholder="Ex: Feliz Natal a todos! Mal posso esperar pela nossa festa..."></textarea>
-              <div class="form-text mb-1 mt-2">Sem ideias? Escolha uma mensagem pronta:</div>
-              <div class="d-flex flex-wrap gap-1" role="group" aria-label="Mensagens prontas">
-                <button type="button" ng-repeat="m in messageSuggestions" ng-click="setMessage(m)" title="{{m.text}}"
-                  class="btn btn-sm rounded-pill date-chip" ng-class="eventMessage === m.text ? 'btn-danger' : 'btn-outline-secondary'">
-                  {{m.label}}
-                </button>
+              <div class="block-body">
+                <label class="sr-only" for="party_message">Mensagem</label>
+                <textarea id="party_message" class="textarea" rows="5" required placeholder="Ex: Feliz Natal a todos! Mal posso esperar pela nossa festa..."></textarea>
+                <div class="hint" style="margin-top:12px">Sem ideias? Escolha uma mensagem pronta:</div>
+                <div class="chips" id="message-chips" role="group" aria-label="Mensagens prontas"></div>
               </div>
+            </section>
+          </div>
+
+          <!-- Resumo -->
+          <aside class="summary">
+            <div class="card card-pad">
+              <span class="eyebrow">Resumo</span>
+              <div class="row" style="margin-top:10px">
+                <span class="small muted" id="progress-label">0 de 4 etapas</span>
+              </div>
+              <div class="progress" aria-hidden="true"><span id="progress-bar" style="width:0%"></span></div>
+              <ul class="summary-list" id="summary"></ul>
+              <button type="submit" class="btn btn-primary btn-lg btn-block" id="create-party-btn" style="margin-top:18px">
+                <i class="bi bi-stars" aria-hidden="true"></i>Criar amigo secreto
+              </button>
+              <p class="xs muted" style="margin-top:12px;text-align:center">O organizador recebe o link do painel por e-mail.</p>
             </div>
-          </div>
-
-          <!-- Submit -->
-          <div class="text-center pb-3">
-            <button type="submit" ng-click="createEvent()" ng-disabled="saving"
-              class="btn btn-santa btn-santa-lg" id="create-party-btn">
-              <span ng-show="saving" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-              <i ng-hide="saving" class="bi bi-stars me-2"></i>{{ saving ? 'Criando evento...' : 'Criar Evento de Amigo Secreto!' }}
-            </button>
-          </div>
-
+          </aside>
         </form>
-      </section>
+      </div>
+    </section>
+  </main>
 
-    </div><!-- /container -->
-  </div><!-- /ng-app -->
-
-  <!-- ── Footer ── -->
-  <footer class="footer-santa">
-    <div class="container text-center">
-      <p class="mb-1"><i class="bi bi-gift-fill me-1 text-danger"></i><strong class="text-white">Secret Santa</strong> — Organizador gratuito de Amigo Secreto</p>
-      <p class="mb-0">Feito com <i class="bi bi-heart-fill text-danger"></i> para tornar o Natal mais especial</p>
+  <footer class="footer">
+    <div class="wrap">
+      <span class="brand"><span class="brand-mark"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>Secret <em>Santa</em></span>
+      <span>Organizador gratuito de amigo secreto · feito com <i class="bi bi-heart-fill" style="color:var(--berry)" aria-label="amor"></i> para o Natal</span>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"
     integrity="sha384-5JqMv4L/Xa0hfvtF06qboNdhvuYXUku9ZrhZh3bSk8VXF0A/RuSLHpLsSV9Zqhl6" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"
     integrity="sha384-agbVpcY312cNMSL1b3CUo060bj9FmbwUX8HUCNSE17+jOU/en4yz3w9ro9IWVusF" crossorigin="anonymous"></script>
-  <script src="./libs/angular.min.js"></script>
-  <script src="./assets/js/script.js"></script>
-  <script src="./assets/js/controllers/eventController.js"></script>
-  <script src="./assets/js/directives/datePicker.js"></script>
-  <script src="./assets/js/directives/moneyInput.js"></script>
-  <script src="./assets/js/services/eventService.js"></script>
-  <script src="./assets/js/services/addressService.js"></script>
+  <script type="module" src="./assets/js/pages/event.js"></script>
 
 </body>
 </html>
