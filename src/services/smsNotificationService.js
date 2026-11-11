@@ -41,7 +41,7 @@ const DEFAULT_ERRORS = {
 	failed: 'O celular do SMS Gateway não conseguiu enviar o SMS.',
 };
 
-// Fila sequencial: um envio/consulta por vez ao gateway
+// Fila sequencial para as consultas de status ao gateway
 let queue = Promise.resolve();
 
 function enqueue(task) {
@@ -50,8 +50,49 @@ function enqueue(task) {
 	return run;
 }
 
+/*
+ * Envios: uma fila por numero de celular. SMS seguidos para o mesmo numero
+ * (ex.: participantes que compartilham o celular) aguardam config.sms.sameNumberIntervalMs,
+ * porque a operadora costuma recusar mensagens em sequencia; numeros diferentes nao esperam.
+ */
+const numberQueues = new Map();
+const pending = new Set();
+
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const numberKey = (number) => String(number || '').replace(/\D/g, '').replace(/^55(?=\d{11}$)/, '');
+
+function enqueueForNumber(number, task) {
+	const key = numberKey(number);
+	const entry = numberQueues.get(key) || { chain: Promise.resolve(), lastSendAt: 0 };
+
+	const run = entry.chain.then(async () => {
+		const delay = entry.lastSendAt + config.sms.sameNumberIntervalMs - Date.now();
+		if (entry.lastSendAt && delay > 0) await wait(delay);
+		entry.lastSendAt = Date.now();
+		return task();
+	});
+
+	entry.chain = run.catch(() => {});
+	numberQueues.set(key, entry);
+
+	const tracked = entry.chain.finally(() => {
+		pending.delete(tracked);
+		// Libera a memoria quando o numero fica ocioso por mais que o intervalo
+		setTimeout(() => {
+			const current = numberQueues.get(key);
+			if (current === entry && Date.now() - entry.lastSendAt >= config.sms.sameNumberIntervalMs) numberQueues.delete(key);
+		}, config.sms.sameNumberIntervalMs).unref?.();
+	});
+	pending.add(tracked);
+
+	return run;
+}
+
 /* Resolve quando todos os envios e consultas pendentes terminarem */
-const idle = () => queue;
+async function idle() {
+	while (pending.size) await Promise.all([...pending]);
+	await queue;
+}
 
 const statusOf = (state) => GATEWAY_STATUS[state] || null;
 
@@ -73,7 +114,7 @@ async function sendTrackedSms(participant, kind, subject, text) {
 		smsMessageId: null,
 	});
 
-	return enqueue(async () => {
+	return enqueueForNumber(to, async () => {
 		const result = await sms.send(to, subject, text);
 		const accepted = Boolean(result) && !result.error;
 

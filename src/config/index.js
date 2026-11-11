@@ -50,6 +50,8 @@ const config = {
 		statusCheckIntervalMs: process.env.TEST ? 0 : 30 * 1000,
 		// Depois deste tempo o status deixa de ser consultado
 		statusCheckMaxAgeMs: 3 * 24 * 60 * 60 * 1000,
+		// Intervalo entre SMS seguidos para o mesmo numero (a operadora recusa mensagens em sequencia)
+		sameNumberIntervalMs: process.env.TEST ? 0 : (Number(process.env.SMS_SAME_NUMBER_INTERVAL_MS) || 30 * 1000),
 		// Tempo minimo entre reenvios de SMS para o mesmo participante
 		resendCooldownMs: 10 * 60 * 1000,
 	},

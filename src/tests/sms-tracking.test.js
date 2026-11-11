@@ -134,6 +134,34 @@ describe('Rastreamento de SMS', () => {
 		await api('post', `/participants/${caio.id}/resend`).send({ channel: 'sms' }).expect(400);
 	});
 
+	it('espera entre SMS para o mesmo numero, sem atrasar os outros numeros', async () => {
+		const config = require('@config');
+		const previous = config.sms.sameNumberIntervalMs;
+		config.sms.sameNumberIntervalMs = 300;
+
+		const create = (name, celphone) => ParticipantModel.create({ name, email: `${name}@example.com`, celphone });
+		const [p1, p2, p3] = [await create('mesmo1', '51988880000'), await create('mesmo2', '(51) 98888-0000'), await create('outro', '51977770000')];
+
+		const sentAt = {};
+		sms.send.mockImplementation(async (to) => { sentAt[to] = Date.now(); return { id: `sms-${to}`, state: 'Pending' }; });
+
+		try {
+			const start = Date.now();
+			smsNotifications.sendTrackedSms(p1, 'draw', 'Amigo Secreto', 'a');
+			smsNotifications.sendTrackedSms(p2, 'draw', 'Amigo Secreto', 'b');
+			smsNotifications.sendTrackedSms(p3, 'draw', 'Amigo Secreto', 'c');
+			await new Promise(resolve => setTimeout(resolve, 20));
+			await smsNotifications.idle();
+
+			expect(sentAt['51977770000'] - start).toBeLessThan(200);
+			expect(sentAt['(51) 98888-0000'] - sentAt['51988880000']).toBeGreaterThanOrEqual(290);
+			expect((await ParticipantModel.get(p2.id))[0].smsStatus).toBe('queued');
+		} finally {
+			config.sms.sameNumberIntervalMs = previous;
+			sms.send.mockReset();
+		}
+	});
+
 	describe('webhook do SMS Gateway', () => {
 		const sign = (body, { key = 'chave-de-teste', timestamp = Math.floor(Date.now() / 1000) } = {}) => ({
 			'X-Signature': crypto.createHmac('sha256', key).update(`${body}${timestamp}`).digest('hex'),
