@@ -6,62 +6,75 @@
     <meta name="color-scheme" content="light" />
     <meta name="supported-color-schemes" content="light" />
     <title>Amigo Secreto</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Mesmo visual do site (Fraunces + Plus Jakarta Sans). Clientes sem suporte usam Georgia / Segoe UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,450&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     <style>
       body { margin: 0; padding: 0; }
       a { text-decoration: none; }
       @media (max-width: 600px) {
         .px { padding-left: 24px !important; padding-right: 24px !important; }
-        .title { font-size: 26px !important; }
+        .title { font-size: 30px !important; }
+        .btn-cell a { display: block !important; }
       }
     </style>
   </head>
 
   <!-- Estilos inline: Gmail e Outlook ignoram folhas de estilo externas -->
-  <body style="margin:0; padding:0; background-color:#fbf7f4;">
+  <body style="margin:0; padding:0; background-color:#fbf7f0;">
     <!-- Texto de pre-visualizacao na caixa de entrada -->
     <div style="display:none; max-height:0; overflow:hidden; opacity:0;">
       Seu amigo secreto foi criado! Abra o painel do organizador para fazer o sorteio.
     </div>
 
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fbf7f4" style="background-color:#fbf7f4;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fbf7f0" style="background-color:#fbf7f0;">
       <tr>
         <td align="center" style="padding:32px 12px;">
+
+          <!-- Marca -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 20px;">
+            <tr>
+              <td width="34" height="34" align="center" valign="middle" bgcolor="#b8323b"
+                style="width:34px; height:34px; border-radius:10px; background-color:#b8323b; font-size:17px; line-height:34px;">🎁</td>
+              <td style="padding-left:10px; font-family:'Fraunces','Iowan Old Style',Georgia,serif; font-size:21px; font-weight:600; letter-spacing:-0.4px; color:#1d2621;">
+                Secret <em style="font-style:italic; font-weight:450; color:#b8323b;">Santa</em>
+              </td>
+            </tr>
+          </table>
+
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-            style="max-width:560px; background-color:#ffffff; border:1px solid #f1e6e3; border-radius:20px; overflow:hidden; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; color:#374151;">
+            style="max-width:560px; background-color:#ffffff; border:1px solid #e7dfd1; border-radius:22px; overflow:hidden; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; color:#1d2621;">
 
             <!-- Cabecalho -->
             <tr>
-              <td align="center" bgcolor="#c81e24" class="px"
-                style="background-color:#c81e24; background-image:linear-gradient(135deg,#f0464a 0%,#e5383b 40%,#a4161a 75%,#1b7a4b 140%); padding:40px 40px 36px;">
-                <div style="display:inline-block; padding:6px 14px; border-radius:999px; background-color:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); color:#ffffff; font-size:12px; font-weight:600; letter-spacing:0.3px;">
-                  ✨ Painel do organizador
-                </div>
-                <div style="font-size:44px; line-height:1; margin:20px 0 8px;">🎁</div>
-                <h1 class="title" style="margin:0; color:#ffffff; font-size:30px; line-height:1.15; font-weight:800; letter-spacing:-0.5px;">
-                  Seu evento foi criado!
+              <td class="px" bgcolor="#f3ece0"
+                style="background-color:#f3ece0; background-image:linear-gradient(180deg,#f3ece0,#fbf7f0); border-bottom:1px solid #e7dfd1; padding:36px 40px 32px;">
+                <p style="margin:0; font-size:12px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:#b8323b;">
+                  Painel do organizador
+                </p>
+                <h1 class="title" style="margin:14px 0 0; font-family:'Fraunces','Iowan Old Style',Georgia,serif; font-size:36px; line-height:1.08; font-weight:560; letter-spacing:-1px; color:#1d2621;">
+                  Seu evento foi <em style="font-style:italic; font-weight:450; color:#b8323b;">criado.</em>
                 </h1>
               </td>
             </tr>
 
             <!-- Conteudo -->
             <tr>
-              <td class="px" style="padding:36px 40px 8px;">
-                <p style="margin:0 0 16px; font-size:18px; color:#111827;">
+              <td class="px" style="padding:32px 40px 8px;">
+                <p style="margin:0 0 14px; font-size:17px; color:#1d2621;">
                   Olá, <strong>{HOST_NAME}</strong> 👋
                 </p>
-                <p style="margin:0 0 28px; font-size:15px; line-height:1.65;">
-                  Seu <strong>Amigo Secreto</strong> está pronto. No painel do organizador você
-                  acompanha os participantes, faz o sorteio e reenvia e-mails quando precisar.
+                <p style="margin:0 0 28px; font-size:15px; line-height:1.65; color:#66706a;">
+                  Seu <strong style="color:#1d2621;">Amigo Secreto</strong> está pronto. No painel do organizador você
+                  acompanha os participantes, faz o sorteio e reenvia as mensagens quando precisar.
                 </p>
 
                 <!-- Botao -->
                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 32px;">
                   <tr>
-                    <td align="center" bgcolor="#e5383b"
-                      style="border-radius:999px; background-color:#e5383b; background-image:linear-gradient(135deg,#f0464a,#e5383b 45%,#a4161a); box-shadow:0 8px 24px -6px rgba(229,56,59,0.55);">
+                    <td class="btn-cell" align="center" bgcolor="#b8323b"
+                      style="border-radius:999px; background-color:#b8323b; box-shadow:0 6px 16px -8px #b8323b;">
                       <a href="{URL_PANEL}" target="_blank"
-                        style="display:inline-block; padding:15px 34px; color:#ffffff; font-size:16px; font-weight:700; border-radius:999px; text-decoration:none;">
+                        style="display:inline-block; padding:14px 30px; color:#ffffff; font-size:15px; font-weight:700; border-radius:999px; text-decoration:none;">
                         Abrir painel do organizador →
                       </a>
                     </td>
@@ -69,35 +82,35 @@
                 </table>
 
                 <!-- Proximos passos -->
-                <p style="margin:0 0 14px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#6b7280;">
+                <p style="margin:0 0 14px; font-size:12px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:#8c948f;">
                   Próximos passos
                 </p>
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
                   <tr>
-                    <td width="40" valign="top" style="padding:0 0 14px;">
-                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">1</div>
+                    <td width="42" valign="top" style="padding:0 0 14px;">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:999px; background-color:#e8f0eb; color:#1e4d3a; font-size:13px; font-weight:700; text-align:center;">1</div>
                     </td>
-                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5;">Confira os participantes no painel.</td>
+                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5; color:#1d2621;">Confira os participantes no painel.</td>
                   </tr>
                   <tr>
-                    <td width="40" valign="top" style="padding:0 0 14px;">
-                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">2</div>
+                    <td width="42" valign="top" style="padding:0 0 14px;">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:999px; background-color:#e8f0eb; color:#1e4d3a; font-size:13px; font-weight:700; text-align:center;">2</div>
                     </td>
-                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5;">Clique em <strong>Sortear agora</strong>: cada um recebe por e-mail o seu amigo secreto.</td>
+                    <td valign="top" style="padding:4px 0 14px; font-size:15px; line-height:1.5; color:#1d2621;">Clique em <strong>Sortear agora</strong>: cada um recebe o seu amigo secreto.</td>
                   </tr>
                   <tr>
-                    <td width="40" valign="top">
-                      <div style="width:28px; height:28px; line-height:28px; border-radius:9px; background-color:#fdecec; color:#a4161a; font-size:13px; font-weight:800; text-align:center;">3</div>
+                    <td width="42" valign="top">
+                      <div style="width:28px; height:28px; line-height:28px; border-radius:999px; background-color:#e8f0eb; color:#1e4d3a; font-size:13px; font-weight:700; text-align:center;">3</div>
                     </td>
-                    <td valign="top" style="padding:4px 0 0; font-size:15px; line-height:1.5;">Acompanhe a entrega dos e-mails e as listas de presentes.</td>
+                    <td valign="top" style="padding:4px 0 0; font-size:15px; line-height:1.5; color:#1d2621;">Acompanhe a entrega das mensagens e as listas de presentes.</td>
                   </tr>
                 </table>
 
                 <!-- Dica -->
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td bgcolor="#fff8e6" style="background-color:#fff8e6; border-left:4px solid #f5a524; border-radius:12px; padding:14px 18px; color:#6b4e05; font-size:14px; line-height:1.55;">
-                      💡 <strong>Guarde este e-mail:</strong> o botão acima é o seu acesso ao painel.
+                    <td bgcolor="#f8f0dc" style="background-color:#f8f0dc; border-left:4px solid #b88a2e; border-radius:14px; padding:14px 18px; color:#6b4a06; font-size:14px; line-height:1.55;">
+                      <strong>Guarde este e-mail:</strong> o botão acima é o seu acesso ao painel.
                     </td>
                   </tr>
                 </table>
@@ -106,25 +119,25 @@
 
             <!-- Rodape -->
             <tr>
-              <td class="px" align="center" style="padding:28px 40px 32px; font-size:14px; color:#6b7280;">
-                Boa sorte e boa festa! 🎉
+              <td class="px" align="center" style="padding:28px 40px 30px; font-family:'Fraunces','Iowan Old Style',Georgia,serif; font-style:italic; font-size:16px; color:#66706a;">
+                Boa sorte e boa festa!
               </td>
             </tr>
             <tr>
               <td style="padding:0;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td height="4" bgcolor="#e5383b" style="background-color:#e5383b; font-size:0; line-height:0;">&nbsp;</td>
-                    <td height="4" bgcolor="#f5a524" style="background-color:#f5a524; font-size:0; line-height:0;">&nbsp;</td>
-                    <td height="4" bgcolor="#2fb36d" style="background-color:#2fb36d; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#b8323b" style="background-color:#b8323b; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#b88a2e" style="background-color:#b88a2e; font-size:0; line-height:0;">&nbsp;</td>
+                    <td height="4" bgcolor="#1e4d3a" style="background-color:#1e4d3a; font-size:0; line-height:0;">&nbsp;</td>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
 
-          <p style="margin:20px 0 0; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; color:#9ca3af;">
-            <strong style="color:#6b7280;">Secret Santa</strong> · Organizador gratuito de Amigo Secreto
+          <p style="margin:20px 0 0; font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif; font-size:12px; color:#8c948f;">
+            <strong style="color:#66706a;">Secret Santa</strong> · Organizador gratuito de Amigo Secreto
           </p>
         </td>
       </tr>
