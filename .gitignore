@@ -2,7 +2,6 @@ node_modules/*
 data/*.json
 .env
 .enviroment
-xxx
 logs/*.log
 data/*.db
 data/*.db-*
