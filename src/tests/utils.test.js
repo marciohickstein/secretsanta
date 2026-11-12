@@ -31,6 +31,33 @@ describe(`Testing utils...`, () => {
 		expect(array).toEqual(expect.arrayContaining(arrayShuffled));
 	})
 
+	it(`shuffleArray() nao altera o array original e mantem os mesmos elementos`, () => {
+		const array = [1, 2, 3, 4, 5, 6, 7, 8];
+		const arrayShuffled = util.shuffleArray(array);
+
+		expect(array).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+		expect([...arrayShuffled].sort((a, b) => a - b)).toEqual(array);
+		expect(util.shuffleArray('nao e array')).toEqual([]);
+	})
+
+	it(`shuffleArray() gera todas as ordens com a mesma frequencia`, () => {
+		// 4 elementos = 24 ordens possiveis; cada uma deve sair ~1/24 das vezes
+		const runs = 48000;
+		const expected = runs / 24;
+		const counts = {};
+
+		for (let i = 0; i < runs; i++) {
+			const key = util.shuffleArray(['a', 'b', 'c', 'd']).join('');
+			counts[key] = (counts[key] || 0) + 1;
+		}
+
+		expect(Object.keys(counts)).toHaveLength(24);
+		// Desvio padrao ~44; a margem de 15% (300) fica muito acima da variacao aleatoria
+		for (const count of Object.values(counts)) {
+			expect(Math.abs(count - expected)).toBeLessThan(expected * 0.15);
+		}
+	})
+
 	it(`Test createListFriends():`, () => { 
 		const list = [ 'Marcio', 'Claudio', 'Leo' ];
 		const listFriends = util.createListFriends(list);

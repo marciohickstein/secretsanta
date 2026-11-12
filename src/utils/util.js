@@ -5,6 +5,7 @@ const config = require('../config');
 const Template = require('./template');
 
 const path = require('path');
+const { randomInt } = require('crypto');
 
 /**
  * Given a path, return the root path of the project
@@ -24,15 +25,20 @@ const resolvePath = (pathToResolve) => {
 	return path.resolve(pathToResolve);
 }
 
-/* It's a function that receives an array and returns a new array with the same elements but in a
-different order. */
+/*
+ * Retorna uma copia embaralhada do array (Fisher-Yates), com todas as ordens igualmente provaveis.
+ * sort(() => Math.random() - 0.5) nao serve: o resultado e enviesado e depende do motor JS.
+ */
 const shuffleArray = function (array) {
 	if (!Array.isArray(array))
 		return [];
 
 	const arrayShuffled = [...array];
 
-	arrayShuffled.sort((a, b) => Math.random() - 0.5);
+	for (let i = arrayShuffled.length - 1; i > 0; i--) {
+		const j = randomInt(i + 1);
+		[arrayShuffled[i], arrayShuffled[j]] = [arrayShuffled[j], arrayShuffled[i]];
+	}
 
 	return arrayShuffled;
 }
