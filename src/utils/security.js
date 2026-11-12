@@ -34,23 +34,29 @@ function maskContact(value) {
 	return '***';
 }
 
+/* Webhooks: recusa timestamps invalidos ou fora da janela de tolerancia (evita reenvio de requisicoes antigas) */
+function isFreshTimestamp(timestamp, { toleranceSeconds = 300, now = Date.now() } = {}) {
+	const ts = Number(timestamp);
+	return Number.isFinite(ts) && Math.abs(now / 1000 - ts) <= toleranceSeconds;
+}
+
+/* Webhooks: corpo bruto recebido (Buffer do express.raw) como texto, exatamente como foi assinado */
+const rawBodyText = (rawBody) => Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody ?? '');
+
 /*
  * Valida a assinatura de webhooks no padrao Svix (usado pelo Resend).
  * Conteudo assinado: "<svix-id>.<svix-timestamp>.<corpo bruto>", HMAC-SHA256 com o segredo (whsec_<base64>).
  */
-function verifyWebhookSignature(secret, headers, rawBody, { toleranceSeconds = 300, now = Date.now() } = {}) {
+function verifyWebhookSignature(secret, headers, rawBody, options) {
 	const id = headers['svix-id'];
 	const timestamp = headers['svix-timestamp'];
 	const signatures = headers['svix-signature'];
 
 	if (!secret || !id || !timestamp || !signatures) return false;
-
-	const ts = Number(timestamp);
-	if (!Number.isFinite(ts) || Math.abs(now / 1000 - ts) > toleranceSeconds) return false;
+	if (!isFreshTimestamp(timestamp, options)) return false;
 
 	const key = Buffer.from(String(secret).replace(/^whsec_/, ''), 'base64');
-	const body = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody ?? '');
-	const expected = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${body}`).digest('base64');
+	const expected = crypto.createHmac('sha256', key).update(`${id}.${timestamp}.${rawBodyText(rawBody)}`).digest('base64');
 
 	return String(signatures)
 		.split(' ')
@@ -62,17 +68,14 @@ function verifyWebhookSignature(secret, headers, rawBody, { toleranceSeconds = 3
  * Valida a assinatura dos webhooks do SMS Gateway for Android.
  * Cabecalhos X-Signature (hex) e X-Timestamp (segundos); conteudo assinado: "<corpo bruto><timestamp>", HMAC-SHA256 com a Signing Key.
  */
-function verifySmsGatewaySignature(key, headers, rawBody, { toleranceSeconds = 300, now = Date.now() } = {}) {
+function verifySmsGatewaySignature(key, headers, rawBody, options) {
 	const signature = headers['x-signature'];
 	const timestamp = headers['x-timestamp'];
 
 	if (!key || !signature || !timestamp) return false;
+	if (!isFreshTimestamp(timestamp, options)) return false;
 
-	const ts = Number(timestamp);
-	if (!Number.isFinite(ts) || Math.abs(now / 1000 - ts) > toleranceSeconds) return false;
-
-	const body = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : String(rawBody ?? '');
-	const expected = crypto.createHmac('sha256', String(key)).update(`${body}${timestamp}`).digest('hex');
+	const expected = crypto.createHmac('sha256', String(key)).update(`${rawBodyText(rawBody)}${timestamp}`).digest('hex');
 
 	return safeEqual(String(signature).toLowerCase(), expected);
 }
