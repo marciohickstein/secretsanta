@@ -4,26 +4,7 @@ const whatsapp = require('./whatsAppSender');
 const config = require('../config');
 const Template = require('./template');
 
-const path = require('path');
 const { randomInt } = require('crypto');
-
-/**
- * Given a path, return the root path of the project
- * @returns A string.
- */
-
-const getRootPath = () => {
-	return process.cwd();
-}
-
-/**
- * Given a path, return the absolute path
- * @param pathToResolve - The path to resolve.
- * @returns A promise.
- */
-const resolvePath = (pathToResolve) => {
-	return path.resolve(pathToResolve);
-}
 
 /*
  * Retorna uma copia embaralhada do array (Fisher-Yates), com todas as ordens igualmente provaveis.
@@ -105,4 +86,4 @@ function sendTextMessages(listFriendsSorted, hostName, subject, text) {
 	});
 }
 
-module.exports = { shuffleArray, createListFriends, drawParticipants, getRootPath, resolvePath, getBaseUrl, buildParticipantMessage, sendTextMessages };
+module.exports = { shuffleArray, createListFriends, drawParticipants, getBaseUrl, buildParticipantMessage, sendTextMessages };

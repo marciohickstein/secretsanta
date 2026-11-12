@@ -7,7 +7,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const config = require('@config');
-const util = require('@utils/util');
+const path = require('path');
 const logger = require('@utils/logger');
 const routerEvent = require('@routes/eventRoutes');
 const routerParticipant = require('@routes/participantRoutes');
@@ -85,7 +85,7 @@ class AppController {
 				return res.status(404).json({ error: true, message: 'Recurso não encontrado.' });
 			}
 
-			res.status(404).sendFile(util.resolvePath(util.getRootPath() + '/client/error404.html'));
+			res.status(404).sendFile(path.join(process.cwd(), 'client', 'error404.html'));
 		});
 
 		// Middleware de erro global — captura erros assíncronos não tratados

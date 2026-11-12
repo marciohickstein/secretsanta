@@ -213,4 +213,4 @@ async function checkEmailDomains(emails) {
 	}
 }
 
-module.exports = { PROFILES, ValidationError, validateEvent, validateWishlist, validateParticipantUpdate, checkEmailDomains };
+module.exports = { ValidationError, validateEvent, validateWishlist, validateParticipantUpdate, checkEmailDomains };

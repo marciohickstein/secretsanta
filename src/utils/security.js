@@ -2,8 +2,6 @@
 
 const crypto = require('crypto');
 
-const newId = () => crypto.randomUUID();
-
 const newToken = () => crypto.randomBytes(24).toString('base64url');
 
 /* Comparacao em tempo constante para tokens */
@@ -80,4 +78,4 @@ function verifySmsGatewaySignature(key, headers, rawBody, options) {
 	return safeEqual(String(signature).toLowerCase(), expected);
 }
 
-module.exports = { newId, newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature, verifySmsGatewaySignature };
+module.exports = { newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature, verifySmsGatewaySignature };

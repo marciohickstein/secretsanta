@@ -4,23 +4,6 @@ const util = require('@utils/util');
 const Template = require('@utils/template');
 
 describe(`Testing utils...`, () => {
-	it(`Test getRootPath():`, () => {
-		const rootPath = util.getRootPath();
-		const processCwd = process.cwd();
-
-		expect(rootPath).toBe(processCwd);
-	})
-
-	it(`Test resolvePath():`, () => {
-		const rootPath = util.getRootPath();
-		const pathsToResolve = [ `${rootPath}/./`, `${rootPath}/../secretsanta` ];
-		
-		pathsToResolve.forEach((path) => {
-			const pathToResolve = util.resolvePath(path);
-			expect(rootPath).toBe(pathToResolve);
-		})
-	})
-
 	it(`Test shuffleArray():`, () => {
 		const array = [ 'Marcio', 'Claudio', 'Leo', 'Eduardo', 'Vitor', 'Renata', 'Roberta', 'Ana Paula' ];
 		const arrayShuffled =	util.shuffleArray(array);
@@ -103,8 +86,7 @@ describe(`Testing utils...`, () => {
 		template.assign('NOME_PROGRAMADOR', 'Marcio');
 		template.assign('LINGUAGEM', 'Javascript');
 
-		const finalText = 
-		`${template.getValue('MENSAGEM_OLA')} ${template.getValue('NOME_CONVIDADO')},\nMeu nome eh ${template.getValue('NOME_PROGRAMADOR')} programador que desenvolveu esta funcao em ${template.getValue('LINGUAGEM')}`;
+		const finalText = `Ola Leo,\nMeu nome eh Marcio programador que desenvolveu esta funcao em Javascript`;
 
 		const textReplaced = template.replace();
 
