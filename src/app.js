@@ -18,6 +18,7 @@ const routerAddress = require('@routes/addressRoutes');
 const { accessGate } = require('./middlewares/accessGate');
 
 const CDN = 'https://cdn.jsdelivr.net';
+const PERMISSIONS_POLICY = 'camera=(), microphone=(), geolocation=(), payment=(), usb=()';
 
 // Log de acesso sem query string (que pode conter tokens de sorteio)
 morgan.token('path', (req) => req.originalUrl.split('?')[0]);
@@ -49,6 +50,12 @@ class AppController {
 				},
 			},
 		}));
+
+		// O site nao usa camera, microfone, localizacao etc.; o helmet nao define este cabecalho
+		this.express.use((req, res, next) => {
+			res.setHeader('Permissions-Policy', PERMISSIONS_POLICY);
+			next();
+		});
 
 		// Webhooks precisam do corpo bruto, por isso ficam antes do express.json()
 		this.express.use('/webhooks', routerWebhook);

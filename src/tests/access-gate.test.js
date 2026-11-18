@@ -20,6 +20,12 @@ const login = (password, next) => request(app).post('/auth/login').send({ passwo
 const cookieOf = (response) => response.headers['set-cookie'][0].split(';')[0];
 
 describe('Senha de acesso', () => {
+	it('formulario de login envia por POST (senha nunca vai para a URL sem JavaScript)', async () => {
+		const response = await request(app).get('/login.html').expect(200);
+		expect(response.text).toMatch(/<form id="login-form" method="post"/);
+		expect(response.headers['permissions-policy']).toContain('camera=()');
+	});
+
 	it('redireciona as paginas protegidas para o login', async () => {
 		for (const path of ['/', '/index.html', '/event.html']) {
 			const response = await request(app).get(path).set('Accept', 'text/html').expect(302);
