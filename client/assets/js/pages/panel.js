@@ -6,7 +6,7 @@
 import { $, h, icon, mount, param } from '../lib/dom.js';
 import { organizer, errorText } from '../lib/api.js';
 import { openDialog, showMessage, confirmDialog, toast, initLogout } from '../lib/ui.js';
-import { formatDateTime, formatTime, PROFILES, profileLabel, onlyDigits } from '../lib/format.js';
+import { formatDateTime, formatTime, PROFILES, profileLabel, phoneKey } from '../lib/format.js';
 
 initLogout();
 
@@ -64,7 +64,7 @@ const smsStatus = (p) => {
 	return !data.event.drawn && !p.isHost ? WAITING : NOT_SENT;
 };
 
-const smsNumberChanged = (p) => p.smsStatus && p.smsStatus.sentTo && onlyDigits(p.smsStatus.sentTo) !== onlyDigits(p.celphone);
+const smsNumberChanged = (p) => p.smsStatus && p.smsStatus.sentTo && phoneKey(p.smsStatus.sentTo) !== phoneKey(p.celphone);
 
 const kindLabel = (kind) => kind === 'organizer' ? 'Link do painel' : 'Resultado do sorteio';
 

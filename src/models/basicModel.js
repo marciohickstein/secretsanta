@@ -14,9 +14,6 @@ function BasicModel(tableName, options = {}) {
 	this.create = async function(item) {
 		return await this.data.insertAutoId(item);
 	};
-	this.delete = async function(id) {
-		return await this.data.delete(id);
-	};
 	this.find = async function(filter) {
 		return await this.data.select(filter);
 	};

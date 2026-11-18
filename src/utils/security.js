@@ -78,4 +78,4 @@ function verifySmsGatewaySignature(key, headers, rawBody, options) {
 	return safeEqual(String(signature).toLowerCase(), expected);
 }
 
-module.exports = { newToken, safeEqual, escapeHtml, maskContact, verifyWebhookSignature, verifySmsGatewaySignature };
+module.exports = { newToken, safeEqual, escapeHtml, maskContact, rawBodyText, verifyWebhookSignature, verifySmsGatewaySignature };

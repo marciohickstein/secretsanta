@@ -44,6 +44,8 @@ CI (`.github/workflows/node.js.yml`): every push to `main` runs `npm test` and, 
 - send via an in-process sequential promise queue (rate limit for Resend; per-number spacing for SMS) — sends are fire-and-forget from the request; tests `await notifications.idle()` to wait for them;
 - record status on the participant document and update it from signed webhooks (`/webhooks/resend`, `/webhooks/sms`) or by polling the provider when the panel loads (`refreshPendingStatuses`), with a status rank so late events don't regress status;
 - enforce resend cooldowns exposed to the panel.
+
+The channel-independent part (participant fields `<prefix>Status/Kind/SentTo/SentAt/UpdatedAt/Error/MessageId/CheckedAt`, monotonic status, polling, panel view, cooldown) lives once in `services/deliveryTracker.js` (`createDeliveryTracker`); each channel service keeps only its queues, provider calls, status mapping and webhook parsing, and passes its real differences as options (SMS ignores failure-over-failure and compares phones without the `55` country code). The field names are stored data and indexed — don't rename them. Both webhook routes share `webhookHandler` in `webhookController.js` (503 no secret / 401 bad signature / 400 bad JSON).
 Message bodies come from `src/templates/` rendered by `utils/template.js`. Links in messages use `APP_URL`.
 
 **Config.** All env vars are read in `src/config/index.js` (the reference for `.env`). Many intervals are zeroed when `TEST` is set.

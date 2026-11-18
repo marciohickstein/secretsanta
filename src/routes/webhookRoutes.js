@@ -7,7 +7,9 @@ const router = express.Router();
 const WebhookController = require('@controllers/webhookController');
 
 // Corpo bruto: a assinatura e calculada sobre o conteudo exato recebido
-router.post('/resend', express.raw({ type: '*/*', limit: '256kb' }), WebhookController.resend);
-router.post('/sms', express.raw({ type: '*/*', limit: '256kb' }), WebhookController.sms);
+router.use(express.raw({ type: '*/*', limit: '256kb' }));
+
+router.post('/resend', WebhookController.resend);
+router.post('/sms', WebhookController.sms);
 
 module.exports = router;

@@ -41,8 +41,6 @@ class SQLiteDataSource {
 			byId: this._db.prepare(`SELECT data FROM ${this._table} WHERE id = ?`),
 			insert: this._db.prepare(`INSERT INTO ${this._table} (id, data) VALUES (?, ?)`),
 			update: this._db.prepare(`UPDATE ${this._table} SET data = ? WHERE id = ?`),
-			delete: this._db.prepare(`DELETE FROM ${this._table} WHERE id = ?`),
-			deleteAll: this._db.prepare(`DELETE FROM ${this._table}`),
 		};
 	}
 
@@ -53,10 +51,6 @@ class SQLiteDataSource {
 	_findById(id) {
 		const row = this._stmt.byId.get(String(id));
 		return row ? JSON.parse(row.data) : null;
-	}
-
-	async selectById(id) {
-		return this.select({ id });
 	}
 
 	async select(filter) {
@@ -106,14 +100,6 @@ class SQLiteDataSource {
 		return newItem;
 	}
 
-	async insert(item, autoId = false) {
-		if (autoId || item?.id === undefined) {
-			return this.insertAutoId({ ...item, id: undefined });
-		}
-
-		return this.insertAutoId(item);
-	}
-
 	/*
 	 * onlyIf: funcao opcional avaliada dentro da transacao com o registro atual.
 	 * Se retornar false, nada e alterado e o metodo retorna null.
@@ -137,32 +123,6 @@ class SQLiteDataSource {
 		})();
 
 		return altItem;
-	}
-
-	async delete(id) {
-		const itemRemoved = this._db.transaction(() => {
-			const current = this._findById(id);
-
-			if (!current) {
-				throw new Error(`Item ${id} not found`);
-			}
-
-			this._stmt.delete.run(String(id));
-
-			return current;
-		})();
-
-		return itemRemoved;
-	}
-
-	async deleteAll() {
-		const items = this._db.transaction(() => {
-			const all = this._parse(this._stmt.all.all());
-			this._stmt.deleteAll.run();
-			return all;
-		})();
-
-		return items;
 	}
 }
 

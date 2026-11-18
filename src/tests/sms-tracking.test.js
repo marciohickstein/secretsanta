@@ -162,6 +162,16 @@ describe('Rastreamento de SMS', () => {
 		}
 	});
 
+	it('intervalo de reenvio trata o celular com e sem DDI 55 como o mesmo numero', () => {
+		const config = require('@config');
+		const now = Date.now();
+		const sent = { smsSentAt: now, smsStatus: 'sent', smsSentTo: '+55 (51) 99999-0001' };
+
+		expect(smsNotifications.resendAvailableAt({ ...sent, celphone: '51999990001' }, now)).toBe(now + config.sms.resendCooldownMs);
+		// Numero realmente diferente libera o reenvio na hora
+		expect(smsNotifications.resendAvailableAt({ ...sent, celphone: '51999990002' }, now)).toBe(0);
+	});
+
 	describe('webhook do SMS Gateway', () => {
 		const sign = (body, { key = 'chave-de-teste', timestamp = Math.floor(Date.now() / 1000) } = {}) => ({
 			'X-Signature': crypto.createHmac('sha256', key).update(`${body}${timestamp}`).digest('hex'),

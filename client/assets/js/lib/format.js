@@ -6,6 +6,9 @@ export const pad = (n) => String(n).padStart(2, '0');
 
 export const onlyDigits = (value) => String(value || '').replace(/\D/g, '');
 
+// Celular sem o DDI 55 (mesma regra do numberKey no servidor): 5551988880000 e 51988880000 sao o mesmo numero
+export const phoneKey = (value) => onlyDigits(value).replace(/^55(?=\d{11}$)/, '');
+
 export const capitalize = (text) => text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : '';
 
 export const formatDateTime = (ms) => ms ? new Date(ms).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '';
