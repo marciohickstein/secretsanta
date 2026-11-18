@@ -90,9 +90,24 @@ function clearSessionCookie(req, res) {
 	res.clearCookie(COOKIE_NAME, { httpOnly: true, sameSite: 'lax', secure: req.secure, path: '/' });
 }
 
-/* Link de retorno apos o login: apenas caminhos locais */
+/*
+ * Link de retorno apos o login: apenas caminhos locais.
+ * Resolve a URL como o navegador faria (que trata "\" como "/" e remove TAB/quebras de linha)
+ * e so aceita se continuar na mesma origem. A mesma regra esta em client/assets/js/login.js.
+ */
+const LOCAL_ORIGIN = 'http://local.invalid';
+
 function safeNext(next) {
-	return typeof next === 'string' && next.startsWith('/') && !next.startsWith('//') && !next.startsWith('/\\') ? next : '/';
+	if (typeof next !== 'string' || !next.startsWith('/')) return '/';
+
+	try {
+		const url = new URL(next, LOCAL_ORIGIN);
+		const local = url.pathname + url.search + url.hash;
+		// "/..//evil.com" normaliza para "//evil.com", que o navegador le como outro site
+		return url.origin === LOCAL_ORIGIN && !local.startsWith('//') ? local : '/';
+	} catch {
+		return '/';
+	}
 }
 
 let warnedMissingPassword = false;

@@ -90,9 +90,17 @@ describe('Senha de acesso', () => {
 	});
 
 	it('nao aceita redirecionamento para outro site', async () => {
-		for (const next of ['//evil.com', 'https://evil.com', '/\\evil.com']) {
+		// O navegador trata "\" como "/" e remove TAB/quebras de linha: todos estes iriam para evil.com
+		for (const next of ['//evil.com', 'https://evil.com', '/\\evil.com', '/\t/evil.com', '/\n/evil.com', '/\r\n/evil.com', '\\/evil.com', '/..//evil.com', '/.//evil.com', '/x/..//evil.com', '/%2e%2e//evil.com']) {
 			const response = await login('senha-secreta', next).expect(200);
 			expect(response.body.redirect).toBe('/');
+		}
+	});
+
+	it('mantem o redirecionamento para paginas do proprio site', async () => {
+		for (const next of ['/painel.html?event=1&token=abc', '/wishlist.html#lista', '/']) {
+			const response = await login('senha-secreta', next).expect(200);
+			expect(response.body.redirect).toBe(next);
 		}
 	});
 

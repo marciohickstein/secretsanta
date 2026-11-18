@@ -10,7 +10,24 @@
     const errorBox = document.getElementById('login-error');
     const submitLabel = submit.innerHTML;
 
-    const next = new URLSearchParams(window.location.search).get('next') || '/';
+    /*
+     * Destino apos o login: apenas paginas deste site. Resolve a URL como o navegador
+     * (que trata "\" como "/" e remove TAB/quebras de linha) e confere a origem.
+     * Mesma regra do safeNext em src/middlewares/accessGate.js.
+     */
+    const safeNext = (value) => {
+        if (typeof value !== 'string' || !value.startsWith('/')) return '/';
+        try {
+            const url = new URL(value, window.location.origin);
+            const local = url.pathname + url.search + url.hash;
+            // "/..//evil.com" normaliza para "//evil.com", que o navegador le como outro site
+            return url.origin === window.location.origin && !local.startsWith('//') ? local : '/';
+        } catch (e) {
+            return '/';
+        }
+    };
+
+    const next = safeNext(new URLSearchParams(window.location.search).get('next') || '/');
 
     const showError = (message) => {
         errorBox.querySelector('span').textContent = message;
@@ -63,7 +80,7 @@
                 return;
             }
 
-            window.location.replace(data.redirect || '/');
+            window.location.replace(safeNext(data.redirect));
         } catch (e) {
             showError('Não foi possível falar com o servidor. Verifique sua conexão.');
         } finally {
@@ -75,7 +92,7 @@
     fetch('/auth/status', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
         .then(r => r.json())
         .then(status => {
-            if (!status.enabled || status.authenticated) window.location.replace(next.startsWith('/') && !next.startsWith('//') ? next : '/');
+            if (!status.enabled || status.authenticated) window.location.replace(next);
         })
         .catch(() => {});
 })();
